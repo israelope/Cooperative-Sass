@@ -1,0 +1,38 @@
+{
+  "name": "cooperative-saas-mvp",
+  "version": "0.1.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "description": "Multi-tenant SaaS platform for cooperative financial management with Paystack split-payment webhook reconciliation (University of Ibadan final-year project MVP).",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "seed": "node scripts/seed.mjs",
+    "test": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "eval:selftest": "node eval/run-experiment.mjs --mode=model --n=1000 --rate=0.15 --runs=3",
+    "eval": "node eval/run-experiment.mjs",
+    "eval:integrity": "node eval/integrity.mjs",
+    "eval:prepare-load": "node eval/prepare-load.mjs"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.5.1",
+    "@supabase/supabase-js": "^2.45.4",
+    "next": "14.2.15",
+    "pdf-lib": "^1.17.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "server-only": "^0.0.1",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.13",
+    "vitest": "^2.1.2"
+  },
+  "engines": {
+    "node": ">=18.18"
+  }
+}

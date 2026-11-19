@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body { @apply bg-chalk text-ink font-body antialiased; }
+  h1, h2, h3, h4 { @apply font-display tracking-tight; }
+  :focus-visible { @apply outline outline-2 outline-offset-2 outline-adire-500; }
+  .num { font-variant-numeric: tabular-nums; }
+}
+
+@layer components {
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors disabled:opacity-60 disabled:cursor-not-allowed; }
+  .btn-primary { @apply btn bg-adire-700 text-white hover:bg-adire-800; }
+  .btn-gold { @apply btn bg-marigold-400 text-ink hover:bg-marigold-500; }
+  .btn-quiet { @apply btn bg-white text-adire-800 ring-1 ring-inset ring-rule hover:bg-adire-50; }
+  .btn-danger { @apply btn bg-bad-100 text-bad-700 hover:bg-[#f6cdc7]; }
+  .btn-sm { @apply px-3 py-1.5 text-xs; }
+  .input { @apply block w-full rounded-lg border border-rule bg-white px-3 py-2.5 text-sm text-ink placeholder:text-ink/40 focus:border-adire-500; }
+  .label { @apply mb-1 block text-sm font-medium text-ink/80; }
+  .hint { @apply mt-1 text-xs text-ink/60; }
+  .panel { @apply rounded-xl bg-white ring-1 ring-rule; }
+  .badge { @apply inline-block rounded-full px-2.5 py-0.5 text-xs font-medium; }
+  .badge-ok { @apply badge bg-ok-100 text-ok-700; }
+  .badge-warn { @apply badge bg-marigold-100 text-marigold-700; }
+  .badge-bad { @apply badge bg-bad-100 text-bad-700; }
+  .badge-info { @apply badge bg-adire-100 text-adire-800; }
+  .table-wrap { @apply overflow-x-auto; }
+  .tbl { @apply w-full text-left text-sm; }
+  .tbl th { @apply whitespace-nowrap border-b border-rule px-3 py-2 font-semibold text-ink/70; }
+  .tbl td { @apply border-b border-rule/60 px-3 py-2.5 align-top; }
+  .tbl tr:last-child td { @apply border-b-0; }
+
+  /* The passbook: ruled lines and a double rule at the left margin, like the paper book it replaces. */
+  .passbook { background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 2.74rem, #E4E9F5 2.74rem, #E4E9F5 2.8rem); }
+  .passbook-page { @apply relative rounded-xl bg-white ring-1 ring-rule; box-shadow: inset 2.1rem 0 0 0 #F1F3FA, inset 2.2rem 0 0 0 #C9D0E8; }
+  .passbook-page .tbl th:first-child, .passbook-page .tbl td:first-child { padding-left: 3.1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
