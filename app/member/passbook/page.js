@@ -1,32 +1,54 @@
+import Icon from '@/components/Icon';
 import PageHeader from '@/components/PageHeader';
+import DataTable from '@/components/DataTable';
+import EmptyState from '@/components/EmptyState';
 import { requireMember } from '@/lib/auth';
+import { must } from '@/lib/db';
 import { naira, formatDate } from '@/lib/format';
 
 export const dynamic = 'force-dynamic';
+export const metadata = { title: 'Passbook' };
 
 export default async function PassbookPage() {
   const { supabase, member } = await requireMember();
-  const [{ data: entries }, { data: txns }] = await Promise.all([
-    supabase.from('passbook_entries').select('id, transaction_id, entry_date, entry_type, amount, running_balance, note').eq('member_id', member.id).order('seq', { ascending: false }).limit(500),
-    supabase.from('transactions').select('id, receipt_url').eq('member_id', member.id).not('receipt_url', 'is', null),
+  const [entries, txns] = await Promise.all([
+    must(
+      supabase
+        .from('passbook_entries')
+        .select('id, transaction_id, entry_date, entry_type, amount, running_balance, note')
+        .eq('member_id', member.id)
+        .order('seq', { ascending: false })
+        .limit(500),
+      'passbook entries',
+    ),
+    must(
+      supabase
+        .from('transactions')
+        .select('id, receipt_url')
+        .eq('member_id', member.id)
+        .not('receipt_url', 'is', null),
+      'receipts',
+    ),
   ]);
   const receipts = Object.fromEntries((txns || []).map((t) => [t.id, t.receipt_url]));
 
   return (
     <>
-      <PageHeader title="Passbook" intro="Every entry, newest first. Entries are never edited: corrections appear as new lines.">
-        <a href={`/api/statements/member/${member.id}`} className="btn-gold">Download PDF statement</a>
-        <a href={`/api/export/statement/${member.id}`} className="btn-quiet">CSV</a>
+      <PageHeader title="Passbook" intro="Every entry, newest first. Entries are never edited: corrections appear as new lines." icon="book">
+        <a href={`/api/statements/member/${member.id}`} className="btn-gold"><Icon name="download" size={16} /> Download PDF statement</a>
+        <a href={`/api/export/statement/${member.id}`} className="btn-quiet"><Icon name="fileText" size={16} /> CSV</a>
       </PageHeader>
       <form method="get" action={`/api/statements/member/${member.id}`} className="mb-4 flex flex-wrap items-end gap-3">
         <div><label htmlFor="from" className="label">Statement from</label><input id="from" name="from" type="date" className="input" /></div>
         <div><label htmlFor="to" className="label">to</label><input id="to" name="to" type="date" className="input" /></div>
-        <button className="btn-quiet">Download PDF for these dates</button>
+        <button className="btn-quiet"><Icon name="download" size={16} /> Download PDF for these dates</button>
       </form>
       <div className="passbook-page p-2">
-        <div className="table-wrap">
-          <table className="tbl num">
-            <thead><tr><th>Date</th><th>Entry</th><th className="text-right">Amount</th><th className="text-right">Balance</th><th>Receipt</th></tr></thead>
+        {(entries || []).length === 0 ? (
+          <EmptyState compact icon="book" title="Nothing here yet" description="Your first contribution will appear here." />
+        ) : (
+          <DataTable caption="All passbook entries, newest first">
+            <thead><tr><th scope="col">Date</th><th scope="col">Entry</th><th scope="col" className="text-right">Amount</th><th scope="col" className="text-right">Balance</th><th scope="col">Receipt</th></tr></thead>
             <tbody>
               {(entries || []).map((e) => (
                 <tr key={e.id}>
@@ -34,14 +56,14 @@ export default async function PassbookPage() {
                   <td>{e.note || e.entry_type}</td>
                   <td className="text-right">{e.entry_type === 'withdrawal' ? '−' : ''}{naira(e.amount)}</td>
                   <td className="text-right font-semibold">{naira(e.running_balance)}</td>
-                  <td>{receipts[e.transaction_id] && <a className="font-semibold text-adire-700 underline" target="_blank" rel="noreferrer" href={`/api/receipt?path=${encodeURIComponent(receipts[e.transaction_id])}`}>View</a>}</td>
+                  <td>{receipts[e.transaction_id] && <a className="link inline-flex items-center gap-1 whitespace-nowrap" target="_blank" rel="noreferrer" href={`/api/receipt?path=${encodeURIComponent(receipts[e.transaction_id])}`}>View <Icon name="externalLink" size={13} /></a>}</td>
                 </tr>
               ))}
-              {(entries || []).length === 0 && <tr><td colSpan={5} className="py-8 text-center text-ink/60">Nothing here yet.</td></tr>}
             </tbody>
-          </table>
-        </div>
+          </DataTable>
+        )}
       </div>
+      {(entries || []).length > 0 && <p className="mt-3 text-xs text-ink/75">Showing first {entries.length} entries (newest first, up to 500).</p>}
     </>
   );
 }

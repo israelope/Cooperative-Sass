@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import Icon from '@/components/Icon';
 
 const QUICK = [5000, 10000, 20000, 50000];
 
@@ -24,21 +25,64 @@ export default function PayForm({ disabled, purpose = 'contribution', loanId = n
     }
   }
 
+  const hintId = `pay-hint-${loanId || 'c'}`;
+
   return (
     <form onSubmit={pay} className="panel max-w-md space-y-4 p-6">
-      {purpose === 'loan_repayment' && maxAmount != null && <p className="text-sm text-ink/70">You still owe <span className="num font-semibold">₦{Number(maxAmount).toLocaleString('en-NG', { minimumFractionDigits: 2 })}</span> on this loan. Pay all or part of it.</p>}
+      <h2 className="flex items-center gap-2 text-lg font-bold text-adire-900">
+        <Icon name="wallet" size={18} className="text-adire-500" />
+        {purpose === 'loan_repayment' ? 'Repay your loan' : 'Pay a contribution'}
+      </h2>
+      {purpose === 'loan_repayment' && maxAmount != null && (
+        <div className="callout-info">
+          <Icon name="info" size={17} className="mt-0.5" />
+          <span>You still owe <span className="num font-semibold">₦{Number(maxAmount).toLocaleString('en-NG', { minimumFractionDigits: 2 })}</span> on this loan. Pay all or part of it.</span>
+        </div>
+      )}
       <div>
         <label htmlFor={`amount-${loanId || 'c'}`} className="label">Amount (₦)</label>
-        <input id={`amount-${loanId || 'c'}`} type="number" inputMode="decimal" min="1" step="0.01" max={maxAmount || undefined} required value={amount} onChange={(e) => setAmount(e.target.value)} className="input num text-lg" disabled={disabled} />
-        {quick && <div className="mt-2 flex flex-wrap gap-2">
-          {QUICK.map((q) => (
-            <button key={q} type="button" disabled={disabled} onClick={() => setAmount(String(q))} className="btn-quiet btn-sm num">₦{q.toLocaleString('en-NG')}</button>
-          ))}
-        </div>}
+        <input
+          id={`amount-${loanId || 'c'}`}
+          type="number"
+          inputMode="decimal"
+          min="1"
+          step="0.01"
+          max={maxAmount || undefined}
+          required
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          aria-describedby={hintId}
+          className="input num text-lg"
+          disabled={disabled}
+        />
+        {quick && (
+          <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label="Quick amounts">
+            {QUICK.map((q) => (
+              <button
+                key={q}
+                type="button"
+                disabled={disabled}
+                aria-pressed={String(amount) === String(q)}
+                onClick={() => setAmount(String(q))}
+                className={`btn btn-sm num ${String(amount) === String(q) ? 'bg-adire-700 text-white' : 'bg-adire-50 text-adire-800 hover:bg-adire-100'}`}
+              >
+                ₦{q.toLocaleString('en-NG')}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
-      <button className="btn-gold w-full" disabled={disabled || state.busy}>{state.busy ? 'Opening Paystack…' : buttonLabel}</button>
-      {state.error && <p role="alert" className="rounded-lg bg-bad-100 px-3 py-2 text-sm text-bad-700">{state.error}</p>}
-      <p className="hint">Your money is paid by Paystack into your cooperative's bank account, usually the next working day. Your passbook updates as soon as Paystack confirms the payment.</p>
+      <button className="btn-gold w-full" disabled={disabled || state.busy}>
+        <Icon name={state.busy ? 'refresh' : 'lock'} size={16} />
+        {state.busy ? 'Opening Paystack…' : buttonLabel}
+      </button>
+      {state.error && (
+        <div role="alert" className="callout-bad">
+          <Icon name="xCircle" size={18} className="mt-0.5" />
+          <span>{state.error}</span>
+        </div>
+      )}
+      <p id={hintId} className="hint">Your money is paid by Paystack into your cooperative&apos;s bank account, usually the next working day. Your passbook updates as soon as Paystack confirms the payment.</p>
     </form>
   );
 }

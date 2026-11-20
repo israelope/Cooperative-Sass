@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useRef } from 'react';
 import { useFormState, useFormStatus } from 'react-dom';
+import FormErrorsContext from '@/components/FormErrorsContext';
 
 export function SubmitButton({ children, className = 'btn-primary', pendingText = 'Please wait…', name, value }) {
   const { pending } = useFormStatus();
@@ -43,19 +44,24 @@ export default function ActionForm({ action, children, className = '', resetOnSu
   useEffect(() => {
     if (!state) return;
     if (state.ok && resetOnSuccess) ref.current?.reset();
+    if (state.fieldErrors && Object.keys(state.fieldErrors).length > 0) {
+      ref.current?.querySelector('[aria-invalid="true"]')?.focus();
+    }
     onResultRef.current?.(state);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 
   return (
-    <form ref={ref} action={formAction} className={className}>
-      {children}
-      {state?.error && (
-        <p role="alert" className="mt-3 rounded-lg bg-bad-100 px-3 py-2 text-sm text-bad-700">{state.error}</p>
-      )}
-      {state?.ok && state?.message && (
-        <p role="status" className="mt-3 rounded-lg bg-ok-100 px-3 py-2 text-sm text-ok-700">{state.message}</p>
-      )}
-    </form>
+    <FormErrorsContext.Provider value={state?.fieldErrors || {}}>
+      <form ref={ref} action={formAction} className={className}>
+        {children}
+        {state?.error && (
+          <p role="alert" className="callout-bad mt-4"><span>{state.error}</span></p>
+        )}
+        {state?.ok && state?.message && (
+          <p role="status" className="callout-ok mt-4"><span>{state.message}</span></p>
+        )}
+      </form>
+    </FormErrorsContext.Provider>
   );
 }

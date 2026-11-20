@@ -1,12 +1,17 @@
 import Link from 'next/link';
+import Icon from '@/components/Icon';
 import PageHeader from '@/components/PageHeader';
 import StatusBadge from '@/components/StatusBadge';
+import DataTable from '@/components/DataTable';
+import EmptyState from '@/components/EmptyState';
 import ActionForm, { SubmitButton } from '@/components/ActionForm';
 import Field from '@/components/Field';
 import { requireStaff } from '@/lib/auth';
+import { must } from '@/lib/db';
 import { addMember, setMemberStatus } from '@/app/admin/actions';
 
 export const dynamic = 'force-dynamic';
+export const metadata = { title: 'Members' };
 const STATUSES = ['all', 'active', 'pending', 'unclaimed', 'suspended'];
 
 export default async function MembersPage({ searchParams }) {
@@ -14,22 +19,34 @@ export default async function MembersPage({ searchParams }) {
   const status = STATUSES.includes(searchParams.status) ? searchParams.status : 'all';
   const q = String(searchParams.q || '').trim().replace(/[%,()]/g, '');
 
-  let query = supabase.from('members').select('id, member_no, full_name, phone, email, status, claim_code, created_at').order('member_no').limit(300);
+  let query = supabase
+    .from('members')
+    .select('id, member_no, full_name, phone, email, status, claim_code, created_at')
+    .order('member_no')
+    .limit(300);
   if (status !== 'all') query = query.eq('status', status);
   if (q) query = query.or(`full_name.ilike.%${q}%,member_no.ilike.%${q}%`);
-  const { data: members } = await query;
+  const members = must(await query, 'members');
   const link = `${process.env.NEXT_PUBLIC_APP_URL || ''}/c/${profile.tenants?.slug}`;
 
   return (
     <>
-      <PageHeader title="Members" intro={`Share this link so members can join: ${link}`}>
-        {profile.role === 'admin' && <Link href="/admin/import" className="btn-quiet">Bulk import</Link>}
+      <PageHeader title="Members" intro="Manage your society's members and their account status." icon="users">
+        {profile.role === 'admin' && <Link href="/admin/import" className="btn-quiet"><Icon name="upload" size={16} /> Bulk import</Link>}
       </PageHeader>
 
-      <form className="mb-4 flex flex-wrap items-end gap-3" method="get">
+      <div className="callout-info mb-5">
+        <Icon name="link" size={17} className="mt-0.5" />
+        <div className="min-w-0">
+          <p className="font-semibold">Share this link so members can join themselves</p>
+          <code className="mt-1 block break-all rounded bg-white px-2 py-1 text-xs text-adire-800">{link}</code>
+        </div>
+      </div>
+
+      <form className="panel mb-4 flex flex-wrap items-end gap-3 p-4" method="get">
         <div className="grow sm:max-w-xs">
           <label htmlFor="q" className="label">Search name or number</label>
-          <input id="q" name="q" defaultValue={q} className="input" />
+          <input id="q" name="q" defaultValue={q} className="input" placeholder="e.g. Adeola or A014" />
         </div>
         <div>
           <label htmlFor="status" className="label">Status</label>
@@ -37,18 +54,21 @@ export default async function MembersPage({ searchParams }) {
             {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
           </select>
         </div>
-        <button className="btn-quiet">Filter</button>
+        <button className="btn-quiet"><Icon name="filter" size={16} /> Filter</button>
+        {(q || status !== 'all') && <Link href="/admin/members" className="btn-quiet">Clear</Link>}
       </form>
 
       <div className="panel p-2">
-        <div className="table-wrap">
-          <table className="tbl">
-            <thead><tr><th>No.</th><th>Name</th><th>Phone</th><th>Status</th><th>Claim code</th><th></th></tr></thead>
+        {(members || []).length === 0 ? (
+          <EmptyState compact icon="users" title="No members match" description="Add one below, use bulk import, or clear your filters." />
+        ) : (
+          <DataTable caption="Members, with status and account actions">
+            <thead><tr><th scope="col">No.</th><th scope="col">Name</th><th scope="col">Phone</th><th scope="col">Status</th><th scope="col">Claim code</th><th scope="col"><span className="sr-only">Actions</span></th></tr></thead>
             <tbody>
               {(members || []).map((m) => (
                 <tr key={m.id}>
                   <td className="num">{m.member_no}</td>
-                  <td><Link href={`/admin/members/${m.id}`} className="font-semibold text-adire-700 underline">{m.full_name}</Link><span className="block text-xs text-ink/50">{m.email}</span></td>
+                  <td><Link href={`/admin/members/${m.id}`} className="link whitespace-nowrap">{m.full_name}</Link><span className="block text-xs text-ink/75">{m.email}</span></td>
                   <td className="num">{m.phone}</td>
                   <td><StatusBadge status={m.status} /></td>
                   <td className="num font-mono">{m.claim_code || ''}</td>
@@ -59,17 +79,15 @@ export default async function MembersPage({ searchParams }) {
                   </td>
                 </tr>
               ))}
-              {(members || []).length === 0 && (
-                <tr><td colSpan={6} className="py-8 text-center text-ink/60">No members match. Add one below or use bulk import.</td></tr>
-              )}
             </tbody>
-          </table>
-        </div>
+          </DataTable>
+        )}
+        {(members || []).length > 0 && <p className="px-3 py-2 text-xs text-ink/75">Showing {members.length} member(s) (up to 300).</p>}
       </div>
 
       <section className="panel mt-8 max-w-2xl p-6">
-        <h2 className="text-lg font-bold text-adire-900">Add a member</h2>
-        <p className="mt-1 text-sm text-ink/70">The member receives a claim code to activate their own account.</p>
+        <h2 className="flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="userPlus" size={18} className="text-adire-500" /> Add a member</h2>
+        <p className="mt-1 text-sm text-ink/75">The member receives a claim code to activate their own account.</p>
         <ActionForm action={addMember} resetOnSuccess className="mt-4 grid gap-4 sm:grid-cols-2">
           <Field label="Member number" name="memberNo" />
           <Field label="Full name" name="fullName" />

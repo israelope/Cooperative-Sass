@@ -1,6 +1,8 @@
 'use client';
 import { useState } from 'react';
+import Icon from '@/components/Icon';
 import ActionForm, { SubmitButton } from '@/components/ActionForm';
+import Field from '@/components/Field';
 import { createClient } from '@/lib/supabase/client';
 
 /** Shrinks a phone photo to a small JPEG so receipts stay well inside the free storage quota. */
@@ -47,22 +49,27 @@ export default function ManualPaymentForm({ action, tenantId, members }) {
         </select>
       </div>
       <div className="grid gap-4 sm:grid-cols-3">
-        <div><label htmlFor="amount" className="label">Amount (₦)</label><input id="amount" name="amount" type="number" step="0.01" min="1" required className="input" /></div>
+        <Field label="Amount (₦)" name="amount" type="number" step="0.01" min="1" />
         <div><label htmlFor="channel" className="label">Paid by</label>
           <select id="channel" name="channel" className="input" defaultValue="cash"><option value="cash">Cash</option><option value="transfer">Bank transfer</option></select></div>
-        <div><label htmlFor="paidOn" className="label">Date paid</label><input id="paidOn" name="paidOn" type="date" defaultValue={today} max={today} required className="input" /></div>
+        <Field label="Date paid" name="paidOn" type="date" defaultValue={today} max={today} />
       </div>
       <div>
         <label htmlFor="receipt" className="label">Photo of the receipt</label>
-        <input id="receipt" type="file" accept="image/*" capture="environment" onChange={onFile} className="input file:mr-3 file:rounded file:border-0 file:bg-adire-100 file:px-3 file:py-1 file:text-sm file:font-semibold" />
+        <input id="receipt" type="file" accept="image/*" capture="environment" required onChange={onFile} className="input file:mr-3 file:rounded file:border-0 file:bg-adire-100 file:px-3 file:py-1 file:text-sm file:font-semibold" />
         <input type="hidden" name="receiptPath" value={path} />
         <p className="hint" aria-live="polite">
           {status.busy ? 'Uploading…' : path ? `Uploaded: ${status.name}` : 'Required. The photo is shrunk automatically and the member can see it in their passbook.'}
         </p>
-        {status.error && <p role="alert" className="mt-2 text-sm text-bad-700">{status.error}</p>}
+        {status.error && (
+          <div role="alert" className="callout-bad mt-2">
+            <Icon name="xCircle" size={18} className="mt-0.5" />
+            <span>{status.error}</span>
+          </div>
+        )}
       </div>
-      <div><label htmlFor="note" className="label">Note (optional)</label><input id="note" name="note" className="input" placeholder="e.g. September contribution" /></div>
-      <SubmitButton className="btn-primary" pendingText="Saving…">Save payment</SubmitButton>
+      <Field label="Note (optional)" name="note" required={false} placeholder="e.g. September contribution" />
+      <SubmitButton className="btn-primary" pendingText="Saving…"><Icon name="check" size={16} /> Save payment</SubmitButton>
     </ActionForm>
   );
 }

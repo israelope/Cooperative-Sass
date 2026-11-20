@@ -10,7 +10,7 @@ module.exports = {
         rule: '#D3D9EA',
         marigold: { 100: '#FBEFC8', 400: '#EBB62B', 500: '#E0A100', 700: '#8A6200' },
         ok: { 100: '#DDF3E6', 700: '#1B6B3A' },
-        bad: { 100: '#FBE0DC', 700: '#A32A1C' },
+        bad: { 100: '#FBE0DC', 200: '#F6CFC7', 700: '#A32A1C' },
       },
       fontFamily: {
         display: ['var(--font-display)', 'system-ui', 'sans-serif'],

@@ -6,8 +6,18 @@ const display = Bricolage_Grotesque({ subsets: ['latin'], variable: '--font-disp
 const body = Public_Sans({ subsets: ['latin'], variable: '--font-body', display: 'swap' });
 
 export const metadata = {
-  title: 'CoopLedger: digital passbooks for cooperative societies',
+  title: {
+    default: 'CoopLedger: digital passbooks for cooperative societies',
+    template: '%s · CoopLedger',
+  },
   description: 'A multi-tenant platform for thrift and credit cooperatives: digital passbooks, online contributions and automatic reconciliation.',
+  applicationName: 'CoopLedger',
+};
+
+export const viewport = {
+  themeColor: '#1A2460',
+  width: 'device-width',
+  initialScale: 1,
 };
 
 export default function RootLayout({ children }) {

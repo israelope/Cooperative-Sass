@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import Icon from '@/components/Icon';
 import ActionForm, { SubmitButton } from '@/components/ActionForm';
 
 export default function BankForm({ action, banks, current }) {
@@ -23,9 +24,11 @@ export default function BankForm({ action, banks, current }) {
       </div>
       <div>
         <label htmlFor="accountNumber" className="label">Account number</label>
-        <input id="accountNumber" name="accountNumber" inputMode="numeric" pattern="\d{10}" maxLength={10} defaultValue={current.accountNumber} required className="input" placeholder="10 digits" />
+        <input id="accountNumber" name="accountNumber" inputMode="numeric" pattern="\d{10}" maxLength={10} defaultValue={current.accountNumber} required className="input num" placeholder="10 digits" />
       </div>
-      <div className="sm:col-span-2"><SubmitButton pendingText="Saving with Paystack…">Save payout account</SubmitButton></div>
+      <div className="sm:col-span-2">
+        <SubmitButton pendingText="Saving with Paystack…"><Icon name="bank" size={16} /> Save payout account</SubmitButton>
+      </div>
     </ActionForm>
   );
 }
