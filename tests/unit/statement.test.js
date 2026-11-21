@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parsePeriod, splitStatement, presetPeriods, lagosDate } from '@/lib/statement';
+import { parsePeriod, splitStatement, presetPeriods, lagosDate, isValidDate } from '@/lib/statement';
 
 const E = (date, type, amount, bal, note = '') => ({ entry_date: date + 'T10:00:00Z', entry_type: type, amount, running_balance: bal, note });
 const entries = [E('2026-01-05', 'opening', 100000, 100000), E('2026-02-10', 'contribution', 20000, 120000), E('2026-03-10', 'contribution', 20000, 140000), E('2026-04-10', 'withdrawal', 10000, 130000)];
@@ -10,6 +10,13 @@ describe('statement period', () => {
     expect(parsePeriod(new URLSearchParams('')).from).toBe(null);
     expect(parsePeriod(new URLSearchParams('from=01/01/2026')).error).toBeTruthy();
     expect(parsePeriod(new URLSearchParams('from=2026-02-01&to=2026-01-01')).error).toBeTruthy();
+  });
+  it('rejects dates that are not on the calendar', () => {
+    expect(isValidDate('2026-02-29')).toBe(false);
+    expect(isValidDate('2026-04-31')).toBe(false);
+    expect(isValidDate('2026-13-01')).toBe(false);
+    expect(isValidDate('2024-02-29')).toBe(true);
+    expect(parsePeriod(new URLSearchParams('from=2026-02-30')).error).toBeTruthy();
   });
 });
 

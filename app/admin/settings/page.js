@@ -16,9 +16,9 @@ export const metadata = { title: 'Settings' };
 export default async function SettingsPage() {
   const { supabase, profile } = await requireStaff({ adminOnly: true });
   const [tenant, banks, staff] = await Promise.all([
-    must(supabase.from('tenants').select('*').eq('id', profile.tenant_id).single(), 'cooperative settings'),
+    await must(supabase.from('tenants').select('*').eq('id', profile.tenant_id).single(), 'cooperative settings'),
     listBanks(),
-    must(supabase.from('profiles').select('id, full_name, role').in('role', ['admin', 'bookkeeper']).order('role'), 'staff'),
+    await must(supabase.from('profiles').select('id, full_name, role').in('role', ['admin', 'bookkeeper']).order('role'), 'staff'),
   ]);
   const link = `${getAppUrl()}/c/${tenant.slug}`;
 

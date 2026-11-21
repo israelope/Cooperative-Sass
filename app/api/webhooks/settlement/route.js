@@ -26,8 +26,12 @@ export async function POST(req) {
     return NextResponse.json({ error: 'Bad payload' }, { status: 400 });
   }
   const { reference, share = null, leg_ok = true } = body || {};
-  if (typeof reference !== 'string' || !reference || (share !== null && !Number.isFinite(Number(share))) || typeof leg_ok !== 'boolean') {
+  if (typeof reference !== 'string' || !reference || typeof leg_ok !== 'boolean') {
     return NextResponse.json({ error: 'reference, share and leg_ok are required' }, { status: 400 });
+  }
+  // Without a share a successful settlement cannot be compared with what we expected.
+  if (leg_ok && (share === null || !Number.isFinite(Number(share)))) {
+    return NextResponse.json({ error: 'A numeric share is required when leg_ok is true' }, { status: 400 });
   }
   const { data, error } = await createServiceClient().rpc('record_settlement', {
     p_reference: reference, p_share: share === null ? null : Number(share), p_leg_ok: leg_ok,

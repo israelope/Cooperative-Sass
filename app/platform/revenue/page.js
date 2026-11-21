@@ -18,7 +18,7 @@ const pct = (a, b) => (Number(b) > 0 ? `${((Number(a) / Number(b)) * 100).toFixe
 export default async function RevenuePage(props) {
   const searchParams = await props.searchParams;
   const days = RANGES.includes(Number(searchParams.days)) ? Number(searchParams.days) : 30;
-  const r = must(await createServiceClient().rpc('revenue_stats', { p_days: days }), 'revenue statistics') || {};
+  const r = (await must(createServiceClient().rpc('revenue_stats', { p_days: days }), 'revenue statistics')) || {};
   const cfg = feeConfig();
   const monthly = r.monthly || [];
 

@@ -26,19 +26,29 @@ export async function GET(req) {
   if (!txn) return NextResponse.json({ status: 'not_found' }, { status: 404 });
 
   if (txn.status === 'pending' && verify) {
+    const service = createServiceClient();
+    let ps;
     try {
-      const ps = await verifyTransaction(ref);
-      if (ps.status === 'success') {
-        await createServiceClient().rpc('process_successful_payment', {
-          p_reference: ref, p_amount: Number(ps.amount) / 100, p_currency: ps.currency, p_payload: { source: 'verify-fallback', data: ps },
-        });
-      } else if (ps.status === 'failed' || ps.status === 'abandoned') {
-        return NextResponse.json({ status: ps.status });
-      }
-      ({ data: txn } = await read());
+      ps = await verifyTransaction(ref);
     } catch {
-      // Paystack unreachable or reference unknown to Paystack yet: keep waiting for the webhook.
+      // Paystack unreachable or the reference is not known to it yet: keep polling.
+      return NextResponse.json({ status: txn.status, retry: true }, { status: 503 });
     }
+    if (ps.status === 'success') {
+      const amount = Number(ps.amount);
+      if (!Number.isFinite(amount) || amount <= 0) {
+        return NextResponse.json({ error: 'Payment confirmation is incomplete' }, { status: 503 });
+      }
+      const { error } = await service.rpc('process_successful_payment', {
+        p_reference: ref, p_amount: amount / 100, p_currency: ps.currency, p_payload: { source: 'verify-fallback', data: ps },
+      });
+      if (error) return NextResponse.json({ error: 'Payment could not be recorded yet' }, { status: 503 });
+    } else if (ps.status === 'failed' || ps.status === 'abandoned') {
+      const { error } = await service.rpc('mark_transaction_failed', { p_reference: ref });
+      if (error) return NextResponse.json({ error: 'Payment status could not be saved yet' }, { status: 503 });
+      return NextResponse.json({ status: ps.status });
+    }
+    ({ data: txn } = await read());
   }
   return NextResponse.json({ status: txn.status, purpose: txn.purpose });
 }

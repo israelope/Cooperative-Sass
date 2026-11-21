@@ -10,10 +10,10 @@ export const metadata = { title: 'Record a payment' };
 
 export default async function RecordPaymentPage() {
   const { supabase, profile } = await requireStaff();
-  const members = must(
-    await supabase.from('members').select('id, member_no, full_name').in('status', ['active', 'unclaimed']).order('member_no').limit(1000),
+  const members = (await must(
+    supabase.from('members').select('id, member_no, full_name').in('status', ['active', 'unclaimed']).order('member_no').limit(1000),
     'members for manual payment',
-  ) || [];
+  )) || [];
   return (
     <>
       <PageHeader title="Record a payment" intro="For cash and bank-transfer payments. Online payments are recorded automatically." icon="plusCircle">

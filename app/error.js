@@ -16,7 +16,8 @@ export default function Error({ error, reset }) {
       </span>
       <h1 className="mt-5 text-2xl font-bold text-accent-900">Something went wrong</h1>
       <p className="mt-2 text-sm text-ink/75">
-        This page could not be loaded. Try again; if it keeps happening, contact your cooperative&apos;s administrator.
+        This page could not be loaded. Try again, then sign out and back in if nothing changes.
+        If it still fails, send the reference below (if shown) to whoever supports this app.
       </p>
       <div className="mt-6 flex flex-wrap justify-center gap-2">
         <button type="button" onClick={reset} className="btn-primary">

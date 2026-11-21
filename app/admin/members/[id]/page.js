@@ -18,12 +18,12 @@ export const metadata = { title: 'Member details' };
 export default async function MemberDetail(props) {
   const params = await props.params;
   const { supabase, profile } = await requireStaff();
-  const member = must(await supabase.from('members').select('*').eq('id', params.id).maybeSingle(), 'member');
+  const member = await must(supabase.from('members').select('*').eq('id', params.id).maybeSingle(), 'member');
   if (!member) notFound();
   const [sum, entries, loans] = await Promise.all([
-    must(supabase.rpc('member_summary', { p_member_id: member.id }), 'member summary'),
-    must(supabase.from('passbook_entries').select('id, entry_date, entry_type, amount, running_balance, note').eq('member_id', member.id).order('seq', { ascending: false }).limit(200), 'passbook entries'),
-    must(supabase.from('loans').select('id, principal, total_repayable, amount_repaid, status, created_at').eq('member_id', member.id).order('created_at', { ascending: false }), 'member loans'),
+    await must(supabase.rpc('member_summary', { p_member_id: member.id }), 'member summary'),
+    await must(supabase.from('passbook_entries').select('id, entry_date, entry_type, amount, running_balance, note').eq('member_id', member.id).order('seq', { ascending: false }).limit(200), 'passbook entries'),
+    await must(supabase.from('loans').select('id, principal, total_repayable, amount_repaid, status, created_at').eq('member_id', member.id).order('created_at', { ascending: false }), 'member loans'),
   ]);
   const s = sum?.[0] || {};
 

@@ -13,8 +13,8 @@ export const metadata = { title: 'Home' };
 export default async function MemberHome() {
   const { supabase, member, profile } = await requireMember();
   const [sum, entries] = await Promise.all([
-    must(supabase.rpc('member_summary', { p_member_id: member.id }), 'member summary'),
-    must(
+    await must(supabase.rpc('member_summary', { p_member_id: member.id }), 'member summary'),
+    await must(
       supabase
         .from('passbook_entries')
         .select('id, entry_date, entry_type, amount, running_balance, note')

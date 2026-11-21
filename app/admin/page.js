@@ -16,8 +16,8 @@ export const metadata = { title: 'Dashboard' };
 export default async function AdminDashboard() {
   const { supabase, profile } = await requireStaff();
   const [stats, recent] = await Promise.all([
-    must(supabase.rpc('admin_stats'), 'dashboard statistics'),
-    must(
+    await must(supabase.rpc('admin_stats'), 'dashboard statistics'),
+    await must(
       supabase
         .from('transactions')
         .select('id, amount, channel, status, created_at, paid_at, members(full_name, member_no)')

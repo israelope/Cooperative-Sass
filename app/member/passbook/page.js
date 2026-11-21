@@ -17,7 +17,7 @@ export default async function PassbookPage(props) {
   const page = pageOf(searchParams.page);
   const range = pageRange(page);
   const [{ rows: entries, count: total }, txns] = await Promise.all([
-    mustWithCount(
+    await mustWithCount(
       supabase
         .from('passbook_entries')
         .select('id, transaction_id, entry_date, entry_type, amount, running_balance, note', { count: 'exact' })
@@ -26,7 +26,7 @@ export default async function PassbookPage(props) {
         .range(range.from, range.to),
       'passbook entries',
     ),
-    must(
+    await must(
       supabase
         .from('transactions')
         .select('id, receipt_url')

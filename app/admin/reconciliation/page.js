@@ -28,12 +28,16 @@ const SELECT = 'id, status, detected_fault, flagged_mismatch, expected_amount, r
 export default async function ReconciliationPage(props) {
   const searchParams = await props.searchParams;
   const { supabase } = await requireStaff();
+  const openPage = pageOf(searchParams.openPage);
   const page = pageOf(searchParams.page);
+  const openRange = pageRange(openPage);
   const range = pageRange(page);
-  const [sum, open, { rows: recent, count: total }] = await Promise.all([
-    must(supabase.rpc('reconciliation_summary'), 'reconciliation summary'),
-    must(supabase.from('reconciliation_results').select(SELECT).in('status', ['NEEDS_REVIEW', 'UNRESOLVED']).order('received_at', { ascending: true }).limit(100), 'cases needing review'),
-    mustWithCount(supabase.from('reconciliation_results').select(SELECT, { count: 'exact' }).order('received_at', { ascending: false }).range(range.from, range.to), 'recent reconciliations'),
+  const [sum, { rows: open, count: openTotal }, { rows: recent, count: total }] = await Promise.all([
+    await must(supabase.rpc('reconciliation_summary'), 'reconciliation summary'),
+    await mustWithCount(supabase.from('reconciliation_results').select(SELECT, { count: 'exact' })
+      .in('status', ['NEEDS_REVIEW', 'UNRESOLVED']).order('received_at', { ascending: true })
+      .range(openRange.from, openRange.to), 'cases needing review'),
+    await mustWithCount(supabase.from('reconciliation_results').select(SELECT, { count: 'exact' }).order('received_at', { ascending: false }).range(range.from, range.to), 'recent reconciliations'),
   ]);
   const s = sum || {};
   const by = s.by_status || {};
@@ -55,7 +59,7 @@ export default async function ReconciliationPage(props) {
       <h2 className="mb-3 mt-8 flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="alertTriangle" size={18} className="text-accent-500" /> Needs your decision</h2>
       {(open || []).length === 0 ? (
         <div className="panel p-2">
-          <EmptyState compact icon="checkCircle" title="All caught up" description="Nothing needs review right now." />
+          <EmptyState compact icon="checkCircle" title={openTotal ? 'No cases on this page' : 'All caught up'} description={openTotal ? 'Go back to an earlier page.' : 'Nothing needs review right now.'} />
         </div>
       ) : (
         <div className="space-y-4">
@@ -79,7 +83,7 @@ export default async function ReconciliationPage(props) {
                 <div>
                   <label htmlFor={`a-${r.id}`} className="sr-only">Decision</label>
                   <select id={`a-${r.id}`} name="action" className="input" defaultValue="acknowledge">
-                    <option value="acknowledge">Acknowledge (already dealt with)</option>
+                    <option value="acknowledge">Add a note (keep case open)</option>
                     <option value="accept_received">Accept the amount received</option>
                     <option value="mark_failed">Mark the payment failed</option>
                   </select>
@@ -91,11 +95,12 @@ export default async function ReconciliationPage(props) {
           ))}
         </div>
       )}
+      <Pagination page={openPage} total={openTotal} basePath="/admin/reconciliation" paramName="openPage" />
 
       <h2 className="mb-3 mt-8 flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="refresh" size={18} className="text-accent-500" /> Recent reconciliations</h2>
       <div className="panel p-2">
         {(recent || []).length === 0 ? (
-          <EmptyState compact icon="refresh" title="No reconciliations yet" description="Online payments will appear here once they have been checked." />
+          <EmptyState compact icon="refresh" title={total ? 'No reconciliations on this page' : 'No reconciliations yet'} description={total ? 'Go back to an earlier page.' : 'Online payments will appear here once they have been checked.'} />
         ) : (
           <>
             <DataTable caption="The most recent payment reconciliations" scroll>
@@ -116,9 +121,9 @@ export default async function ReconciliationPage(props) {
                 ))}
               </tbody>
             </DataTable>
-            <Pagination page={page} total={total} basePath="/admin/reconciliation" />
           </>
         )}
+        <Pagination page={page} total={total} basePath="/admin/reconciliation" />
       </div>
     </>
   );

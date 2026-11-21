@@ -33,7 +33,7 @@ export default async function PaymentsPage(props) {
   if (status !== 'all') q = q.eq('status', status);
   if (from) q = q.gte('created_at', from);
   if (to) q = q.lt('created_at', new Date(new Date(to).getTime() + 86400000).toISOString().slice(0, 10));
-  const { rows: txns, count: total } = mustWithCount(await q.range(range.from, range.to), 'payments');
+  const { rows: txns, count: total } = await mustWithCount(q.range(range.from, range.to), 'payments');
   const params = new URLSearchParams({ channel, status, from, to }).toString();
 
   return (
@@ -93,9 +93,9 @@ export default async function PaymentsPage(props) {
                 ))}
               </tbody>
             </DataTable>
-            <Pagination page={page} total={total} basePath="/admin/payments" params={{ channel, status, from, to }} />
           </>
         )}
+        <Pagination page={page} total={total} basePath="/admin/payments" params={{ channel, status, from, to }} />
       </div>
     </>
   );

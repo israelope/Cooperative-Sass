@@ -6,11 +6,15 @@ import { login } from '@/app/actions/auth';
 
 export const metadata = { title: 'Log in' };
 
-export default function LoginPage() {
+export default async function LoginPage({ searchParams }) {
+  const sp = await searchParams;
+  const reason = sp?.reason === 'role';
   return (
     <AuthCard
       title="Log in"
-      intro="Welcome back. Sign in to your cooperative workspace."
+      intro={reason
+        ? 'Your permissions changed. Sign in again to refresh them.'
+        : 'Welcome back. Sign in to your cooperative workspace.'}
       footer={
         <p>
           New cooperative? <Link href="/register" className="link">Register it</Link>.{' '}

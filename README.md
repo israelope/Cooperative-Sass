@@ -1,21 +1,19 @@
 # CoopLedger: Multi-Tenant SaaS for Cooperative Financial Management
 
 Final-year project MVP, Department of Computer Science, University of Ibadan.
-**Stack:** Next.js 14 (App Router, JavaScript) · Tailwind CSS · Supabase (PostgreSQL + Auth + Storage) · Paystack · Vercel.
+**Stack:** Next.js 16 (App Router, JavaScript) · Tailwind CSS · Supabase (PostgreSQL + Auth + Storage) · Paystack · Vercel.
 **Everything runs on free plans.**
 
-> **IMPORTANT: nothing in this project has been run yet.** It was written without access to the internet, so neither
-> the app nor any SQL file has been executed against a real Supabase project or Paystack account. The pure logic
-> (money maths, import validation, webhook signature, fees, visit tracking) has unit tests that pass in a stand-in
-> test runner, and every file passes a syntax check, but **the SQL, the Supabase/Paystack calls and the pages have never
-> been run.** Expect to fix some errors on your first run. Send each error message (with the file and line) to whoever is
-> helping you and fix them one at a time. Do not use this with real members' money until it has been run, tested and
-> reviewed by an experienced developer.
+> **IMPORTANT: the database and external services have not been run against a live project.** Lint, unit tests and
+> the production build pass locally, but the SQL and the Supabase/Paystack calls have not been executed against a real
+> project or account. Expect to fix some errors on your first run. Send each error message (with the file and line) to
+> whoever is helping you and fix them one at a time. Do not use this with real members' money until it has been run,
+> tested and reviewed by an experienced developer.
 
 ## Start here: first-run checklist
 
 1. Do sections 3 to 6 in order (accounts, Supabase project, Paystack test keys, `npm install`, `.env.local`).
-2. In the Supabase SQL Editor run the **eight** migration files in order, one at a time. If one fails, copy the exact error, fix it, and only then run the next.
+2. In the Supabase SQL Editor run the **eleven** migration files in order, one at a time. If one fails, copy the exact error, fix it, and only then run the next.
 3. `npm run seed`, then `npm run dev`, then work through the section 7 walkthrough.
 4. `npm test` (no database needed), then `npm run test:integration` (needs steps 1 to 3).
 5. Fees are **off by default** (`PLATFORM_FEE_KOBO=0`). To see revenue in test mode, set it to `5000` temporarily (section 8).
@@ -25,7 +23,8 @@ Final-year project MVP, Department of Computer Science, University of Ibadan.
 Billing and subscriptions (trial dates, "paid until", plans), password reset, email/SMS notifications, a withdrawals screen,
 admin two-factor login, dedicated virtual account numbers per cooperative (money reaches each cooperative through its Paystack sub-account instead). The
 suggested business model is a monthly/yearly subscription per cooperative with no per-transaction charge to members; the
-fee setting exists but is off by default.
+fee setting exists but is off by default. Login/registration rate limits are in-memory per server instance; a
+multi-instance deployment needs a shared store such as Upstash or Supabase itself.
 
 ---------------------------------------------------------------------
 
@@ -64,8 +63,8 @@ app/                     Next.js routes (pages, server actions, API routes)
   c/[slug]/                public cooperative landing + join page
 components/              ActionForm, ManualPaymentForm, ImportWizard, PayForm, ...
 lib/                     supabase clients, paystack, signature, money, import validation, format
-middleware.js            route-level role guard
-supabase/migrations/     9 SQL files: schema, functions, RLS, storage, platform, revenue, loan repayment + statements, reconciliation, staff roles   (docs/all_migrations_combined.sql = all nine)
+proxy.js                 route-level role guard (Next.js 16 renamed middleware)
+supabase/migrations/     11 SQL files: schema, functions, RLS, storage, platform, revenue, loan repayment + statements, reconciliation, staff roles, money safety, role authority   (docs/all_migrations_combined.sql = all eleven)
 scripts/                 seed.mjs, simulate-webhook.mjs
 tests/                   unit/ (no database)  integration/ (needs Supabase + seed)
 docs/REPORT_ALIGNMENT.md Differences between this code and the project report (READ THIS)
@@ -90,10 +89,11 @@ docs/REPORT_ALIGNMENT.md Differences between this code and the project report (R
    * the **anon / publishable** key
    * the **service_role / secret** key (**server only; never commit or expose it**)
    If the dashboard shows both "legacy" and new-style keys, either pair works with this code.
-3. **SQL Editor > New query**. Paste and run the nine files in `supabase/migrations/` **in order**
+3. **SQL Editor > New query**. Paste and run the eleven files in `supabase/migrations/` **in order**
    (or run `docs/all_migrations_combined.sql` once):
-   1. `..._schema.sql`  2. `..._functions.sql`  3. `..._rls.sql`  4. `..._storage.sql`  5. `..._platform.sql`  6. `..._revenue.sql`  7. `..._loan_repayment_statements.sql`  8. `..._reconciliation.sql`  9. `..._staff_roles.sql`
-   Each must finish with "Success. No rows returned". If one errors, fix it before running the next.
+   1. `..._schema.sql`  2. `..._functions.sql`  3. `..._rls.sql`  4. `..._storage.sql`  5. `..._platform.sql`  6. `..._revenue.sql`  7. `..._loan_repayment_statements.sql`  8. `..._reconciliation.sql`  9. `..._staff_roles.sql`  10. `..._money_safety.sql`  11. `..._role_authority.sql`
+   Each must finish with "Success. No rows returned". If one errors, fix it before running the next. On an existing
+   database run only the migrations that are new to it, not the whole set again.
 4. Check **Storage**: a private bucket named `receipts` should exist.
 5. **Authentication > Providers > Email**: leave enabled. The app creates users as already-confirmed through the
    admin API, so you do **not** depend on Supabase's rate-limited confirmation emails.
@@ -116,7 +116,8 @@ npm install
 cp .env.example .env.local        # Windows: copy .env.example .env.local
 ```
 
-Edit `.env.local` and fill in the Supabase URL/keys and `PAYSTACK_SECRET_KEY`. Then:
+Edit `.env.local` and fill in the Supabase URL/keys, `PAYSTACK_SECRET_KEY`, `NEXT_PUBLIC_APP_URL` and `VISIT_SALT`
+(a long random string; visitor counting is skipped in production without it). Then:
 
 ```bash
 npm run seed       # creates 2 test cooperatives with users, balances and one claim code each

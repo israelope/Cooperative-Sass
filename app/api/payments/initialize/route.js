@@ -33,8 +33,16 @@ export async function POST(req) {
     const { data: loan } = await supabase.from('loans').select('id, status, total_repayable, amount_repaid').eq('id', String(body.loanId || '')).maybeSingle();
     if (!loan || loan.status !== 'active') return NextResponse.json({ error: 'That loan is not active.' }, { status: 400 });
     const owed = Math.round((Number(loan.total_repayable) - Number(loan.amount_repaid)) * 100) / 100;
-    if (amount > owed) return NextResponse.json({ error: `You only owe ₦${owed.toLocaleString('en-NG')} on this loan.` }, { status: 400 });
-    if (amount < Math.min(100, owed)) return NextResponse.json({ error: 'The minimum payment is ₦100.' }, { status: 400 });
+    // Pending checkouts reserve part of the balance: two full-amount checkouts must
+    // not both pass and end up charging the member twice for one outstanding loan.
+    const { data: pending } = await supabase.from('transactions')
+      .select('amount').eq('loan_id', loan.id).eq('status', 'pending');
+    const reserved = (pending || []).reduce((sum, t) => sum + Number(t.amount || 0), 0);
+    const available = Math.round((owed - reserved) * 100) / 100;
+    if (amount > available) {
+      return NextResponse.json({ error: `Only ₦${available.toLocaleString('en-NG')} is available for this loan; another payment may still be processing.` }, { status: 400 });
+    }
+    if (amount < Math.min(100, available)) return NextResponse.json({ error: 'The minimum payment is ₦100.' }, { status: 400 });
     loanId = loan.id;
   } else if (amount < 100) {
     return NextResponse.json({ error: 'The minimum payment is ₦100.' }, { status: 400 });
@@ -45,6 +53,9 @@ export async function POST(req) {
     return NextResponse.json({ error: 'Your cooperative has not set up its payout account yet. Please tell your admin.' }, { status: 409 });
   }
 
+  // Validate the callback origin before writing a transaction or a fee, so a
+  // misconfigured deployment cannot leave an orphaned pending row.
+  const processingUrl = `${getAppUrl()}/member/pay/processing?ref=`;
   const reference = 'CT-' + crypto.randomBytes(8).toString('hex');
   const { error: insErr } = await supabase.from('transactions').insert({
     tenant_id: member.tenant_id, member_id: member.id, reference, amount, channel: 'online', status: 'pending',
@@ -70,7 +81,6 @@ export async function POST(req) {
     }
   }
 
-  const processingUrl = `${getAppUrl()}/member/pay/processing?ref=${reference}`;
   try {
     const data = await initializeTransaction({
       email: user.email,
@@ -79,7 +89,7 @@ export async function POST(req) {
       subaccount,
       feeKobo,
       bearer: cfg.bearer,
-      callbackUrl: processingUrl,
+      callbackUrl: `${processingUrl}${reference}`,
     });
     return NextResponse.json({ url: data.authorization_url, reference });
   } catch (e) {
@@ -94,7 +104,7 @@ export async function POST(req) {
     }
     if (ps?.status === 'success') {
       // Charge went through despite the error response; the status page will credit it.
-      return NextResponse.json({ url: processingUrl, reference });
+      return NextResponse.json({ url: `${processingUrl}${reference}`, reference });
     }
     const failed = ps?.status === 'failed' || ps?.status === 'abandoned';
     if (failed) await failTransaction();

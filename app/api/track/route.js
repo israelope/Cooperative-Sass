@@ -16,7 +16,10 @@ export async function POST(req) {
 
   const ip = (req.headers.get('x-forwarded-for') || 'local').split(',')[0].trim();
   const day = new Date().toISOString().slice(0, 10);
-  const salt = process.env.VISIT_SALT || process.env.SUPABASE_SERVICE_ROLE_KEY || 'coopledger';
+  // Never derive the daily salt from a public or predictable value: visitor
+  // hashes could then be correlated. Skip tracking until it is configured.
+  const salt = process.env.VISIT_SALT || (process.env.NODE_ENV !== 'production' ? 'dev-only-visit-salt' : null);
+  if (!salt) return new NextResponse(null, { status: 204 });
   const hash = visitorHash({ salt, ip, ua, day });
   if (!rateLimit(`track:${hash}`, { max: 90, windowMs: 60_000 })) return new NextResponse(null, { status: 204 });
 

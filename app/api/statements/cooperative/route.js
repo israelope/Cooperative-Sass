@@ -10,8 +10,11 @@ export const dynamic = 'force-dynamic';
 export async function GET(req) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  const role = user?.app_metadata?.role;
-  if (!user || !['admin', 'bookkeeper'].includes(role)) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 });
+  if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 });
+  // The profile is authoritative; a stale JWT must not keep staff powers.
+  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).maybeSingle();
+  const role = profile?.role || user.app_metadata?.role;
+  if (!['admin', 'bookkeeper'].includes(role)) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 });
 
   const period = parsePeriod(new URL(req.url).searchParams);
   if (period.error) return NextResponse.json({ error: period.error }, { status: 400 });

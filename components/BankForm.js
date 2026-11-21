@@ -2,11 +2,14 @@
 import { useState } from 'react';
 import Icon from '@/components/Icon';
 import ActionForm, { SubmitButton } from '@/components/ActionForm';
+import { dedupeBanks } from '@/lib/banks';
 
 export default function BankForm({ action, banks, current }) {
   const [code, setCode] = useState(current.bankCode);
-  const selected = banks.find((b) => b.code === code);
-  const manual = banks.length === 0; // Paystack bank list unavailable: let the admin type the code
+  // Defensive: even a caller passing raw Paystack data cannot produce duplicate keys.
+  const options = dedupeBanks(banks);
+  const selected = options.find((b) => b.code === code);
+  const manual = options.length === 0; // Paystack bank list unavailable: let the admin type the code
   return (
     <ActionForm action={action} className="mt-4 grid gap-4 sm:grid-cols-2">
       <div>
@@ -16,7 +19,7 @@ export default function BankForm({ action, banks, current }) {
         ) : (
           <select id="bankCode" name="bankCode" className="input" value={code} onChange={(e) => setCode(e.target.value)} required>
             <option value="" disabled>Choose your bank…</option>
-            {banks.map((b) => <option key={b.code} value={b.code}>{b.name}</option>)}
+            {options.map((b, i) => <option key={`${b.code}-${i}`} value={b.code}>{b.name}</option>)}
           </select>
         )}
         <input type="hidden" name="bankName" value={selected?.name || ''} />

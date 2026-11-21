@@ -31,7 +31,7 @@ export default async function MembersPage(props) {
     .order('member_no');
   if (status !== 'all') query = query.eq('status', status);
   if (q) query = query.or(`full_name.ilike.%${q}%,member_no.ilike.%${q}%`);
-  const { rows: members, count: total } = mustWithCount(await query.range(range.from, range.to), 'members');
+  const { rows: members, count: total } = await mustWithCount(query.range(range.from, range.to), 'members');
   const link = `${getAppUrl()}/c/${profile.tenants?.slug}`;
 
   return (

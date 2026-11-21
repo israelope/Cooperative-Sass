@@ -22,8 +22,8 @@ export default async function MemberLoans(props) {
   const page = pageOf(searchParams.page);
   const range = pageRange(page);
   const [sum, { rows: loans, count: total }, activeLoans] = await Promise.all([
-    must(supabase.rpc('member_summary', { p_member_id: member.id }), 'member summary'),
-    mustWithCount(
+    await must(supabase.rpc('member_summary', { p_member_id: member.id }), 'member summary'),
+    await mustWithCount(
       supabase
         .from('loans')
         .select('id, principal, interest_rate, tenor_months, total_repayable, amount_repaid, status, created_at', { count: 'exact' })
@@ -33,7 +33,7 @@ export default async function MemberLoans(props) {
       'loans',
     ),
     // The pay forms stay visible even when an active loan is on another page.
-    must(
+    await must(
       supabase.from('loans').select('id, total_repayable, amount_repaid')
         .eq('member_id', member.id).eq('status', 'active'),
       'active loans',

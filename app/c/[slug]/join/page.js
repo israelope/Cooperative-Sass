@@ -13,8 +13,8 @@ export async function generateMetadata(props) {
 
 export default async function JoinPage(props) {
   const params = await props.params;
-  const tenant = must(
-    await createServiceClient().from('tenants').select('name, slug, status').eq('slug', params.slug).maybeSingle(),
+  const tenant = await must(
+    createServiceClient().from('tenants').select('name, slug, status').eq('slug', params.slug).maybeSingle(),
     'cooperative lookup',
   );
   if (!tenant || tenant.status !== 'active') notFound();

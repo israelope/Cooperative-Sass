@@ -15,7 +15,7 @@ const RANGES = [7, 30, 90];
 export default async function VisitorsPage(props) {
   const searchParams = await props.searchParams;
   const days = RANGES.includes(Number(searchParams.days)) ? Number(searchParams.days) : 30;
-  const s = must(await createServiceClient().rpc('visit_stats', { p_days: days }), 'visit statistics') || {};
+  const s = (await must(createServiceClient().rpc('visit_stats', { p_days: days }), 'visit statistics')) || {};
   const totalDevices = (s.devices || []).reduce((a, d) => a + Number(d.views), 0) || 1;
 
   return (

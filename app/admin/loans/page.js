@@ -14,7 +14,7 @@ import { decideLoan, activateLoan, recordRepayment } from '@/app/admin/actions';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Loans' };
 
-function Section({ title, icon, hint, rows, emptyTitle, emptyDescription, caption, note, scroll = false, children }) {
+function Section({ title, icon, hint, rows, emptyTitle, emptyDescription, caption, note, scroll = false, pagination, children }) {
   return (
     <section className="mb-8">
       <h2 className="mb-1 mt-8 flex items-center gap-2 text-lg font-bold text-accent-900">
@@ -28,6 +28,7 @@ function Section({ title, icon, hint, rows, emptyTitle, emptyDescription, captio
           <DataTable caption={caption} scroll={scroll}>{children}</DataTable>
         )}
         {note && <p className="px-3 py-2 text-xs text-ink/75">{note}</p>}
+        {pagination}
       </div>
     </section>
   );
@@ -35,29 +36,36 @@ function Section({ title, icon, hint, rows, emptyTitle, emptyDescription, captio
 
 const who = (l) => (<>{l.members?.full_name}<span className="block text-xs text-ink/75">{l.members?.member_no}</span></>);
 
+const LOAN_SELECT = 'id, principal, interest_rate, tenor_months, total_repayable, amount_repaid, status, created_at, members(full_name, member_no)';
+
 export default async function LoansPage(props) {
   const searchParams = await props.searchParams;
   const { supabase, profile } = await requireStaff();
   const isAdmin = profile.role === 'admin';
+  // Each queue has its own page number so acting on one list does not reset another.
+  const requestedPage = pageOf(searchParams.requestedPage);
+  const approvedPage = pageOf(searchParams.approvedPage);
+  const activePage = pageOf(searchParams.activePage);
   const page = pageOf(searchParams.page);
-  const range = pageRange(page);
-  const [loans, tenant, { rows: history, count: total }] = await Promise.all([
-    must(
-      supabase.from('loans').select('id, principal, interest_rate, tenor_months, total_repayable, amount_repaid, status, created_at, members(full_name, member_no)').order('created_at', { ascending: false }).limit(300),
-      'loans',
-    ),
-    must(supabase.from('tenants').select('default_interest_rate').eq('id', profile.tenant_id).single(), 'loan settings'),
-    mustWithCount(
-      supabase.from('loans')
-        .select('id, principal, status, created_at, members(full_name, member_no)', { count: 'exact' })
-        .in('status', ['repaid', 'rejected'])
-        .order('created_at', { ascending: false })
-        .range(range.from, range.to),
-      'loan history',
-    ),
+  const req = pageRange(requestedPage), appr = pageRange(approvedPage);
+  const act = pageRange(activePage), hist = pageRange(page);
+  const [tenant, requestedRes, approvedRes, activeRes, historyRes] = await Promise.all([
+    await must(supabase.from('tenants').select('default_interest_rate').eq('id', profile.tenant_id).single(), 'loan settings'),
+    await mustWithCount(supabase.from('loans').select(LOAN_SELECT, { count: 'exact' })
+      .eq('status', 'requested').order('created_at', { ascending: false })
+      .range(req.from, req.to), 'loan requests'),
+    await mustWithCount(supabase.from('loans').select(LOAN_SELECT, { count: 'exact' })
+      .eq('status', 'approved').order('created_at', { ascending: false })
+      .range(appr.from, appr.to), 'approved loans'),
+    await mustWithCount(supabase.from('loans').select(LOAN_SELECT, { count: 'exact' })
+      .eq('status', 'active').order('created_at', { ascending: false })
+      .range(act.from, act.to), 'active loans'),
+    await mustWithCount(supabase.from('loans').select(LOAN_SELECT, { count: 'exact' })
+      .in('status', ['repaid', 'rejected']).order('created_at', { ascending: false })
+      .range(hist.from, hist.to), 'loan history'),
   ]);
-  const by = (st) => (loans || []).filter((l) => l.status === st);
-  const requested = by('requested'), approved = by('approved'), active = by('active');
+  const requested = requestedRes.rows, approved = approvedRes.rows, active = activeRes.rows;
+  const { rows: history, count: total } = historyRes;
 
   return (
     <>
@@ -71,6 +79,7 @@ export default async function LoansPage(props) {
         emptyTitle="No requests waiting"
         emptyDescription="New loan requests will appear here."
         caption="Loan requests awaiting a decision"
+        pagination={<Pagination page={requestedPage} total={requestedRes.count} basePath="/admin/loans" paramName="requestedPage" />}
       >
         <thead><tr>
           <th scope="col">Member</th><th scope="col" className="text-right">Amount</th><th scope="col">Months</th>
@@ -106,6 +115,7 @@ export default async function LoansPage(props) {
         emptyTitle="Nothing to pay out"
         emptyDescription="Approved loans will appear here until you confirm payment."
         caption="Approved loans awaiting payout"
+        pagination={<Pagination page={approvedPage} total={approvedRes.count} basePath="/admin/loans" paramName="approvedPage" />}
       >
         <thead><tr>
           <th scope="col">Member</th><th scope="col" className="text-right">Amount</th><th scope="col" className="text-right">Total to repay</th><th scope="col"><span className="sr-only">Actions</span></th>
@@ -131,6 +141,7 @@ export default async function LoansPage(props) {
         emptyTitle="No active loans"
         emptyDescription="Loans you mark as paid out will appear here."
         caption="Active loans and repayments"
+        pagination={<Pagination page={activePage} total={activeRes.count} basePath="/admin/loans" paramName="activePage" />}
       >
         <thead><tr>
           <th scope="col">Member</th><th scope="col" className="text-right">Total to repay</th><th scope="col" className="text-right">Repaid</th>
@@ -162,6 +173,7 @@ export default async function LoansPage(props) {
         emptyDescription="Repaid and rejected loans will appear here."
         caption="Loan history"
         scroll
+        pagination={<Pagination page={page} total={total} basePath="/admin/loans" />}
       >
         <thead><tr>
           <th scope="col">Member</th><th scope="col" className="text-right">Amount</th><th scope="col">Status</th><th scope="col">Date</th>
@@ -170,7 +182,6 @@ export default async function LoansPage(props) {
           {history.map((l) => (<tr key={l.id}><td>{who(l)}</td><td className="text-right">{naira(l.principal)}</td><td><StatusBadge status={l.status} /></td><td>{formatDate(l.created_at)}</td></tr>))}
         </tbody>
       </Section>
-      <Pagination page={page} total={total} basePath="/admin/loans" />
     </>
   );
 }

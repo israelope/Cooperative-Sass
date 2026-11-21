@@ -32,6 +32,13 @@ export async function proxy(request) {
   const role = user.app_metadata?.role;
   if (!APP_ROLES.includes(role)) return go('/login');
 
+  // The profile is authoritative: a demoted admin must not keep staff access
+  // through a token that still carries the old role claim.
+  const { data: profile } = await supabase.from('profiles').select('role, tenant_id').eq('id', user.id).maybeSingle();
+  if (profile && profile.role !== role) return go('/login?reason=role');
+  const claimTenant = user.app_metadata?.tenant_id;
+  if (claimTenant && profile?.tenant_id && claimTenant !== profile.tenant_id) return go('/login?reason=role');
+
   const section = sectionFor(path);
   if (!canAccess(role, section)) return go(roleHome(role));
   return response;

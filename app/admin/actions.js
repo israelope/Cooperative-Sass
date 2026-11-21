@@ -187,10 +187,16 @@ export async function createStaff(prev, fd) {
     await admin.auth.admin.deleteUser(created.user.id);
     return { error: `Could not create the ${role} profile.` };
   }
-  await admin.from('audit_logs').insert({
+  const { error: auditErr } = await admin.from('audit_logs').insert({
     tenant_id: profile.tenant_id, actor_id: profile.id,
     action: 'staff.created', details: { user_id: created.user.id, role, email },
   });
+  if (auditErr) {
+    // Do not leave an unaudited privileged account behind.
+    await admin.from('profiles').delete().eq('id', created.user.id);
+    await admin.auth.admin.deleteUser(created.user.id);
+    return { error: 'Could not record this action in the audit log. No account was created; please try again.' };
+  }
   revalidatePath('/admin/team');
   revalidatePath('/admin/settings');
   return { ok: true, message: `${role === 'admin' ? 'Admin' : 'Bookkeeper'} account created for ${email}. Share the password with them securely.` };

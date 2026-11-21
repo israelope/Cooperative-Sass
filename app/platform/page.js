@@ -28,12 +28,12 @@ function SectionTitle({ icon, children, link }) {
 export default async function PlatformOverview() {
   const svc = createServiceClient();
   const [s, v, rev, activity, newest, rc] = await Promise.all([
-    must(svc.rpc('platform_stats'), 'platform statistics'),
-    must(svc.rpc('visit_stats', { p_days: 30 }), 'visit statistics'),
-    must(svc.rpc('revenue_stats', { p_days: 30 }), 'revenue statistics'),
-    must(svc.from('audit_logs').select('id, action, created_at, tenants(name)').order('created_at', { ascending: false }).limit(12), 'activity log'),
-    must(svc.from('tenants').select('id, name, slug, created_at, status').order('created_at', { ascending: false }).limit(6), 'newest cooperatives'),
-    must(svc.rpc('platform_reconciliation_summary'), 'reconciliation summary'),
+    await must(svc.rpc('platform_stats'), 'platform statistics'),
+    await must(svc.rpc('visit_stats', { p_days: 30 }), 'visit statistics'),
+    await must(svc.rpc('revenue_stats', { p_days: 30 }), 'revenue statistics'),
+    await must(svc.from('audit_logs').select('id, action, created_at, tenants(name)').order('created_at', { ascending: false }).limit(12), 'activity log'),
+    await must(svc.from('tenants').select('id, name, slug, created_at, status').order('created_at', { ascending: false }).limit(6), 'newest cooperatives'),
+    await must(svc.rpc('platform_reconciliation_summary'), 'reconciliation summary'),
   ]);
 
   const st = s || {};

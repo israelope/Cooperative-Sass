@@ -5,7 +5,7 @@ import { headers } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { slugify, isReservedSlug } from '@/lib/slug';
-import { rateLimit } from '@/lib/ratelimit';
+import { rateLimit, clientIp } from '@/lib/ratelimit';
 import { roleHome } from '@/lib/roles';
 
 const str = (fd, k) => String(fd.get(k) ?? '').trim();
@@ -28,6 +28,13 @@ export async function login(prev, fd) {
   const email = str(fd, 'email').toLowerCase();
   const password = String(fd.get('password') ?? '');
   if (!email || !password) return { error: 'Enter your email address and password.' };
+  const ip = clientIp(await headers());
+  if (!rateLimit(`login:ip:${ip}`, { max: 30, windowMs: 15 * 60 * 1000 })) {
+    return { error: 'Too many login attempts from this network. Wait a few minutes and try again.' };
+  }
+  if (!rateLimit(`login:email:${email}`, { max: 10, windowMs: 15 * 60 * 1000 })) {
+    return { error: 'Too many attempts for this account. Wait a few minutes and try again.' };
+  }
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) return { error: 'Email or password is incorrect.' };
@@ -50,6 +57,9 @@ export async function registerCooperative(prev, fd) {
   if (coopName.length < 3) return { error: 'Enter the cooperative\'s name (at least 3 characters).' };
   const bad = checkCommon({ email, password, fullName });
   if (bad) return { error: bad };
+  if (!rateLimit(`register:${clientIp(await headers())}`, { max: 5, windowMs: 60 * 60 * 1000 })) {
+    return { error: 'Too many registrations from this network. Try again later.' };
+  }
 
   const admin = createServiceClient();
 
@@ -95,6 +105,9 @@ export async function joinCooperative(prev, fd) {
   const password = String(fd.get('password') ?? '');
   const bad = checkCommon({ email, password, fullName });
   if (bad) return { error: bad };
+  if (!rateLimit(`join:${clientIp(await headers())}`, { max: 8, windowMs: 60 * 60 * 1000 })) {
+    return { error: 'Too many sign-ups from this network. Try again later.' };
+  }
 
   const admin = createServiceClient();
   const { data: tenant } = await admin.from('tenants').select('id, name, status').eq('slug', slug).maybeSingle();
@@ -124,11 +137,17 @@ export async function joinCooperative(prev, fd) {
 
 /** Imported member activates the account with a one-time claim code. */
 export async function claimAccount(prev, fd) {
-  const ip = ((await headers()).get('x-forwarded-for') || 'local').split(',')[0].trim();
-  if (!rateLimit(`claim:${ip}`)) return { error: 'Too many attempts. Wait a few minutes and try again.' };
+  const ip = clientIp(await headers());
+  if (!rateLimit(`claim:ip:${ip}`, { max: 12, windowMs: 15 * 60 * 1000 })) {
+    return { error: 'Too many attempts. Wait a few minutes and try again.' };
+  }
 
   const code = str(fd, 'code').toUpperCase().replace(/\s+/g, '');
   const normalised = code.includes('-') ? code : code.replace(/^(.{4})(.{4})$/, '$1-$2');
+  // A code-specific bucket stops an attacker spreading guesses across IP addresses.
+  if (!rateLimit(`claim:code:${normalised}`, { max: 6, windowMs: 15 * 60 * 1000 })) {
+    return { error: 'Too many attempts with this claim code. Wait a few minutes and try again.' };
+  }
   const email = str(fd, 'email').toLowerCase();
   const password = String(fd.get('password') ?? '');
   const confirm = String(fd.get('confirm') ?? '');
@@ -147,6 +166,13 @@ export async function claimAccount(prev, fd) {
   if (!reserved) return { error: 'This claim code is not valid or has already been used.' };
 
   const undo = () => admin.from('members').update({ status: 'unclaimed', claimed_at: null }).eq('id', reserved.id);
+
+  // A suspended cooperative cannot activate new members. Release the code again.
+  const { data: tenant } = await admin.from('tenants').select('status').eq('id', reserved.tenant_id).maybeSingle();
+  if (tenant?.status !== 'active') {
+    await undo();
+    return { error: 'This cooperative is suspended. Ask your coordinator to contact support.' };
+  }
 
   // 2. Create the login with the tenant + role in tamper-proof app_metadata.
   const { data: created, error: userErr } = await admin.auth.admin.createUser({

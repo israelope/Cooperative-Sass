@@ -18,20 +18,20 @@ export const metadata = { title: 'Cooperative details' };
 export default async function CooperativeDetail(props) {
   const params = await props.params;
   const svc = createServiceClient();
-  const all = must(await svc.rpc('platform_cooperatives'), 'platform cooperatives');
+  const all = await must(svc.rpc('platform_cooperatives'), 'platform cooperatives');
   const c = (all || []).find((x) => x.id === params.id);
   if (!c) notFound();
 
   const [members, staff, logs] = await Promise.all([
-    must(
+    await must(
       svc.from('members').select('id, member_no, full_name, status, created_at').eq('tenant_id', c.id).order('member_no').limit(500),
       'members',
     ),
-    must(
+    await must(
       svc.from('profiles').select('id, full_name, role').eq('tenant_id', c.id).in('role', ['admin', 'bookkeeper']),
       'staff',
     ),
-    must(
+    await must(
       svc.from('audit_logs').select('id, action, created_at').eq('tenant_id', c.id).order('created_at', { ascending: false }).limit(15),
       'activity log',
     ),

@@ -14,13 +14,20 @@ const ROLES = ['admin', 'bookkeeper', 'member'];
 
 export default async function TeamPage() {
   const { supabase, profile } = await requireStaff({ adminOnly: true });
-  const staff = must(
-    await supabase.from('profiles')
+  const staff = await must(
+    supabase.from('profiles')
       .select('id, full_name, role')
       .in('role', ['admin', 'bookkeeper'])
       .order('role'),
     'team',
   );
+  // Only offer member to staff who have a member record: without one the SQL
+  // function refuses the change and requireMember would trap the user.
+  const ids = (staff || []).map((p) => p.id);
+  const linked = ids.length
+    ? await must(supabase.from('members').select('user_id').in('user_id', ids), 'staff member records')
+    : [];
+  const withMember = new Set((linked || []).map((m) => m.user_id));
 
   return (
     <>
@@ -55,7 +62,8 @@ export default async function TeamPage() {
                     <input type="hidden" name="userId" value={p.id} />
                     <label className="sr-only" htmlFor={`role-${p.id}`}>Role for {p.full_name}</label>
                     <select id={`role-${p.id}`} name="role" defaultValue={p.role} className="input w-36">
-                      {ROLES.map((r) => <option key={r} value={r}>{r[0].toUpperCase() + r.slice(1)}</option>)}
+                      {ROLES.filter((r) => r !== 'member' || withMember.has(p.id))
+                        .map((r) => <option key={r} value={r}>{r[0].toUpperCase() + r.slice(1)}</option>)}
                     </select>
                     <SubmitButton className="btn-quiet btn-sm">Save</SubmitButton>
                   </ActionForm>

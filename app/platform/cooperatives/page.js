@@ -8,7 +8,7 @@ import Pagination from '@/components/Pagination';
 import ActionForm, { SubmitButton } from '@/components/ActionForm';
 import { createServiceClient } from '@/lib/supabase/service';
 import { must } from '@/lib/db';
-import { pageOf, pageRange } from '@/lib/pagination';
+import { pageOf, pageRange, clampPage } from '@/lib/pagination';
 import { naira, formatDate } from '@/lib/format';
 import { setTenantStatus } from '@/app/platform/actions';
 
@@ -18,9 +18,9 @@ export const metadata = { title: 'Cooperatives' };
 export default async function CooperativesPage(props) {
   const searchParams = await props.searchParams;
   const q = String(searchParams.q || '').trim().toLowerCase();
-  const all = must(await createServiceClient().rpc('platform_cooperatives'), 'platform cooperatives') || [];
+  const all = (await must(createServiceClient().rpc('platform_cooperatives'), 'platform cooperatives')) || [];
   const coops = q ? all.filter((c) => c.name.toLowerCase().includes(q) || c.slug.includes(q) || (c.admin_name || '').toLowerCase().includes(q)) : all;
-  const page = pageOf(searchParams.page);
+  const page = clampPage(pageOf(searchParams.page), coops.length);
   const range = pageRange(page);
   const visible = coops.slice(range.from, range.to + 1);
 
