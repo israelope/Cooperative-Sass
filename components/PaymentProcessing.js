@@ -3,6 +3,15 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Icon from '@/components/Icon';
 
+/** Only these statuses stop the poller; anything else means "keep waiting". */
+const TERMINAL = {
+  success: 'success',
+  failed: 'failed',
+  abandoned: 'failed',
+  not_found: 'not_found',
+  unknown: 'not_found',
+};
+
 /** Polls the payment status. The passbook is credited by the verified webhook, not by this page. */
 export default function PaymentProcessing({ reference }) {
   const [status, setStatus] = useState('pending');
@@ -15,10 +24,12 @@ export default function PaymentProcessing({ reference }) {
       try {
         // After a few seconds without the webhook, also ask Paystack directly (verify fallback).
         const res = await fetch(`/api/payments/status?ref=${encodeURIComponent(reference)}${tries >= 3 ? '&verify=1' : ''}`, { cache: 'no-store' });
-        const json = await res.json();
+        if (res.status === 401) { setStatus('session_expired'); return; }
+        const json = await res.json().catch(() => ({}));
         if (json.purpose) setPurpose(json.purpose);
-        if (json.status) setStatus(json.status === 'abandoned' ? 'failed' : json.status);
-      } catch { /* try again */ }
+        const next = TERMINAL[json.status];
+        if (next) setStatus(next);
+      } catch { /* network hiccup: keep polling */ }
       setTries((n) => n + 1);
     }, tries === 0 ? 800 : 2000);
     return () => clearTimeout(t);
@@ -44,6 +55,26 @@ export default function PaymentProcessing({ reference }) {
         <h2 className="mt-4 font-display text-2xl font-bold text-bad-700">Payment did not go through</h2>
         <p className="mt-2 text-sm text-ink/75">No money was added to your passbook. If your bank debited you, contact your cooperative and quote this reference: <span className="font-mono">{reference}</span>.</p>
         <Link href="/member/pay" className="btn-primary mt-4"><Icon name="refresh" size={16} /> Try again</Link>
+      </div>
+    );
+  }
+  if (status === 'not_found') {
+    return (
+      <div className="panel max-w-md p-6" role="alert">
+        <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-marigold-100 text-marigold-700"><Icon name="info" size={24} /></span>
+        <h2 className="mt-4 font-display text-xl font-bold text-accent-900">We couldn&apos;t find this payment</h2>
+        <p className="mt-2 text-sm text-ink/75">The reference <span className="font-mono">{reference}</span> has no matching payment. If you were charged, contact your cooperative with this reference. Otherwise, start a new payment.</p>
+        <Link href="/member/pay" className="btn-primary mt-4"><Icon name="refresh" size={16} /> Start again</Link>
+      </div>
+    );
+  }
+  if (status === 'session_expired') {
+    return (
+      <div className="panel max-w-md p-6" role="alert">
+        <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-marigold-100 text-marigold-700"><Icon name="clock" size={24} /></span>
+        <h2 className="mt-4 font-display text-xl font-bold text-accent-900">Please log in again</h2>
+        <p className="mt-2 text-sm text-ink/75">Your session ended while we were checking this payment. Log in and reopen your passbook; the reference is <span className="font-mono">{reference}</span>.</p>
+        <Link href="/login" className="btn-primary mt-4"><Icon name="logout" size={16} /> Log in</Link>
       </div>
     );
   }

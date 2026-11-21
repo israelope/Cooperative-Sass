@@ -5,8 +5,8 @@ import MobileNav from '@/components/MobileNav';
 import { logout } from '@/app/actions/auth';
 
 export default function AppShell({ nav, title, subtitle, tone = 'cooperative', children }) {
-  // The bottom bar stays compact: the full list remains available in the Menu.
-  const primaryNav = nav.slice(0, 4);
+  // Three primary destinations on mobile; the More tab opens the full list.
+  const primaryNav = nav.slice(0, 3);
 
   return (
     <div data-tone={tone} className="min-h-dvh overflow-x-clip bg-chalk">
@@ -42,9 +42,12 @@ export default function AppShell({ nav, title, subtitle, tone = 'cooperative', c
         </main>
       </div>
 
-      {/* Mobile: four primary destinations; everything else is in Menu. */}
+      {/* Mobile: three primary destinations plus a More tab for everything else. */}
       <nav aria-label="Quick navigation" className="fixed inset-x-0 bottom-0 z-40 w-full max-w-full border-t border-rule bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
-        <NavLinks nav={primaryNav} variant="tabs" />
+        <div className="grid max-w-full grid-cols-4">
+          <div className="col-span-3"><NavLinks nav={primaryNav} variant="tabs" columns={3} /></div>
+          <MobileNav nav={nav} title={title} subtitle={subtitle} variant="tab" />
+        </div>
       </nav>
     </div>
   );

@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
+import { APP_ROLES, roleHome, sectionFor, canAccess } from '@/lib/roles';
 
 // Route-level guard (level 1 of 3). Level 2 = server actions re-check role; level 3 = RLS in the database.
 export async function proxy(request) {
@@ -29,15 +30,10 @@ export async function proxy(request) {
 
   if (!user) return go('/login');
   const role = user.app_metadata?.role;
-  if (!['platform_admin', 'admin', 'bookkeeper', 'member'].includes(role)) return go('/login');
+  if (!APP_ROLES.includes(role)) return go('/login');
 
-  const home = role === 'platform_admin' ? '/platform' : role === 'member' ? '/member' : '/admin';
-  const section = path.startsWith('/platform') ? 'platform' : path.startsWith('/admin') ? 'staff' : 'member';
-  const allowed =
-    section === 'platform' ? role === 'platform_admin'
-    : section === 'staff' ? role === 'admin' || role === 'bookkeeper'
-    : role === 'member';
-  if (!allowed) return go(home);
+  const section = sectionFor(path);
+  if (!canAccess(role, section)) return go(roleHome(role));
   return response;
 }
 

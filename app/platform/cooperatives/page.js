@@ -4,9 +4,11 @@ import PageHeader from '@/components/PageHeader';
 import StatusBadge from '@/components/StatusBadge';
 import DataTable from '@/components/DataTable';
 import EmptyState from '@/components/EmptyState';
+import Pagination from '@/components/Pagination';
 import ActionForm, { SubmitButton } from '@/components/ActionForm';
 import { createServiceClient } from '@/lib/supabase/service';
 import { must } from '@/lib/db';
+import { pageOf, pageRange } from '@/lib/pagination';
 import { naira, formatDate } from '@/lib/format';
 import { setTenantStatus } from '@/app/platform/actions';
 
@@ -18,11 +20,15 @@ export default async function CooperativesPage(props) {
   const q = String(searchParams.q || '').trim().toLowerCase();
   const all = must(await createServiceClient().rpc('platform_cooperatives'), 'platform cooperatives') || [];
   const coops = q ? all.filter((c) => c.name.toLowerCase().includes(q) || c.slug.includes(q) || (c.admin_name || '').toLowerCase().includes(q)) : all;
+  const page = pageOf(searchParams.page);
+  const range = pageRange(page);
+  const visible = coops.slice(range.from, range.to + 1);
 
   return (
     <>
       <PageHeader title="Cooperatives" intro={`${all.length} registered. Suspending a cooperative locks all its users out immediately.`} icon="building" />
       <form method="get" className="mb-4 flex items-end gap-3">
+        <input type="hidden" name="page" value="1" />
         <div className="grow sm:max-w-xs"><label htmlFor="q" className="label">Search name, link or admin</label><input id="q" name="q" defaultValue={q} className="input" /></div>
         <button className="btn-quiet"><Icon name="search" size={16} /> Search</button>
       </form>
@@ -32,13 +38,14 @@ export default async function CooperativesPage(props) {
         ) : (
           <DataTable
             caption="Registered cooperatives with membership, payments and account status"
+            scroll
             className="[&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-10 [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-10 [&_td:first-child]:bg-white"
           >
             <thead><tr><th scope="col">Cooperative</th><th scope="col">Admin</th><th scope="col" className="text-right">Members</th><th scope="col" className="text-right">Savings</th><th scope="col" className="text-right">Transacted</th><th scope="col" className="text-right">Fees earned</th><th scope="col">Last payment</th><th scope="col">Payout</th><th scope="col">Status</th><th scope="col">Registered</th><th scope="col"><span className="sr-only">Actions</span></th></tr></thead>
             <tbody>
-              {coops.map((c) => (
+              {visible.map((c) => (
                 <tr key={c.id}>
-                  <td><Link href={`/platform/cooperatives/${c.id}`} className="link whitespace-nowrap">{c.name}</Link><span className="block font-mono text-xs text-ink/75">/c/{c.slug}</span></td>
+                  <td><Link href={`/platform/cooperatives/${c.id}`} className="link whitespace-nowrap">{c.name}</Link><Link href={`/c/${c.slug}`} target="_blank" rel="noopener noreferrer" className="link block font-mono text-xs">/c/{c.slug}</Link></td>
                   <td>{c.admin_name}</td>
                   <td className="text-right">{c.members_active}<span className="text-ink/75"> / {c.members_total}</span></td>
                   <td className="text-right">{naira(c.total_savings)}</td>
@@ -62,6 +69,7 @@ export default async function CooperativesPage(props) {
             </tbody>
           </DataTable>
         )}
+        <Pagination page={page} total={coops.length} basePath="/platform/cooperatives" params={{ q }} />
       </div>
       <p className="mt-3 text-xs text-ink/75">The table scrolls horizontally on small screens. Members column: active / total. Individual passbooks are intentionally not shown here.</p>
     </>

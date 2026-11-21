@@ -22,7 +22,8 @@ export async function GET(req) {
 
   const read = () => supabase.from('transactions').select('status, amount, purpose').eq('reference', ref).maybeSingle();
   let { data: txn } = await read();                               // RLS: a member sees only their own
-  if (!txn) return NextResponse.json({ status: 'unknown' }, { status: 404 });
+  // A terminal state - the polling page must not keep waiting for a reference that does not exist.
+  if (!txn) return NextResponse.json({ status: 'not_found' }, { status: 404 });
 
   if (txn.status === 'pending' && verify) {
     try {

@@ -160,6 +160,8 @@
   .tbl td { @apply border-b border-rule/60 px-3 py-2.5 align-top; }
   .tbl tbody tr:hover { @apply bg-accent-50/60; }
   .tbl tr:last-child td { @apply border-b-0; }
+  .tbl-scroll { @apply max-h-[68vh] overflow-y-auto; }
+  .tbl-sticky th { @apply sticky top-0 z-10; }
 
   /* The passbook: ruled lines and a double rule at the left margin, like the paper book it replaces. */
   .passbook { background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 2.74rem, #E4E9F5 2.74rem, #E4E9F5 2.8rem); }

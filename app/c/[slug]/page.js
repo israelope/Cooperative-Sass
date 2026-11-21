@@ -13,10 +13,10 @@ export async function generateMetadata(props) {
 export default async function CooperativePage(props) {
   const params = await props.params;
   const tenant = must(
-    await createServiceClient().from('tenants').select('name, slug').eq('slug', params.slug).maybeSingle(),
+    await createServiceClient().from('tenants').select('name, slug, status').eq('slug', params.slug).maybeSingle(),
     'cooperative lookup',
   );
-  if (!tenant) notFound();
+  if (!tenant || tenant.status !== 'active') notFound();
 
   return (
     <AuthCard

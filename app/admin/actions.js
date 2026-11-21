@@ -89,7 +89,11 @@ export async function importMembers(prev, fd) {
 
 export async function decideLoan(prev, fd) {
   const { supabase } = await requireStaff({ adminOnly: true });
-  const approve = str(fd, 'decision') === 'approve';
+  // The decision is normally written by the clicked button in ActionForm. An Enter-key submit
+  // in the interest field can bypass that, so fail closed instead of silently rejecting the loan.
+  const decision = str(fd, 'decision');
+  if (decision !== 'approve' && decision !== 'reject') return { error: 'Choose Approve or Reject.' };
+  const approve = decision === 'approve';
   const { error } = await supabase.rpc('decide_loan', { p_loan_id: str(fd, 'loanId'), p_approve: approve, p_interest: approve ? num(fd, 'interest') : null });
   if (error) return { error: msg(error) };
   revalidatePath('/admin/loans');
@@ -160,29 +164,77 @@ export async function saveBank(prev, fd) {
   return { ok: true, message: 'Payout account saved. Members can now pay online and the money goes to this account.' };
 }
 
-export async function createBookkeeper(prev, fd) {
+export async function createStaff(prev, fd) {
   const { profile } = await requireStaff({ adminOnly: true });
+  const role = str(fd, 'role');
+  if (role !== 'admin' && role !== 'bookkeeper') return { error: 'Choose admin or bookkeeper.' };
   const fullName = str(fd, 'fullName');
   const email = str(fd, 'email').toLowerCase();
   const password = String(fd.get('password') ?? '');
-  if (fullName.length < 3) return { error: 'Enter the bookkeeper\'s full name.' };
+  if (fullName.length < 3) return { error: `Enter the ${role}'s full name.` };
   if (!EMAIL_RE.test(email)) return { error: 'Enter a valid email address.' };
   if (password.length < 8) return { error: 'Use a password of at least 8 characters.' };
 
   const admin = createServiceClient();
   const { data: created, error } = await admin.auth.admin.createUser({
     email, password, email_confirm: true,
-    app_metadata: { tenant_id: profile.tenant_id, role: 'bookkeeper' },
+    app_metadata: { tenant_id: profile.tenant_id, role },
     user_metadata: { full_name: fullName },
   });
   if (error) return { error: 'Could not create the account. The email may already be in use.' };
-  const { error: pErr } = await admin.from('profiles').insert({ id: created.user.id, tenant_id: profile.tenant_id, role: 'bookkeeper', full_name: fullName });
+  const { error: pErr } = await admin.from('profiles').insert({ id: created.user.id, tenant_id: profile.tenant_id, role, full_name: fullName });
   if (pErr) {
     await admin.auth.admin.deleteUser(created.user.id);
-    return { error: 'Could not create the bookkeeper profile.' };
+    return { error: `Could not create the ${role} profile.` };
   }
+  await admin.from('audit_logs').insert({
+    tenant_id: profile.tenant_id, actor_id: profile.id,
+    action: 'staff.created', details: { user_id: created.user.id, role, email },
+  });
+  revalidatePath('/admin/team');
   revalidatePath('/admin/settings');
-  return { ok: true, message: `Bookkeeper account created for ${email}. Share the password with them securely.` };
+  return { ok: true, message: `${role === 'admin' ? 'Admin' : 'Bookkeeper'} account created for ${email}. Share the password with them securely.` };
+}
+
+/** Kept for the Settings page; all staff roles now go through createStaff. */
+export async function createBookkeeper(prev, fd) {
+  const withRole = new FormData(fd);
+  withRole.set('role', 'bookkeeper');
+  return createStaff(prev, withRole);
+}
+
+/**
+ * Changes a person's role inside the caller's cooperative. The SQL function
+ * re-checks role, tenant, the last-admin rule and the member-record rule.
+ * The JWT claim also has to be updated through the admin API, otherwise the
+ * person keeps their old permissions until they sign in again.
+ */
+export async function setStaffRole(prev, fd) {
+  const { supabase, profile } = await requireStaff({ adminOnly: true });
+  const userId = str(fd, 'userId');
+  const role = str(fd, 'role');
+  if (!['admin', 'bookkeeper', 'member'].includes(role)) return { error: 'Invalid role.' };
+
+  const { data: changed, error } = await supabase.rpc('set_staff_role', { p_user_id: userId, p_role: role });
+  if (error) return { error: msg(error) };
+
+  const admin = createServiceClient();
+  const { data: found, error: readErr } = await admin.auth.admin.getUserById(userId);
+  if (!readErr && found?.user) {
+    const { error: metaErr } = await admin.auth.admin.updateUserById(userId, {
+      app_metadata: { ...(found.user.app_metadata || {}), tenant_id: profile.tenant_id, role },
+    });
+    if (metaErr) return { error: 'Role saved, but the login metadata could not be refreshed. Ask them to sign out and back in.' };
+  }
+
+  revalidatePath('/admin/team');
+  revalidatePath('/admin/settings');
+  revalidatePath('/admin/members');
+  revalidatePath('/admin', 'layout');
+  return {
+    ok: true,
+    message: changed === 'unchanged' ? 'No change needed.' : `Role set to ${role}. Ask them to sign out and back in.`,
+  };
 }
 
 /* ---------------- reconciliation exceptions ---------------- */

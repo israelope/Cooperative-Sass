@@ -6,7 +6,9 @@ import StatusBadge from '@/components/StatusBadge';
 import Stat, { StatGrid } from '@/components/Stat';
 import DataTable from '@/components/DataTable';
 import EmptyState from '@/components/EmptyState';
+import ActionForm, { SubmitButton } from '@/components/ActionForm';
 import { requireStaff } from '@/lib/auth';
+import { setStaffRole } from '@/app/admin/actions';
 import { must } from '@/lib/db';
 import { naira, formatDate } from '@/lib/format';
 
@@ -15,7 +17,7 @@ export const metadata = { title: 'Member details' };
 
 export default async function MemberDetail(props) {
   const params = await props.params;
-  const { supabase } = await requireStaff();
+  const { supabase, profile } = await requireStaff();
   const member = must(await supabase.from('members').select('*').eq('id', params.id).maybeSingle(), 'member');
   if (!member) notFound();
   const [sum, entries, loans] = await Promise.all([
@@ -45,6 +47,22 @@ export default async function MemberDetail(props) {
           <Icon name="ticket" size={17} className="mt-0.5" />
           <span>Claim code (not yet used): <span className="font-mono font-semibold">{member.claim_code}</span></span>
         </div>
+      )}
+
+      {profile.role === 'admin' && member.user_id && (
+        <section className="panel mt-5 p-4">
+          <h2 className="flex items-center gap-2 font-semibold text-accent-900"><Icon name="shield" size={17} className="text-accent-500" /> Promote to staff</h2>
+          <p className="mt-1 text-sm text-ink/75">This member already has a login. Give them staff permissions without creating another account. They will need to sign out and back in.</p>
+          <ActionForm action={setStaffRole} className="mt-3 flex flex-wrap items-center gap-2">
+            <input type="hidden" name="userId" value={member.user_id} />
+            <label className="sr-only" htmlFor={`promote-${member.id}`}>Staff role</label>
+            <select id={`promote-${member.id}`} name="role" defaultValue="bookkeeper" className="input w-40">
+              <option value="bookkeeper">Bookkeeper</option>
+              <option value="admin">Admin</option>
+            </select>
+            <SubmitButton className="btn-quiet" pendingText="Saving…"><Icon name="userPlus" size={16} /> Promote</SubmitButton>
+          </ActionForm>
+        </section>
       )}
 
       <h2 className="mb-3 mt-8 flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="book" size={18} className="text-accent-500" /> Passbook</h2>

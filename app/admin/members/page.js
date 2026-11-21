@@ -4,10 +4,13 @@ import PageHeader from '@/components/PageHeader';
 import StatusBadge from '@/components/StatusBadge';
 import DataTable from '@/components/DataTable';
 import EmptyState from '@/components/EmptyState';
+import Pagination from '@/components/Pagination';
 import ActionForm, { SubmitButton } from '@/components/ActionForm';
 import Field from '@/components/Field';
 import { requireStaff } from '@/lib/auth';
-import { must } from '@/lib/db';
+import { mustWithCount } from '@/lib/db';
+import { pageOf, pageRange } from '@/lib/pagination';
+import { getAppUrl } from '@/lib/appUrl';
 import { addMember, setMemberStatus } from '@/app/admin/actions';
 
 export const dynamic = 'force-dynamic';
@@ -19,20 +22,22 @@ export default async function MembersPage(props) {
   const { supabase, profile } = await requireStaff();
   const status = STATUSES.includes(searchParams.status) ? searchParams.status : 'all';
   const q = String(searchParams.q || '').trim().replace(/[%,()]/g, '');
+  const page = pageOf(searchParams.page);
+  const range = pageRange(page);
 
   let query = supabase
     .from('members')
-    .select('id, member_no, full_name, phone, email, status, claim_code, created_at')
-    .order('member_no')
-    .limit(300);
+    .select('id, member_no, full_name, phone, email, status, claim_code, created_at', { count: 'exact' })
+    .order('member_no');
   if (status !== 'all') query = query.eq('status', status);
   if (q) query = query.or(`full_name.ilike.%${q}%,member_no.ilike.%${q}%`);
-  const members = must(await query, 'members');
-  const link = `${process.env.NEXT_PUBLIC_APP_URL || ''}/c/${profile.tenants?.slug}`;
+  const { rows: members, count: total } = mustWithCount(await query.range(range.from, range.to), 'members');
+  const link = `${getAppUrl()}/c/${profile.tenants?.slug}`;
 
   return (
     <>
       <PageHeader title="Members" intro="Manage your society's members and their account status." icon="users">
+        {profile.role === 'admin' && <Link href="/admin/team" className="btn-quiet"><Icon name="users" size={16} /> Manage team</Link>}
         {profile.role === 'admin' && <Link href="/admin/import" className="btn-quiet"><Icon name="upload" size={16} /> Bulk import</Link>}
       </PageHeader>
 
@@ -40,11 +45,12 @@ export default async function MembersPage(props) {
         <Icon name="link" size={17} className="mt-0.5" />
         <div className="min-w-0">
           <p className="font-semibold">Share this link so members can join themselves</p>
-          <code className="mt-1 block break-all rounded bg-white px-2 py-1 text-xs text-accent-800">{link}</code>
+          <Link href={`/c/${profile.tenants?.slug}`} target="_blank" rel="noopener noreferrer" className="link mt-1 block break-all rounded bg-white px-2 py-1 text-xs"><code>{link}</code></Link>
         </div>
       </div>
 
       <form className="panel mb-4 flex flex-wrap items-end gap-3 p-4" method="get">
+        <input type="hidden" name="page" value="1" />
         <div className="grow sm:max-w-xs">
           <label htmlFor="q" className="label">Search name or number</label>
           <input id="q" name="q" defaultValue={q} className="input" placeholder="e.g. Adeola or A014" />
@@ -63,7 +69,7 @@ export default async function MembersPage(props) {
         {(members || []).length === 0 ? (
           <EmptyState compact icon="users" title="No members match" description="Add one below, use bulk import, or clear your filters." />
         ) : (
-          <DataTable caption="Members, with status and account actions">
+          <DataTable caption="Members, with status and account actions" scroll>
             <thead><tr><th scope="col">No.</th><th scope="col">Name</th><th scope="col">Phone</th><th scope="col">Status</th><th scope="col">Claim code</th><th scope="col"><span className="sr-only">Actions</span></th></tr></thead>
             <tbody>
               {(members || []).map((m) => (
@@ -83,7 +89,7 @@ export default async function MembersPage(props) {
             </tbody>
           </DataTable>
         )}
-        {(members || []).length > 0 && <p className="px-3 py-2 text-xs text-ink/75">Showing {members.length} member(s) (up to 300).</p>}
+        <Pagination page={page} total={total} basePath="/admin/members" params={{ q, status }} />
       </div>
 
       <section className="panel mt-8 max-w-2xl p-6">

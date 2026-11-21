@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { slugify, isReservedSlug } from '@/lib/slug';
 import { rateLimit } from '@/lib/ratelimit';
+import { roleHome } from '@/lib/roles';
 
 const str = (fd, k) => String(fd.get(k) ?? '').trim();
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -31,7 +32,7 @@ export async function login(prev, fd) {
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) return { error: 'Email or password is incorrect.' };
   const role = data.user.app_metadata?.role;
-  redirect(role === 'platform_admin' ? '/platform' : role === 'member' ? '/member' : '/admin');
+  redirect(roleHome(role));
 }
 
 export async function logout() {
@@ -96,8 +97,8 @@ export async function joinCooperative(prev, fd) {
   if (bad) return { error: bad };
 
   const admin = createServiceClient();
-  const { data: tenant } = await admin.from('tenants').select('id, name').eq('slug', slug).maybeSingle();
-  if (!tenant) return { error: 'This cooperative link is not valid.' };
+  const { data: tenant } = await admin.from('tenants').select('id, name, status').eq('slug', slug).maybeSingle();
+  if (!tenant || tenant.status !== 'active') return { error: 'This cooperative is not accepting new members.' };
 
   const { data: created, error: userErr } = await admin.auth.admin.createUser({
     email, password, email_confirm: true,

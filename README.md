@@ -65,7 +65,7 @@ app/                     Next.js routes (pages, server actions, API routes)
 components/              ActionForm, ManualPaymentForm, ImportWizard, PayForm, ...
 lib/                     supabase clients, paystack, signature, money, import validation, format
 middleware.js            route-level role guard
-supabase/migrations/     8 SQL files: schema, functions, RLS, storage, platform, revenue, loan repayment + statements, reconciliation   (docs/all_migrations_combined.sql = all four)
+supabase/migrations/     9 SQL files: schema, functions, RLS, storage, platform, revenue, loan repayment + statements, reconciliation, staff roles   (docs/all_migrations_combined.sql = all nine)
 scripts/                 seed.mjs, simulate-webhook.mjs
 tests/                   unit/ (no database)  integration/ (needs Supabase + seed)
 docs/REPORT_ALIGNMENT.md Differences between this code and the project report (READ THIS)
@@ -90,9 +90,9 @@ docs/REPORT_ALIGNMENT.md Differences between this code and the project report (R
    * the **anon / publishable** key
    * the **service_role / secret** key (**server only; never commit or expose it**)
    If the dashboard shows both "legacy" and new-style keys, either pair works with this code.
-3. **SQL Editor > New query**. Paste and run the eight files in `supabase/migrations/` **in order**
+3. **SQL Editor > New query**. Paste and run the nine files in `supabase/migrations/` **in order**
    (or run `docs/all_migrations_combined.sql` once):
-   1. `..._schema.sql`  2. `..._functions.sql`  3. `..._rls.sql`  4. `..._storage.sql`  5. `..._platform.sql`  6. `..._revenue.sql`  7. `..._loan_repayment_statements.sql`  8. `..._reconciliation.sql`
+   1. `..._schema.sql`  2. `..._functions.sql`  3. `..._rls.sql`  4. `..._storage.sql`  5. `..._platform.sql`  6. `..._revenue.sql`  7. `..._loan_repayment_statements.sql`  8. `..._reconciliation.sql`  9. `..._staff_roles.sql`
    Each must finish with "Success. No rows returned". If one errors, fix it before running the next.
 4. Check **Storage**: a private bucket named `receipts` should exist.
 5. **Authentication > Providers > Email**: leave enabled. The app creates users as already-confirmed through the

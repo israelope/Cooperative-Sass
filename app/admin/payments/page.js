@@ -4,8 +4,10 @@ import PageHeader from '@/components/PageHeader';
 import StatusBadge from '@/components/StatusBadge';
 import DataTable from '@/components/DataTable';
 import EmptyState from '@/components/EmptyState';
+import Pagination from '@/components/Pagination';
 import { requireStaff } from '@/lib/auth';
-import { must } from '@/lib/db';
+import { mustWithCount } from '@/lib/db';
+import { pageOf, pageRange } from '@/lib/pagination';
 import { naira, formatDate } from '@/lib/format';
 
 export const dynamic = 'force-dynamic';
@@ -21,15 +23,17 @@ export default async function PaymentsPage(props) {
   const status = STATUSES.includes(searchParams.status) ? searchParams.status : 'all';
   const from = /^\d{4}-\d{2}-\d{2}$/.test(searchParams.from || '') ? searchParams.from : '';
   const to = /^\d{4}-\d{2}-\d{2}$/.test(searchParams.to || '') ? searchParams.to : '';
+  const page = pageOf(searchParams.page);
+  const range = pageRange(page);
 
   let q = supabase.from('transactions')
-    .select('id, reference, amount, channel, purpose, status, receipt_url, note, created_at, paid_at, members(full_name, member_no)')
-    .order('created_at', { ascending: false }).limit(200);
+    .select('id, reference, amount, channel, purpose, status, receipt_url, note, created_at, paid_at, members(full_name, member_no)', { count: 'exact' })
+    .order('created_at', { ascending: false });
   if (channel !== 'all') q = q.eq('channel', channel);
   if (status !== 'all') q = q.eq('status', status);
   if (from) q = q.gte('created_at', from);
   if (to) q = q.lt('created_at', new Date(new Date(to).getTime() + 86400000).toISOString().slice(0, 10));
-  const txns = must(await q, 'payments') || [];
+  const { rows: txns, count: total } = mustWithCount(await q.range(range.from, range.to), 'payments');
   const params = new URLSearchParams({ channel, status, from, to }).toString();
 
   return (
@@ -41,6 +45,7 @@ export default async function PaymentsPage(props) {
       </PageHeader>
 
       <form method="get" className="panel mb-4 flex flex-wrap items-end gap-3 p-4">
+        <input type="hidden" name="page" value="1" />
         <div><label htmlFor="channel" className="label">Channel</label>
           <select id="channel" name="channel" defaultValue={channel} className="input">{CHANNELS.map((c) => <option key={c}>{c}</option>)}</select></div>
         <div><label htmlFor="status" className="label">Status</label>
@@ -64,7 +69,7 @@ export default async function PaymentsPage(props) {
           />
         ) : (
           <>
-            <DataTable caption="Payments, newest first">
+            <DataTable caption="Payments, newest first" scroll>
               <thead><tr>
                 <th scope="col">Date</th><th scope="col">Member</th><th scope="col" className="text-right">Amount</th>
                 <th scope="col">For</th><th scope="col">Channel</th><th scope="col">Status</th><th scope="col">Reference</th><th scope="col">Receipt</th>
@@ -88,7 +93,7 @@ export default async function PaymentsPage(props) {
                 ))}
               </tbody>
             </DataTable>
-            <p className="px-3 py-2 text-xs text-ink/75">Showing first {txns.length} payment(s) (up to 200).</p>
+            <Pagination page={page} total={total} basePath="/admin/payments" params={{ channel, status, from, to }} />
           </>
         )}
       </div>

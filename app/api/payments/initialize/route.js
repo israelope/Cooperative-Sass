@@ -2,8 +2,9 @@ import crypto from 'crypto';
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
-import { initializeTransaction } from '@/lib/paystack';
+import { initializeTransaction, verifyTransaction } from '@/lib/paystack';
 import { feeConfig, computePlatformFeeKobo } from '@/lib/fees';
+import { getAppUrl } from '@/lib/appUrl';
 
 export const dynamic = 'force-dynamic';
 
@@ -55,12 +56,21 @@ export async function POST(req) {
   const amountKobo = Math.round(amount * 100);
   const cfg = feeConfig();
   const feeKobo = subaccount ? computePlatformFeeKobo(amountKobo, cfg) : 0;
+  const service = createServiceClient();
+  const failTransaction = () => service.from('transactions').update({ status: 'failed' }).eq('reference', reference);
+
   if (subaccount) {
-    await createServiceClient().from('transactions')
+    const { error: feeErr } = await service.from('transactions')
       .update({ platform_fee: feeKobo / 100, fee_bearer: cfg.bearer })
       .eq('reference', reference);
+    if (feeErr) {
+      // Revenue reporting would be wrong, and no charge has been attempted yet.
+      await failTransaction();
+      return NextResponse.json({ error: 'Could not record the platform fee. Please try again.' }, { status: 500 });
+    }
   }
 
+  const processingUrl = `${getAppUrl()}/member/pay/processing?ref=${reference}`;
   try {
     const data = await initializeTransaction({
       email: user.email,
@@ -69,10 +79,27 @@ export async function POST(req) {
       subaccount,
       feeKobo,
       bearer: cfg.bearer,
-      callbackUrl: `${process.env.NEXT_PUBLIC_APP_URL}/member/pay/processing?ref=${reference}`,
+      callbackUrl: processingUrl,
     });
     return NextResponse.json({ url: data.authorization_url, reference });
   } catch (e) {
-    return NextResponse.json({ error: `Paystack: ${e.message}` }, { status: 502 });
+    // A failed initialize must not leave a pending row behind: retries would open multiple
+    // checkouts for the same intent. Verify first so a lost Paystack response (where the
+    // charge may have succeeded) is never marked failed - the webhook still needs that row.
+    let ps = null;
+    try {
+      ps = await verifyTransaction(reference);
+    } catch {
+      // Verification unavailable - treat as inconclusive, never as a confirmed failure.
+    }
+    if (ps?.status === 'success') {
+      // Charge went through despite the error response; the status page will credit it.
+      return NextResponse.json({ url: processingUrl, reference });
+    }
+    const failed = ps?.status === 'failed' || ps?.status === 'abandoned';
+    if (failed) await failTransaction();
+    // Inconclusive or still pending: leave the row for the webhook / reconciliation sweep.
+    const hint = failed ? '' : ` Check reference ${reference} in your passbook before paying again.`;
+    return NextResponse.json({ error: `Paystack: ${e.message}.${hint}` }, { status: 502 });
   }
 }

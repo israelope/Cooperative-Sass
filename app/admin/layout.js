@@ -12,7 +12,7 @@ export default async function AdminLayout({ children }) {
     { href: '/admin/payments/record', label: 'Record payment' },
     { href: '/admin/reconciliation', label: 'Reconciliation' },
     { href: '/admin/statements', label: 'Statements' },
-    ...(isAdmin ? [{ href: '/admin/import', label: 'Bulk import' }, { href: '/admin/settings', label: 'Settings' }] : []),
+    ...(isAdmin ? [{ href: '/admin/team', label: 'Team' }, { href: '/admin/import', label: 'Bulk import' }, { href: '/admin/settings', label: 'Settings' }] : []),
   ];
   return (
     <AppShell nav={nav} title={isAdmin ? 'Cooperative admin' : 'Bookkeeper'} subtitle={profile.tenants?.name} tone="cooperative">

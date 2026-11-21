@@ -2,23 +2,28 @@ import Icon from '@/components/Icon';
 import PageHeader from '@/components/PageHeader';
 import DataTable from '@/components/DataTable';
 import EmptyState from '@/components/EmptyState';
+import Pagination from '@/components/Pagination';
 import { requireMember } from '@/lib/auth';
-import { must } from '@/lib/db';
+import { must, mustWithCount } from '@/lib/db';
+import { pageOf, pageRange } from '@/lib/pagination';
 import { naira, formatDate } from '@/lib/format';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Passbook' };
 
-export default async function PassbookPage() {
+export default async function PassbookPage(props) {
+  const searchParams = await props.searchParams;
   const { supabase, member } = await requireMember();
-  const [entries, txns] = await Promise.all([
-    must(
+  const page = pageOf(searchParams.page);
+  const range = pageRange(page);
+  const [{ rows: entries, count: total }, txns] = await Promise.all([
+    mustWithCount(
       supabase
         .from('passbook_entries')
-        .select('id, transaction_id, entry_date, entry_type, amount, running_balance, note')
+        .select('id, transaction_id, entry_date, entry_type, amount, running_balance, note', { count: 'exact' })
         .eq('member_id', member.id)
         .order('seq', { ascending: false })
-        .limit(500),
+        .range(range.from, range.to),
       'passbook entries',
     ),
     must(
@@ -47,7 +52,7 @@ export default async function PassbookPage() {
         {(entries || []).length === 0 ? (
           <EmptyState compact icon="book" title="Nothing here yet" description="Your first contribution will appear here." />
         ) : (
-          <DataTable caption="All passbook entries, newest first">
+          <DataTable caption="All passbook entries, newest first" scroll>
             <thead><tr><th scope="col">Date</th><th scope="col">Entry</th><th scope="col" className="text-right">Amount</th><th scope="col" className="text-right">Balance</th><th scope="col">Receipt</th></tr></thead>
             <tbody>
               {(entries || []).map((e) => (
@@ -63,7 +68,7 @@ export default async function PassbookPage() {
           </DataTable>
         )}
       </div>
-      {(entries || []).length > 0 && <p className="mt-3 text-xs text-ink/75">Showing first {entries.length} entries (newest first, up to 500).</p>}
+      <Pagination page={page} total={total} basePath="/member/passbook" />
     </>
   );
 }

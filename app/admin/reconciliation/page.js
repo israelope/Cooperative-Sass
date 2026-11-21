@@ -3,9 +3,11 @@ import PageHeader from '@/components/PageHeader';
 import Stat, { StatGrid } from '@/components/Stat';
 import DataTable from '@/components/DataTable';
 import EmptyState from '@/components/EmptyState';
+import Pagination from '@/components/Pagination';
 import ActionForm, { SubmitButton } from '@/components/ActionForm';
 import { requireStaff } from '@/lib/auth';
-import { must } from '@/lib/db';
+import { must, mustWithCount } from '@/lib/db';
+import { pageOf, pageRange } from '@/lib/pagination';
 import { naira, formatDate } from '@/lib/format';
 import { resolveReconciliation } from '@/app/admin/actions';
 
@@ -23,12 +25,15 @@ const STATUS_CLASS = {
 const Status = ({ s }) => <span className={STATUS_CLASS[s] || 'badge-info'}>{s}</span>;
 const SELECT = 'id, status, detected_fault, flagged_mismatch, expected_amount, received_amount, expected_share, received_share, received_at, reconciled_at, resolution_note, transactions(reference, purpose, members(full_name, member_no))';
 
-export default async function ReconciliationPage() {
+export default async function ReconciliationPage(props) {
+  const searchParams = await props.searchParams;
   const { supabase } = await requireStaff();
-  const [sum, open, recent] = await Promise.all([
+  const page = pageOf(searchParams.page);
+  const range = pageRange(page);
+  const [sum, open, { rows: recent, count: total }] = await Promise.all([
     must(supabase.rpc('reconciliation_summary'), 'reconciliation summary'),
     must(supabase.from('reconciliation_results').select(SELECT).in('status', ['NEEDS_REVIEW', 'UNRESOLVED']).order('received_at', { ascending: true }).limit(100), 'cases needing review'),
-    must(supabase.from('reconciliation_results').select(SELECT).order('received_at', { ascending: false }).limit(30), 'recent reconciliations'),
+    mustWithCount(supabase.from('reconciliation_results').select(SELECT, { count: 'exact' }).order('received_at', { ascending: false }).range(range.from, range.to), 'recent reconciliations'),
   ]);
   const s = sum || {};
   const by = s.by_status || {};
@@ -93,7 +98,7 @@ export default async function ReconciliationPage() {
           <EmptyState compact icon="refresh" title="No reconciliations yet" description="Online payments will appear here once they have been checked." />
         ) : (
           <>
-            <DataTable caption="The most recent payment reconciliations">
+            <DataTable caption="The most recent payment reconciliations" scroll>
               <thead><tr>
                 <th scope="col">Received</th><th scope="col">Member</th><th scope="col" className="text-right">Amount</th>
                 <th scope="col">Status</th><th scope="col">Finding</th><th scope="col">Final</th>
@@ -111,7 +116,7 @@ export default async function ReconciliationPage() {
                 ))}
               </tbody>
             </DataTable>
-            <p className="px-3 py-2 text-xs text-ink/75">Showing first {recent.length} reconciliation(s) (up to 30).</p>
+            <Pagination page={page} total={total} basePath="/admin/reconciliation" />
           </>
         )}
       </div>

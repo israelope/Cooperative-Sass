@@ -6,25 +6,37 @@ import ActionForm, { SubmitButton } from '@/components/ActionForm';
 import PayForm from '@/components/PayForm';
 import DataTable from '@/components/DataTable';
 import EmptyState from '@/components/EmptyState';
+import Pagination from '@/components/Pagination';
 import { requireMember } from '@/lib/auth';
-import { must } from '@/lib/db';
+import { must, mustWithCount } from '@/lib/db';
+import { pageOf, pageRange } from '@/lib/pagination';
 import { naira, formatDate } from '@/lib/format';
 import { requestLoan } from '@/app/member/actions';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Loans' };
 
-export default async function MemberLoans() {
+export default async function MemberLoans(props) {
+  const searchParams = await props.searchParams;
   const { supabase, member } = await requireMember();
-  const [sum, loans] = await Promise.all([
+  const page = pageOf(searchParams.page);
+  const range = pageRange(page);
+  const [sum, { rows: loans, count: total }, activeLoans] = await Promise.all([
     must(supabase.rpc('member_summary', { p_member_id: member.id }), 'member summary'),
-    must(
+    mustWithCount(
       supabase
         .from('loans')
-        .select('id, principal, interest_rate, tenor_months, total_repayable, amount_repaid, status, created_at')
+        .select('id, principal, interest_rate, tenor_months, total_repayable, amount_repaid, status, created_at', { count: 'exact' })
         .eq('member_id', member.id)
-        .order('created_at', { ascending: false }),
+        .order('created_at', { ascending: false })
+        .range(range.from, range.to),
       'loans',
+    ),
+    // The pay forms stay visible even when an active loan is on another page.
+    must(
+      supabase.from('loans').select('id, total_repayable, amount_repaid')
+        .eq('member_id', member.id).eq('status', 'active'),
+      'active loans',
     ),
   ]);
   const s = sum?.[0] || {};
@@ -50,7 +62,7 @@ export default async function MemberLoans() {
         </ActionForm>
       </section>
 
-      {(loans || []).filter((l) => l.status === 'active').map((l) => {
+      {(activeLoans || []).map((l) => {
         const owed = Math.round((Number(l.total_repayable) - Number(l.amount_repaid)) * 100) / 100;
         return (
           <section key={l.id} className="mb-8">
@@ -65,7 +77,7 @@ export default async function MemberLoans() {
         {(loans || []).length === 0 ? (
           <EmptyState compact icon="receipt" title="You have no loans yet" description="When you request a loan, its status and repayments will appear here." />
         ) : (
-          <DataTable caption="Your loan requests and repayments">
+          <DataTable caption="Your loan requests and repayments" scroll>
             <thead><tr><th scope="col">Date</th><th scope="col" className="text-right">Amount</th><th scope="col">Months</th><th scope="col" className="text-right">Total to repay</th><th scope="col" className="text-right">Repaid</th><th scope="col">Status</th></tr></thead>
             <tbody>
               {(loans || []).map((l) => (
@@ -75,6 +87,7 @@ export default async function MemberLoans() {
             </tbody>
           </DataTable>
         )}
+        <Pagination page={page} total={total} basePath="/member/loans" />
       </div>
     </>
   );

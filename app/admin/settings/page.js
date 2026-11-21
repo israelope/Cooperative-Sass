@@ -1,11 +1,13 @@
+import Link from 'next/link';
 import Icon from '@/components/Icon';
 import PageHeader from '@/components/PageHeader';
 import ActionForm, { SubmitButton } from '@/components/ActionForm';
 import Field from '@/components/Field';
 import { requireStaff } from '@/lib/auth';
 import { must } from '@/lib/db';
+import { getAppUrl } from '@/lib/appUrl';
 import { listBanks } from '@/lib/paystack';
-import { saveSettings, saveBank, createBookkeeper } from '@/app/admin/actions';
+import { saveSettings, saveBank, createStaff } from '@/app/admin/actions';
 import BankForm from '@/components/BankForm';
 
 export const dynamic = 'force-dynamic';
@@ -18,7 +20,7 @@ export default async function SettingsPage() {
     listBanks(),
     must(supabase.from('profiles').select('id, full_name, role').in('role', ['admin', 'bookkeeper']).order('role'), 'staff'),
   ]);
-  const link = `${process.env.NEXT_PUBLIC_APP_URL || ''}/c/${tenant.slug}`;
+  const link = `${getAppUrl()}/c/${tenant.slug}`;
 
   return (
     <>
@@ -28,7 +30,7 @@ export default async function SettingsPage() {
         <h2 className="flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="building" size={18} className="text-accent-500" /> Cooperative</h2>
         <div className="callout-info mt-3">
           <Icon name="link" size={17} className="mt-0.5" />
-          <span className="min-w-0">Member link: <code className="break-all font-mono">{link}</code></span>
+          <span className="min-w-0">Member link: <Link href={`/c/${tenant.slug}`} target="_blank" rel="noopener noreferrer" className="link break-all font-mono">{link}</Link></span>
         </div>
         <ActionForm action={saveSettings} className="mt-4 grid gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2"><Field label="Cooperative name" name="name" defaultValue={tenant.name} /></div>
@@ -53,9 +55,13 @@ export default async function SettingsPage() {
         <ul className="mt-2 divide-y divide-rule text-sm">
           {(staff || []).map((p) => <li key={p.id} className="flex justify-between py-2"><span>{p.full_name}</span><span className="capitalize text-ink/75">{p.role}</span></li>)}
         </ul>
+        <p className="mt-3 text-sm text-ink/75">
+          Need another admin, or want to change a role? <Link href="/admin/team" className="link">Manage your team</Link>.
+        </p>
         <h3 className="mt-5 flex items-center gap-2 font-semibold"><Icon name="userPlus" size={16} className="text-accent-500" /> Add a bookkeeper</h3>
         <p className="text-sm text-ink/75">A bookkeeper can record payments and manage members, but cannot approve loans or change settings.</p>
-        <ActionForm action={createBookkeeper} resetOnSuccess className="mt-3 grid gap-4 sm:grid-cols-2">
+        <ActionForm action={createStaff} resetOnSuccess className="mt-3 grid gap-4 sm:grid-cols-2">
+          <input type="hidden" name="role" value="bookkeeper" />
           <Field label="Full name" name="fullName" />
           <Field label="Email address" name="email" type="email" />
           <Field label="Temporary password" name="password" type="password" minLength={8} autoComplete="new-password" />

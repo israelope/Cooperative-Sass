@@ -3,16 +3,18 @@ import PageHeader from '@/components/PageHeader';
 import StatusBadge from '@/components/StatusBadge';
 import DataTable from '@/components/DataTable';
 import EmptyState from '@/components/EmptyState';
+import Pagination from '@/components/Pagination';
 import ActionForm, { SubmitButton } from '@/components/ActionForm';
 import { requireStaff } from '@/lib/auth';
-import { must } from '@/lib/db';
+import { must, mustWithCount } from '@/lib/db';
+import { pageOf, pageRange } from '@/lib/pagination';
 import { naira, formatDate } from '@/lib/format';
 import { decideLoan, activateLoan, recordRepayment } from '@/app/admin/actions';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Loans' };
 
-function Section({ title, icon, hint, rows, emptyTitle, emptyDescription, caption, note, children }) {
+function Section({ title, icon, hint, rows, emptyTitle, emptyDescription, caption, note, scroll = false, children }) {
   return (
     <section className="mb-8">
       <h2 className="mb-1 mt-8 flex items-center gap-2 text-lg font-bold text-accent-900">
@@ -23,7 +25,7 @@ function Section({ title, icon, hint, rows, emptyTitle, emptyDescription, captio
         {rows.length === 0 ? (
           <EmptyState compact icon={icon} title={emptyTitle} description={emptyDescription} />
         ) : (
-          <DataTable caption={caption}>{children}</DataTable>
+          <DataTable caption={caption} scroll={scroll}>{children}</DataTable>
         )}
         {note && <p className="px-3 py-2 text-xs text-ink/75">{note}</p>}
       </div>
@@ -33,19 +35,29 @@ function Section({ title, icon, hint, rows, emptyTitle, emptyDescription, captio
 
 const who = (l) => (<>{l.members?.full_name}<span className="block text-xs text-ink/75">{l.members?.member_no}</span></>);
 
-export default async function LoansPage() {
+export default async function LoansPage(props) {
+  const searchParams = await props.searchParams;
   const { supabase, profile } = await requireStaff();
   const isAdmin = profile.role === 'admin';
-  const [loans, tenant] = await Promise.all([
+  const page = pageOf(searchParams.page);
+  const range = pageRange(page);
+  const [loans, tenant, { rows: history, count: total }] = await Promise.all([
     must(
       supabase.from('loans').select('id, principal, interest_rate, tenor_months, total_repayable, amount_repaid, status, created_at, members(full_name, member_no)').order('created_at', { ascending: false }).limit(300),
       'loans',
     ),
     must(supabase.from('tenants').select('default_interest_rate').eq('id', profile.tenant_id).single(), 'loan settings'),
+    mustWithCount(
+      supabase.from('loans')
+        .select('id, principal, status, created_at, members(full_name, member_no)', { count: 'exact' })
+        .in('status', ['repaid', 'rejected'])
+        .order('created_at', { ascending: false })
+        .range(range.from, range.to),
+      'loan history',
+    ),
   ]);
   const by = (st) => (loans || []).filter((l) => l.status === st);
   const requested = by('requested'), approved = by('approved'), active = by('active');
-  const history = (loans || []).filter((l) => ['repaid', 'rejected'].includes(l.status));
 
   return (
     <>
@@ -71,6 +83,9 @@ export default async function LoansPage() {
               <td>{isAdmin && (
                 <ActionForm action={decideLoan} className="flex flex-wrap items-center gap-2">
                   <input type="hidden" name="loanId" value={l.id} />
+                  {/* ActionForm's submit buttons overwrite this value on click; an Enter-key
+                      submit leaves it empty and the server action returns a validation error. */}
+                  <input type="hidden" name="decision" defaultValue="" data-submitter="decision" />
                   <label className="sr-only" htmlFor={`i-${l.id}`}>Interest % per year</label>
                   <input id={`i-${l.id}`} name="interest" type="number" step="0.01" min="0" max="100" defaultValue={tenant?.default_interest_rate ?? 5} className="input w-24" />
                   <span className="text-xs text-ink/75">% a year</span>
@@ -146,7 +161,7 @@ export default async function LoansPage() {
         emptyTitle="Nothing yet"
         emptyDescription="Repaid and rejected loans will appear here."
         caption="Loan history"
-        note={`Showing first ${loans.length} loan(s) (up to 300).`}
+        scroll
       >
         <thead><tr>
           <th scope="col">Member</th><th scope="col" className="text-right">Amount</th><th scope="col">Status</th><th scope="col">Date</th>
@@ -155,6 +170,7 @@ export default async function LoansPage() {
           {history.map((l) => (<tr key={l.id}><td>{who(l)}</td><td className="text-right">{naira(l.principal)}</td><td><StatusBadge status={l.status} /></td><td>{formatDate(l.created_at)}</td></tr>))}
         </tbody>
       </Section>
+      <Pagination page={page} total={total} basePath="/admin/loans" />
     </>
   );
 }

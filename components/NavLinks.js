@@ -13,6 +13,7 @@ const NAV_ICONS = {
   '/admin/reconciliation': 'refresh',
   '/admin/statements': 'fileText',
   '/admin/import': 'upload',
+  '/admin/team': 'users',
   '/admin/settings': 'settings',
   '/member': 'home',
   '/member/passbook': 'book',
@@ -31,12 +32,14 @@ export function isActivePath(pathname, href) {
   return href.split('/').length > 2 && pathname.startsWith(`${href}/`);
 }
 
-export default function NavLinks({ nav, variant = 'sidebar', onNavigate }) {
+const TAB_COLS = { 3: 'grid-cols-3', 4: 'grid-cols-4', 5: 'grid-cols-5' };
+
+export default function NavLinks({ nav, variant = 'sidebar', onNavigate, columns = 4 }) {
   const pathname = usePathname() || '';
 
   if (variant === 'tabs') {
     return (
-      <div className="no-scrollbar grid max-w-full grid-cols-4">
+      <div className={`no-scrollbar grid max-w-full ${TAB_COLS[columns] || TAB_COLS[4]}`}>
         {nav.map((n) => {
           const active = isActivePath(pathname, n.href);
           return (
