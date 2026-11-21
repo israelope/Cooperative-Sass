@@ -67,8 +67,8 @@ export default async function AdminDashboard() {
       <div className="mt-6 grid gap-6 lg:grid-cols-5">
         <section className="panel p-5 lg:col-span-2">
           <div className="flex items-center justify-between gap-3">
-            <h2 className="text-lg font-bold text-adire-900">Collections, last 6 months</h2>
-            <Icon name="chart" size={18} className="text-adire-300" />
+            <h2 className="text-lg font-bold text-accent-900">Collections, last 6 months</h2>
+            <Icon name="chart" size={18} className="text-accent-300" />
           </div>
           {monthly.length === 0 ? (
             <EmptyState
@@ -90,7 +90,7 @@ export default async function AdminDashboard() {
 
         <section className="panel p-5 lg:col-span-3">
           <div className="flex items-center justify-between gap-3">
-            <h2 className="text-lg font-bold text-adire-900">Recent payments</h2>
+            <h2 className="text-lg font-bold text-accent-900">Recent payments</h2>
             <Link href="/admin/payments" className="link whitespace-nowrap text-xs">View all</Link>
           </div>
           {(recent || []).length === 0 ? (

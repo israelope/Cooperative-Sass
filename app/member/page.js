@@ -40,9 +40,9 @@ export default async function MemberHome() {
 
       <div className="passbook-page p-6 pl-14">
         <p className="flex items-center gap-2 text-sm font-medium text-ink/75">
-          <Icon name="wallet" size={16} className="text-adire-500" /> Your savings
+          <Icon name="wallet" size={16} className="text-accent-500" /> Your savings
         </p>
-        <p className="num mt-1 font-display text-4xl font-extrabold text-adire-900 sm:text-5xl">{naira(s.savings)}</p>
+        <p className="num mt-1 font-display text-4xl font-extrabold text-accent-900 sm:text-5xl">{naira(s.savings)}</p>
         <dl className="mt-5 grid max-w-xl grid-cols-1 gap-x-8 gap-y-2 text-sm sm:grid-cols-2">
           <dt className="text-ink/75">You can borrow up to</dt><dd className="num text-right font-semibold text-ok-700 sm:text-right">{naira(s.loan_limit)}</dd>
           <dt className="text-ink/75">Loan still owed</dt><dd className="num font-semibold sm:text-right">{naira(s.outstanding)}</dd>
@@ -54,14 +54,14 @@ export default async function MemberHome() {
               <span>Loan used</span><span className="num font-semibold">{used}%</span>
             </div>
             <div
-              className="h-2 w-full overflow-hidden rounded-full bg-adire-100"
+              className="h-2 w-full overflow-hidden rounded-full bg-accent-100"
               role="progressbar"
               aria-label="Loan balance used"
               aria-valuemin={0}
               aria-valuemax={100}
               aria-valuenow={used}
             >
-              <div className="h-full rounded-full bg-adire-600" style={{ width: `${used}%` }} />
+              <div className="h-full rounded-full bg-accent-600" style={{ width: `${used}%` }} />
             </div>
           </div>
         )}
@@ -69,21 +69,21 @@ export default async function MemberHome() {
 
       {active && (
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
-          <Link href="/member/pay" className="panel flex items-center gap-4 p-5 transition-colors hover:bg-adire-50">
+          <Link href="/member/pay" className="panel flex items-center gap-4 p-5 transition-colors hover:bg-accent-50">
             <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-marigold-100 text-marigold-700"><Icon name="wallet" size={20} /></span>
-            <span><span className="block font-display font-semibold text-adire-900">Pay a contribution</span><span className="text-sm text-ink/75">Online or with a receipt from your bookkeeper.</span></span>
-            <Icon name="arrowRight" size={18} className="ml-auto text-adire-500" />
+            <span><span className="block font-display font-semibold text-accent-900">Pay a contribution</span><span className="text-sm text-ink/75">Online or with a receipt from your bookkeeper.</span></span>
+            <Icon name="arrowRight" size={18} className="ml-auto text-accent-500" />
           </Link>
-          <Link href="/member/loans" className="panel flex items-center gap-4 p-5 transition-colors hover:bg-adire-50">
-            <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-adire-50 text-adire-600"><Icon name="bank" size={20} /></span>
-            <span><span className="block font-display font-semibold text-adire-900">Loans & repayments</span><span className="text-sm text-ink/75">Request a loan or repay what you owe.</span></span>
-            <Icon name="arrowRight" size={18} className="ml-auto text-adire-500" />
+          <Link href="/member/loans" className="panel flex items-center gap-4 p-5 transition-colors hover:bg-accent-50">
+            <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-accent-50 text-accent-600"><Icon name="bank" size={20} /></span>
+            <span><span className="block font-display font-semibold text-accent-900">Loans & repayments</span><span className="text-sm text-ink/75">Request a loan or repay what you owe.</span></span>
+            <Icon name="arrowRight" size={18} className="ml-auto text-accent-500" />
           </Link>
         </div>
       )}
 
-      <h2 className="mb-3 mt-8 flex items-center gap-2 text-lg font-bold text-adire-900">
-        <Icon name="book" size={18} className="text-adire-500" /> Latest entries
+      <h2 className="mb-3 mt-8 flex items-center gap-2 text-lg font-bold text-accent-900">
+        <Icon name="book" size={18} className="text-accent-500" /> Latest entries
       </h2>
       <div className="panel p-2">
         {(entries || []).length === 0 ? (

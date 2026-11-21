@@ -36,7 +36,7 @@ export default async function VisitorsPage(props) {
       </StatGrid>
 
       <section className="panel mt-6 p-5">
-        <h2 className="flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="chart" size={18} className="text-adire-500" /> Daily traffic</h2>
+        <h2 className="flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="chart" size={18} className="text-accent-500" /> Daily traffic</h2>
         <p className="mt-1 text-xs text-ink/75">Light bar = page views, dark bar = unique visitors that day.</p>
         {(s.daily || []).length === 0 ? (
           <EmptyState compact icon="chart" title="No visits recorded yet" description="Traffic will appear once visitors open a page." />
@@ -50,7 +50,7 @@ export default async function VisitorsPage(props) {
 
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
         <section className="panel p-5">
-          <h2 className="flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="fileText" size={18} className="text-adire-500" /> Top pages</h2>
+          <h2 className="flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="fileText" size={18} className="text-accent-500" /> Top pages</h2>
           {(s.top_pages || []).length === 0 ? (
             <EmptyState compact icon="fileText" title="No visits recorded yet" />
           ) : (
@@ -61,7 +61,7 @@ export default async function VisitorsPage(props) {
           )}
         </section>
         <section className="panel p-5">
-          <h2 className="flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="dashboard" size={18} className="text-adire-500" /> Devices</h2>
+          <h2 className="flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="dashboard" size={18} className="text-accent-500" /> Devices</h2>
           {(s.devices || []).length === 0 ? (
             <EmptyState compact icon="dashboard" title="No device data yet" />
           ) : (
@@ -72,14 +72,14 @@ export default async function VisitorsPage(props) {
                   <li key={d.device}>
                     <div className="flex justify-between"><span className="capitalize">{d.device}</span><span className="num">{pct}%</span></div>
                     <div
-                      className="mt-1 h-2 w-full rounded bg-adire-100"
+                      className="mt-1 h-2 w-full rounded bg-accent-100"
                       role="progressbar"
                       aria-label={`${d.device} share of page views`}
                       aria-valuemin={0}
                       aria-valuemax={100}
                       aria-valuenow={pct}
                     >
-                      <div className="h-full rounded bg-adire-600" style={{ width: `${pct}%` }} />
+                      <div className="h-full rounded bg-accent-600" style={{ width: `${pct}%` }} />
                     </div>
                   </li>
                 );
@@ -88,7 +88,7 @@ export default async function VisitorsPage(props) {
           )}
         </section>
         <section className="panel p-5">
-          <h2 className="flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="building" size={18} className="text-adire-500" /> Most visited cooperative pages</h2>
+          <h2 className="flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="building" size={18} className="text-accent-500" /> Most visited cooperative pages</h2>
           {(s.coop_pages || []).length === 0 ? (
             <EmptyState compact icon="building" title="No cooperative page visits yet" />
           ) : (

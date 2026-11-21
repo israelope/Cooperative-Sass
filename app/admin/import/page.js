@@ -17,7 +17,7 @@ export default async function ImportPage() {
       </PageHeader>
 
       <section className="panel mb-6 max-w-2xl p-5">
-        <h2 className="flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="book" size={18} className="text-adire-500" /> How to prepare your file</h2>
+        <h2 className="flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="book" size={18} className="text-accent-500" /> How to prepare your file</h2>
         <ol className="mt-3 list-decimal space-y-1 pl-5 text-sm text-ink/75">
           <li>Pick a cut-off date, for example the last day of the month.</li>
           <li>From the paper ledger, write each member&apos;s total savings (and unpaid loan, if any) as at that date into the template.</li>

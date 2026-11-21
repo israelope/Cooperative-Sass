@@ -4,44 +4,47 @@ import NavLinks from '@/components/NavLinks';
 import MobileNav from '@/components/MobileNav';
 import { logout } from '@/app/actions/auth';
 
-export default function AppShell({ nav, title, subtitle, children }) {
+export default function AppShell({ nav, title, subtitle, tone = 'cooperative', children }) {
+  // The bottom bar stays compact: the full list remains available in the Menu.
+  const primaryNav = nav.slice(0, 4);
+
   return (
-    <div className="min-h-screen bg-chalk">
-      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:font-semibold focus:text-adire-800 focus:ring-2 focus:ring-adire-500">
+    <div data-tone={tone} className="min-h-dvh overflow-x-clip bg-chalk">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:font-semibold focus:text-accent-800 focus:ring-2 focus:ring-accent-500">
         Skip to content
       </a>
 
       {/* Mobile: compact sticky header with an all-pages menu. */}
-      <div className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-rule bg-white/95 px-4 py-3 backdrop-blur md:hidden">
-        <Logo />
+      <div className="sticky top-0 z-40 flex w-full max-w-full items-center justify-between gap-3 border-b border-rule bg-white/95 px-4 py-3 backdrop-blur md:hidden">
+        <div className="min-w-0"><Logo /></div>
         <MobileNav nav={nav} title={title} subtitle={subtitle} />
       </div>
 
       <div className="md:flex">
-        <aside className="hidden bg-adire-800 text-adire-100 md:flex md:min-h-screen md:w-60 md:shrink-0 md:flex-col">
-          <div className="px-5 py-5">
+        <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col bg-accent-800 text-white md:flex">
+          <div className="shrink-0 px-5 py-5">
             <Logo href="/" light />
-            <p className="mt-5 text-xs font-bold uppercase tracking-wider text-adire-200">{title}</p>
+            <p className="mt-5 text-xs font-bold uppercase tracking-wider text-accent-200">{title}</p>
             {subtitle && <p className="mt-1 truncate text-sm font-semibold text-white" title={subtitle}>{subtitle}</p>}
           </div>
-          <nav className="flex-1 px-3 pb-4" aria-label="Main">
+          <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto px-3 pb-4" aria-label="Main">
             <NavLinks nav={nav} />
           </nav>
-          <form action={logout} className="border-t border-white/10 p-3">
-            <button type="submit" className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-adire-100 hover:bg-adire-700 hover:text-white">
+          <form action={logout} className="mt-auto shrink-0 border-t border-white/10 p-3">
+            <button type="submit" className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 transition-colors hover:bg-accent-700 hover:text-white">
               <Icon name="logout" size={17} /> Log out
             </button>
           </form>
         </aside>
 
-        <main id="main-content" className="min-w-0 flex-1 px-4 pb-28 pt-6 sm:px-8 sm:py-8 md:pb-8">
+        <main id="main-content" className="min-w-0 max-w-full flex-1 animate-rise px-4 pb-28 pt-6 sm:px-8 sm:py-8 md:pb-8">
           {children}
         </main>
       </div>
 
-      {/* Mobile: quick tab bar. All items are reachable via the Menu button above. */}
-      <nav aria-label="Quick navigation" className="fixed inset-x-0 bottom-0 z-30 border-t border-rule bg-white/95 backdrop-blur md:hidden">
-        <NavLinks nav={nav} variant="tabs" />
+      {/* Mobile: four primary destinations; everything else is in Menu. */}
+      <nav aria-label="Quick navigation" className="fixed inset-x-0 bottom-0 z-40 w-full max-w-full border-t border-rule bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
+        <NavLinks nav={primaryNav} variant="tabs" />
       </nav>
     </div>
   );

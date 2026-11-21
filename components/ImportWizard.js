@@ -26,7 +26,7 @@ export default function ImportWizard({ action }) {
   }
 
   const step = result?.preview || result?.errors ? 2 : 1;
-  const stepClass = (active) => `inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-semibold ${active ? 'bg-adire-700 text-white' : 'bg-adire-50 text-adire-700'}`;
+  const stepClass = (active) => `inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-semibold ${active ? 'bg-accent-700 text-white' : 'bg-accent-50 text-accent-700'}`;
 
   if (result?.imported) {
     return (
@@ -35,7 +35,7 @@ export default function ImportWizard({ action }) {
           <Icon name="checkCircle" size={18} className="mt-0.5" />
           <span>{result.message}</span>
         </div>
-        <h2 className="mt-6 flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="users" size={18} className="text-adire-500" /> Members imported</h2>
+        <h2 className="mt-6 flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="users" size={18} className="text-accent-500" /> Members imported</h2>
         <p className="mt-1 text-sm text-ink/75">Download or print this list now. You can also find each code on the Members page until the member uses it.</p>
         <button className="btn-gold mt-3" onClick={() => downloadCodes(result.imported)}><Icon name="download" size={16} /> Download claim codes (CSV)</button>
         <div className="panel mt-4 p-2">
@@ -53,12 +53,12 @@ export default function ImportWizard({ action }) {
     <ActionForm action={submit} onResult={setResult} className="panel max-w-3xl space-y-4 p-6">
       <div className="flex flex-wrap items-center gap-2 text-sm" aria-label="Import progress">
         <span className={stepClass(step === 1)}><span className="num">1</span> Choose file</span>
-        <Icon name="arrowRight" size={16} className="text-adire-300" />
+        <Icon name="arrowRight" size={16} className="text-accent-300" />
         <span className={stepClass(step === 2)}><span className="num">2</span> Review &amp; import</span>
       </div>
       <div>
         <label htmlFor="file" className="label">Spreadsheet (.xlsx, .xls or .csv)</label>
-        <input id="file" name="file" type="file" accept=".xlsx,.xls,.csv" onChange={(e) => { fileRef.current = e.target.files?.[0] || null; }} className="input file:mr-3 file:rounded file:border-0 file:bg-adire-100 file:px-3 file:py-1 file:text-sm file:font-semibold" />
+        <input id="file" name="file" type="file" accept=".xlsx,.xls,.csv" onChange={(e) => { fileRef.current = e.target.files?.[0] || null; }} className="input file:mr-3 file:rounded file:border-0 file:bg-accent-100 file:px-3 file:py-1 file:text-sm file:font-semibold" />
       </div>
       <div className="max-w-xs">
         <label htmlFor="cutoff" className="label">Cut-off date</label>
@@ -82,7 +82,7 @@ export default function ImportWizard({ action }) {
       )}
       {result?.preview && (
         <div>
-          <h3 className="flex items-center gap-2 font-semibold text-adire-900"><Icon name="eye" size={16} className="text-adire-500" /> Preview</h3>
+          <h3 className="flex items-center gap-2 font-semibold text-accent-900"><Icon name="eye" size={16} className="text-accent-500" /> Preview</h3>
           <p className="mb-2 mt-1 text-sm text-ink/75">Preview of the first {Math.min(result.preview.length, 10)} of {result.total} rows. Choose &quot;2. Import members&quot; to save them.</p>
           <DataTable caption="Preview of the first ten members in the file">
             <thead><tr><th scope="col">No.</th><th scope="col">Name</th><th scope="col">Phone</th><th scope="col" className="text-right">Savings</th><th scope="col" className="text-right">Loan</th></tr></thead>

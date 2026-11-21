@@ -14,7 +14,7 @@ export default function Error({ error, reset }) {
       <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-bad-100 text-bad-700">
         <Icon name="alertTriangle" size={26} />
       </span>
-      <h1 className="mt-5 text-2xl font-bold text-adire-900">Something went wrong</h1>
+      <h1 className="mt-5 text-2xl font-bold text-accent-900">Something went wrong</h1>
       <p className="mt-2 text-sm text-ink/75">
         This page could not be loaded. Try again; if it keeps happening, contact your cooperative&apos;s administrator.
       </p>

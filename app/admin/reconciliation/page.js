@@ -47,7 +47,7 @@ export default async function ReconciliationPage() {
       </StatGrid>
       <p className="mt-2 text-sm text-ink/75">Automation rate: <span className="num font-semibold">{s.automation_rate == null ? 'n/a' : `${s.automation_rate}%`}</span> of payments needed no human action.</p>
 
-      <h2 className="mb-3 mt-8 flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="alertTriangle" size={18} className="text-adire-500" /> Needs your decision</h2>
+      <h2 className="mb-3 mt-8 flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="alertTriangle" size={18} className="text-accent-500" /> Needs your decision</h2>
       {(open || []).length === 0 ? (
         <div className="panel p-2">
           <EmptyState compact icon="checkCircle" title="All caught up" description="Nothing needs review right now." />
@@ -87,7 +87,7 @@ export default async function ReconciliationPage() {
         </div>
       )}
 
-      <h2 className="mb-3 mt-8 flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="refresh" size={18} className="text-adire-500" /> Recent reconciliations</h2>
+      <h2 className="mb-3 mt-8 flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="refresh" size={18} className="text-accent-500" /> Recent reconciliations</h2>
       <div className="panel p-2">
         {(recent || []).length === 0 ? (
           <EmptyState compact icon="refresh" title="No reconciliations yet" description="Online payments will appear here once they have been checked." />

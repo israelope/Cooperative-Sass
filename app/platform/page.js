@@ -17,8 +17,8 @@ const n = (v) => Number(v || 0).toLocaleString('en-NG');
 function SectionTitle({ icon, children, link }) {
   return (
     <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-      <h2 className="flex items-center gap-2 text-base font-bold text-adire-900">
-        <Icon name={icon} size={17} className="text-adire-500" /> {children}
+      <h2 className="flex items-center gap-2 text-base font-bold text-accent-900">
+        <Icon name={icon} size={17} className="text-accent-500" /> {children}
       </h2>
       {link}
     </div>
@@ -76,7 +76,7 @@ export default async function PlatformOverview() {
           <Stat label="Net revenue (all time)" value={naira(rv.all_net)} sub="your fees after Paystack costs" tone="text-ok-700" icon="trendingUp" />
           <Stat label="Gross fees earned" value={naira(rv.all_gross)} sub={`on ${naira(rv.all_online_volume)} online`} icon="wallet" />
           <Stat label="Net revenue this month" value={naira(rv.month_net)} sub={`Today: ${naira(rv.today_net)}`} tone="text-ok-700" icon="calendar" />
-          <Stat label="Needing attention" value={n(rcs.needs_attention)} sub="reconciliations to review" tone={Number(rcs.needs_attention) > 0 ? 'text-bad-700' : 'text-adire-900'} icon="refresh" />
+          <Stat label="Needing attention" value={n(rcs.needs_attention)} sub="reconciliations to review" tone={Number(rcs.needs_attention) > 0 ? 'text-bad-700' : 'text-accent-900'} icon="refresh" />
         </StatGrid>
       </div>
 
@@ -92,7 +92,7 @@ export default async function PlatformOverview() {
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <section className="panel p-5">
-          <h2 className="text-lg font-bold text-adire-900">Money transacted, last 12 months</h2>
+          <h2 className="text-lg font-bold text-accent-900">Money transacted, last 12 months</h2>
           {monthly.length === 0 ? (
             <EmptyState compact icon="chart" title="No transactions yet" description="Charts will appear once payments are recorded." />
           ) : (
@@ -100,10 +100,10 @@ export default async function PlatformOverview() {
           )}
         </section>
         <section className="panel p-5">
-          <h2 className="text-lg font-bold text-adire-900">Page views, last 30 days</h2>
+          <h2 className="text-lg font-bold text-accent-900">Page views, last 30 days</h2>
           <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ink/75">
-            <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-adire-200" /> Page views</span>
-            <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-adire-600" /> Unique visitors</span>
+            <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-accent-200" /> Page views</span>
+            <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-accent-600" /> Unique visitors</span>
             <Link href="/platform/visitors" className="link">Full analytics</Link>
           </div>
           {(vs.daily || []).length === 0 ? (
@@ -114,7 +114,7 @@ export default async function PlatformOverview() {
         </section>
 
         <section className="panel p-5">
-          <h2 className="text-lg font-bold text-adire-900">New cooperatives and members per month</h2>
+          <h2 className="text-lg font-bold text-accent-900">New cooperatives and members per month</h2>
           {monthly.length === 0 ? (
             <EmptyState compact icon="building" title="No growth data yet" />
           ) : (
@@ -126,7 +126,7 @@ export default async function PlatformOverview() {
         </section>
 
         <section className="panel p-5">
-          <h2 className="text-lg font-bold text-adire-900">Top cooperatives by amount transacted</h2>
+          <h2 className="text-lg font-bold text-accent-900">Top cooperatives by amount transacted</h2>
           {(st.top_coops || []).length === 0 ? (
             <EmptyState compact icon="building" title="No cooperatives yet" />
           ) : (
@@ -148,7 +148,7 @@ export default async function PlatformOverview() {
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <section className="panel p-5">
-          <h2 className="text-lg font-bold text-adire-900">Newest cooperatives</h2>
+          <h2 className="text-lg font-bold text-accent-900">Newest cooperatives</h2>
           {(newest || []).length === 0 ? (
             <EmptyState compact icon="building" title="No cooperatives yet" />
           ) : (
@@ -163,7 +163,7 @@ export default async function PlatformOverview() {
           )}
         </section>
         <section className="panel p-5">
-          <h2 className="text-lg font-bold text-adire-900">Recent activity</h2>
+          <h2 className="text-lg font-bold text-accent-900">Recent activity</h2>
           {(activity || []).length === 0 ? (
             <EmptyState compact icon="clock" title="Nothing yet" description="Actions across cooperatives will appear here." />
           ) : (

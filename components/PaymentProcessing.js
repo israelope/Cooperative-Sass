@@ -51,7 +51,7 @@ export default function PaymentProcessing({ reference }) {
     return (
       <div className="panel max-w-md p-6">
         <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-marigold-100 text-marigold-700"><Icon name="clock" size={24} /></span>
-        <h2 className="mt-4 font-display text-xl font-bold text-adire-900">Still waiting for confirmation</h2>
+        <h2 className="mt-4 font-display text-xl font-bold text-accent-900">Still waiting for confirmation</h2>
         <p className="mt-2 text-sm text-ink/75">This can take a few minutes. Check your passbook shortly. If your account was debited and nothing appears, quote reference <span className="font-mono">{reference}</span> to your admin.</p>
         <Link href="/member/passbook" className="btn-primary mt-4"><Icon name="book" size={16} /> Open passbook</Link>
       </div>
@@ -59,10 +59,10 @@ export default function PaymentProcessing({ reference }) {
   }
   return (
     <div className="panel max-w-md p-6" role="status" aria-live="polite">
-      <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-adire-50 text-adire-600">
+      <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-accent-50 text-accent-600">
         <Icon name="refresh" size={24} className="animate-spin" />
       </span>
-      <h2 className="mt-4 font-display text-xl font-bold text-adire-900">Confirming your payment…</h2>
+      <h2 className="mt-4 font-display text-xl font-bold text-accent-900">Confirming your payment…</h2>
       <p className="mt-2 text-sm text-ink/75">Please keep this page open. Reference: <span className="font-mono">{reference}</span></p>
     </div>
   );

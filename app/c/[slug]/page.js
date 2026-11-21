@@ -25,20 +25,20 @@ export default async function CooperativePage(props) {
       footer={<p className="text-center">Don&apos;t have an account? Ask your cooperative&apos;s officers for a claim code or join link.</p>}
     >
       <div className="space-y-3">
-        <Link href="/login" className="panel flex items-center gap-4 p-4 transition-colors hover:bg-adire-50">
-          <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-adire-700 text-white"><Icon name="logout" size={18} /></span>
-          <span className="flex-1"><span className="block font-display font-semibold text-adire-900">I&apos;m already a member</span><span className="text-xs text-ink/75">Log in to your account</span></span>
-          <Icon name="arrowRight" size={17} className="text-adire-500" />
+        <Link href="/login" className="panel flex items-center gap-4 p-4 transition-colors hover:bg-accent-50">
+          <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent-700 text-white"><Icon name="logout" size={18} /></span>
+          <span className="flex-1"><span className="block font-display font-semibold text-accent-900">I&apos;m already a member</span><span className="text-xs text-ink/75">Log in to your account</span></span>
+          <Icon name="arrowRight" size={17} className="text-accent-500" />
         </Link>
-        <Link href={`/c/${tenant.slug}/join`} className="panel flex items-center gap-4 p-4 transition-colors hover:bg-adire-50">
-          <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-adire-50 text-adire-600"><Icon name="userPlus" size={18} /></span>
-          <span className="flex-1"><span className="block font-display font-semibold text-adire-900">Join this cooperative</span><span className="text-xs text-ink/75">Create an account for officer approval</span></span>
-          <Icon name="arrowRight" size={17} className="text-adire-500" />
+        <Link href={`/c/${tenant.slug}/join`} className="panel flex items-center gap-4 p-4 transition-colors hover:bg-accent-50">
+          <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent-50 text-accent-600"><Icon name="userPlus" size={18} /></span>
+          <span className="flex-1"><span className="block font-display font-semibold text-accent-900">Join this cooperative</span><span className="text-xs text-ink/75">Create an account for officer approval</span></span>
+          <Icon name="arrowRight" size={17} className="text-accent-500" />
         </Link>
-        <Link href="/claim" className="panel flex items-center gap-4 p-4 transition-colors hover:bg-adire-50">
+        <Link href="/claim" className="panel flex items-center gap-4 p-4 transition-colors hover:bg-accent-50">
           <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-marigold-100 text-marigold-700"><Icon name="ticket" size={18} /></span>
-          <span className="flex-1"><span className="block font-display font-semibold text-adire-900">I have a claim code</span><span className="text-xs text-ink/75">Activate the account officers created for you</span></span>
-          <Icon name="arrowRight" size={17} className="text-adire-500" />
+          <span className="flex-1"><span className="block font-display font-semibold text-accent-900">I have a claim code</span><span className="text-xs text-ink/75">Activate the account officers created for you</span></span>
+          <Icon name="arrowRight" size={17} className="text-accent-500" />
         </Link>
       </div>
     </AuthCard>

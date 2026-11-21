@@ -41,7 +41,7 @@ export default async function MemberLoans() {
       </StatGrid>
 
       <section className="panel mb-8 max-w-xl p-6">
-        <h2 className="flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="bank" size={18} className="text-adire-500" /> Request a loan</h2>
+        <h2 className="flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="bank" size={18} className="text-accent-500" /> Request a loan</h2>
         <p className="mt-1 text-sm text-ink/75">The cooperative&apos;s admin reviews every request. If approved, the admin pays you directly; the platform does not send money.</p>
         <ActionForm action={requestLoan} resetOnSuccess className="mt-4 grid gap-4 sm:grid-cols-2">
           <div><label htmlFor="amount" className="label">Amount (₦)</label><input id="amount" name="amount" type="number" step="0.01" min="1" max={s.loan_limit || undefined} required disabled={!active} className="input" /></div>
@@ -54,13 +54,13 @@ export default async function MemberLoans() {
         const owed = Math.round((Number(l.total_repayable) - Number(l.amount_repaid)) * 100) / 100;
         return (
           <section key={l.id} className="mb-8">
-            <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="card" size={18} className="text-adire-500" /> Repay your loan online</h2>
+            <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="card" size={18} className="text-accent-500" /> Repay your loan online</h2>
             <PayForm disabled={!active} purpose="loan_repayment" loanId={l.id} maxAmount={owed} defaultAmount={owed} quick={false} buttonLabel="Pay loan with Paystack" />
           </section>
         );
       })}
 
-      <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="receipt" size={18} className="text-adire-500" /> My loans</h2>
+      <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="receipt" size={18} className="text-accent-500" /> My loans</h2>
       <div className="panel p-2">
         {(loans || []).length === 0 ? (
           <EmptyState compact icon="receipt" title="You have no loans yet" description="When you request a loan, its status and repayments will appear here." />

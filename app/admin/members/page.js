@@ -40,7 +40,7 @@ export default async function MembersPage(props) {
         <Icon name="link" size={17} className="mt-0.5" />
         <div className="min-w-0">
           <p className="font-semibold">Share this link so members can join themselves</p>
-          <code className="mt-1 block break-all rounded bg-white px-2 py-1 text-xs text-adire-800">{link}</code>
+          <code className="mt-1 block break-all rounded bg-white px-2 py-1 text-xs text-accent-800">{link}</code>
         </div>
       </div>
 
@@ -87,7 +87,7 @@ export default async function MembersPage(props) {
       </div>
 
       <section className="panel mt-8 max-w-2xl p-6">
-        <h2 className="flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="userPlus" size={18} className="text-adire-500" /> Add a member</h2>
+        <h2 className="flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="userPlus" size={18} className="text-accent-500" /> Add a member</h2>
         <p className="mt-1 text-sm text-ink/75">The member receives a claim code to activate their own account.</p>
         <ActionForm action={addMember} resetOnSuccess className="mt-4 grid gap-4 sm:grid-cols-2">
           <Field label="Member number" name="memberNo" />

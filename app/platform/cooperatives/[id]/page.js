@@ -61,7 +61,7 @@ export default async function CooperativeDetail(props) {
 
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
         <section className="panel p-5 lg:col-span-2">
-          <h2 className="flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="users" size={18} className="text-adire-500" /> Members</h2>
+          <h2 className="flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="users" size={18} className="text-accent-500" /> Members</h2>
           {(members || []).length === 0 ? (
             <EmptyState compact icon="users" title="No members yet" description="Members will appear here once they are added or join." />
           ) : (
@@ -78,7 +78,7 @@ export default async function CooperativeDetail(props) {
         </section>
         <div className="space-y-6">
           <section className="panel p-5">
-            <h2 className="flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="userPlus" size={18} className="text-adire-500" /> Staff</h2>
+            <h2 className="flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="userPlus" size={18} className="text-accent-500" /> Staff</h2>
             {(staff || []).length === 0 ? (
               <EmptyState compact icon="userPlus" title="No staff yet" />
             ) : (
@@ -86,7 +86,7 @@ export default async function CooperativeDetail(props) {
             )}
           </section>
           <section className="panel p-5">
-            <h2 className="flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="clock" size={18} className="text-adire-500" /> Recent activity</h2>
+            <h2 className="flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="clock" size={18} className="text-accent-500" /> Recent activity</h2>
             {(logs || []).length === 0 ? (
               <EmptyState compact icon="clock" title="Nothing yet" description="Actions for this cooperative will appear here." />
             ) : (

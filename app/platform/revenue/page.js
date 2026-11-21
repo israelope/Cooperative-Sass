@@ -46,7 +46,7 @@ export default async function RevenuePage(props) {
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <section className="panel p-5">
-          <h2 className="flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="chart" size={18} className="text-adire-500" /> Net revenue per month</h2>
+          <h2 className="flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="chart" size={18} className="text-accent-500" /> Net revenue per month</h2>
           {monthly.length === 0 ? (
             <EmptyState compact icon="chart" title="No monthly revenue yet" description="Fees will appear here after online payments are recorded." />
           ) : (
@@ -54,7 +54,7 @@ export default async function RevenuePage(props) {
           )}
         </section>
         <section className="panel p-5">
-          <h2 className="flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="trendingUp" size={18} className="text-adire-500" /> Gross fees per day, last {days} days</h2>
+          <h2 className="flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="trendingUp" size={18} className="text-accent-500" /> Gross fees per day, last {days} days</h2>
           {(r.daily || []).length === 0 ? (
             <EmptyState compact icon="chart" title="No daily fees yet" description="Daily fee totals will appear once online payments start." />
           ) : (
@@ -64,7 +64,7 @@ export default async function RevenuePage(props) {
       </div>
 
       <section className="panel mt-6 p-5">
-        <h2 className="flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="calendar" size={18} className="text-adire-500" /> Month by month</h2>
+        <h2 className="flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="calendar" size={18} className="text-accent-500" /> Month by month</h2>
         {monthly.length === 0 ? (
           <EmptyState compact icon="calendar" title="No monthly records yet" />
         ) : (
@@ -80,7 +80,7 @@ export default async function RevenuePage(props) {
       </section>
 
       <section className="panel mt-6 p-5">
-        <h2 className="flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="building" size={18} className="text-adire-500" /> Revenue by cooperative, last {days} days</h2>
+        <h2 className="flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="building" size={18} className="text-accent-500" /> Revenue by cooperative, last {days} days</h2>
         {(r.by_coop || []).length === 0 ? (
           <EmptyState compact icon="building" title="No cooperatives yet" description="Fees by cooperative will appear here once cooperatives start receiving online payments." />
         ) : (
@@ -101,7 +101,7 @@ export default async function RevenuePage(props) {
       <div className="callout-info mt-6 max-w-3xl">
         <Icon name="info" size={18} className="mt-0.5" />
         <div className="min-w-0 space-y-2 text-sm">
-          <h2 className="font-display text-base font-bold text-adire-900">How these numbers are worked out</h2>
+          <h2 className="font-display text-base font-bold text-accent-900">How these numbers are worked out</h2>
           <p><b>Current fee setting:</b> {naira(cfg.flatKobo / 100)} flat + {cfg.percent}% of each online payment (never more than half the payment). Paystack&apos;s own processing fee is paid by {cfg.bearer === 'account' ? 'the platform' : 'the cooperative'}. Change this with <code>PLATFORM_FEE_KOBO</code>, <code>PLATFORM_FEE_PERCENT</code> and <code>PAYSTACK_BEARER</code> in your environment variables.</p>
           <p><b>Gross fees</b> are the platform fee recorded on each successful online payment. <b>Net revenue</b> = gross fees minus the Paystack fees the platform bears (zero when cooperatives bear them).</p>
           <p>These are your platform&apos;s own records of what it routed to itself through Paystack. Reconcile them with your Paystack settlements. Payments made before fee tracking was added show a fee of zero. Subscription plans are not billed by this version, so revenue here is transaction fees only.</p>

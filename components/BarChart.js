@@ -21,9 +21,9 @@ export default function BarChart({ items, height = 160, format = (n) => String(n
               className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-1"
               title={`${i.label}: ${format(i.value)}${i.value2 != null ? ` (${format(i.value2)} unique)` : ''}`}
             >
-              <div className="relative w-full rounded-t bg-adire-200" style={{ height: `${Math.max(2, ((Number(i.value) || 0) / max) * 88)}%` }}>
+              <div className="bar-grow relative w-full rounded-t bg-accent-200" style={{ height: `${Math.max(2, ((Number(i.value) || 0) / max) * 88)}%`, animationDelay: `${idx * 45}ms` }}>
                 {i.value2 != null && Number(i.value) > 0 && (
-                  <div className="absolute bottom-0 w-full rounded-t bg-adire-600" style={{ height: `${Math.min(100, (Number(i.value2) / Number(i.value)) * 100)}%` }} />
+                  <div className="absolute bottom-0 w-full rounded-t bg-accent-600" style={{ height: `${Math.min(100, (Number(i.value2) / Number(i.value)) * 100)}%` }} />
                 )}
               </div>
               {!thin && <span className="max-w-full truncate text-xs text-ink/75">{i.label}</span>}

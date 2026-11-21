@@ -47,7 +47,7 @@ export default async function MemberDetail(props) {
         </div>
       )}
 
-      <h2 className="mb-3 mt-8 flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="book" size={18} className="text-adire-500" /> Passbook</h2>
+      <h2 className="mb-3 mt-8 flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="book" size={18} className="text-accent-500" /> Passbook</h2>
       <div className="passbook-page p-2">
         {(entries || []).length === 0 ? (
           <EmptyState compact icon="book" title="No entries yet" />
@@ -70,7 +70,7 @@ export default async function MemberDetail(props) {
 
       {(loans || []).length > 0 && (
         <>
-          <h2 className="mb-3 mt-8 flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="bank" size={18} className="text-adire-500" /> Loans</h2>
+          <h2 className="mb-3 mt-8 flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="bank" size={18} className="text-accent-500" /> Loans</h2>
           <div className="panel p-2">
             <DataTable caption={`Loans for ${member.full_name}`}>
               <thead><tr><th scope="col">Date</th><th scope="col" className="text-right">Principal</th><th scope="col" className="text-right">Total to repay</th><th scope="col" className="text-right">Repaid</th><th scope="col">Status</th></tr></thead>

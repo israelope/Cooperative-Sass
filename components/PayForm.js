@@ -29,8 +29,8 @@ export default function PayForm({ disabled, purpose = 'contribution', loanId = n
 
   return (
     <form onSubmit={pay} className="panel max-w-md space-y-4 p-6">
-      <h2 className="flex items-center gap-2 text-lg font-bold text-adire-900">
-        <Icon name="wallet" size={18} className="text-adire-500" />
+      <h2 className="flex items-center gap-2 text-lg font-bold text-accent-900">
+        <Icon name="wallet" size={18} className="text-accent-500" />
         {purpose === 'loan_repayment' ? 'Repay your loan' : 'Pay a contribution'}
       </h2>
       {purpose === 'loan_repayment' && maxAmount != null && (
@@ -64,7 +64,7 @@ export default function PayForm({ disabled, purpose = 'contribution', loanId = n
                 disabled={disabled}
                 aria-pressed={String(amount) === String(q)}
                 onClick={() => setAmount(String(q))}
-                className={`btn btn-sm num ${String(amount) === String(q) ? 'bg-adire-700 text-white' : 'bg-adire-50 text-adire-800 hover:bg-adire-100'}`}
+                className={`btn btn-sm num ${String(amount) === String(q) ? 'bg-accent-700 text-white' : 'bg-accent-50 text-accent-800 hover:bg-accent-100'}`}
               >
                 ₦{q.toLocaleString('en-NG')}
               </button>

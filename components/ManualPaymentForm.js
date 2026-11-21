@@ -56,7 +56,7 @@ export default function ManualPaymentForm({ action, tenantId, members }) {
       </div>
       <div>
         <label htmlFor="receipt" className="label">Photo of the receipt</label>
-        <input id="receipt" type="file" accept="image/*" capture="environment" required onChange={onFile} className="input file:mr-3 file:rounded file:border-0 file:bg-adire-100 file:px-3 file:py-1 file:text-sm file:font-semibold" />
+        <input id="receipt" type="file" accept="image/*" capture="environment" required onChange={onFile} className="input file:mr-3 file:rounded file:border-0 file:bg-accent-100 file:px-3 file:py-1 file:text-sm file:font-semibold" />
         <input type="hidden" name="receiptPath" value={path} />
         <p className="hint" aria-live="polite">
           {status.busy ? 'Uploading…' : path ? `Uploaded: ${status.name}` : 'Required. The photo is shrunk automatically and the member can see it in their passbook.'}

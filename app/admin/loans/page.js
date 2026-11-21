@@ -15,8 +15,8 @@ export const metadata = { title: 'Loans' };
 function Section({ title, icon, hint, rows, emptyTitle, emptyDescription, caption, note, children }) {
   return (
     <section className="mb-8">
-      <h2 className="mb-1 mt-8 flex items-center gap-2 text-lg font-bold text-adire-900">
-        <Icon name={icon} size={18} className="text-adire-500" /> {title}
+      <h2 className="mb-1 mt-8 flex items-center gap-2 text-lg font-bold text-accent-900">
+        <Icon name={icon} size={18} className="text-accent-500" /> {title}
       </h2>
       {hint && <p className="mb-2 text-sm text-ink/75">{hint}</p>}
       <div className="panel p-2">

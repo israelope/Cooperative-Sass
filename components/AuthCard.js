@@ -7,7 +7,7 @@ export default function AuthCard({ title, intro, children, footer, wide = false 
       <div className={`mx-auto w-full ${wide ? 'max-w-xl' : 'max-w-md'}`}>
         <Logo />
         <div className="panel mt-6 p-6 shadow-[0_18px_48px_-32px_rgba(20,23,43,.35)] sm:p-8">
-          <h1 className="text-3xl font-bold text-adire-900">{title}</h1>
+          <h1 className="text-3xl font-bold text-accent-900">{title}</h1>
           {intro && <p className="mt-2 text-sm leading-relaxed text-ink/75">{intro}</p>}
           <div className="mt-6">{children}</div>
           {footer && <div className="mt-6 border-t border-rule pt-5 text-sm text-ink/75">{footer}</div>}

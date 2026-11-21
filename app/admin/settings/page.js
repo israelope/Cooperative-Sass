@@ -25,7 +25,7 @@ export default async function SettingsPage() {
       <PageHeader title="Settings" intro="Your cooperative's rules, payout account and staff." icon="settings" />
 
       <section className="panel mb-8 max-w-2xl p-6">
-        <h2 className="flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="building" size={18} className="text-adire-500" /> Cooperative</h2>
+        <h2 className="flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="building" size={18} className="text-accent-500" /> Cooperative</h2>
         <div className="callout-info mt-3">
           <Icon name="link" size={17} className="mt-0.5" />
           <span className="min-w-0">Member link: <code className="break-all font-mono">{link}</code></span>
@@ -39,7 +39,7 @@ export default async function SettingsPage() {
       </section>
 
       <section className="panel mb-8 max-w-2xl p-6">
-        <h2 className="flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="bank" size={18} className="text-adire-500" /> Payout account for online payments</h2>
+        <h2 className="flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="bank" size={18} className="text-accent-500" /> Payout account for online payments</h2>
         <p className="mt-1 text-sm text-ink/75">
           {tenant.paystack_subaccount_code
             ? `Online contributions are paid into ${tenant.bank_name || 'your bank'} account ending ${String(tenant.account_number || '').slice(-4)}.`
@@ -49,11 +49,11 @@ export default async function SettingsPage() {
       </section>
 
       <section className="panel max-w-2xl p-6">
-        <h2 className="flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="users" size={18} className="text-adire-500" /> Staff</h2>
+        <h2 className="flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="users" size={18} className="text-accent-500" /> Staff</h2>
         <ul className="mt-2 divide-y divide-rule text-sm">
           {(staff || []).map((p) => <li key={p.id} className="flex justify-between py-2"><span>{p.full_name}</span><span className="capitalize text-ink/75">{p.role}</span></li>)}
         </ul>
-        <h3 className="mt-5 flex items-center gap-2 font-semibold"><Icon name="userPlus" size={16} className="text-adire-500" /> Add a bookkeeper</h3>
+        <h3 className="mt-5 flex items-center gap-2 font-semibold"><Icon name="userPlus" size={16} className="text-accent-500" /> Add a bookkeeper</h3>
         <p className="text-sm text-ink/75">A bookkeeper can record payments and manage members, but cannot approve loans or change settings.</p>
         <ActionForm action={createBookkeeper} resetOnSuccess className="mt-3 grid gap-4 sm:grid-cols-2">
           <Field label="Full name" name="fullName" />
