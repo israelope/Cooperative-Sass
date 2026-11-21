@@ -15,7 +15,7 @@ export default async function MemberLayout({ children }) {
         <p className="mb-5 rounded-xl bg-marigold-100 px-4 py-3 text-sm text-marigold-700">Your membership is waiting for approval by a cooperative officer. You can look around, but payments and loans open once you are approved.</p>
       )}
       {member.status === 'suspended' && (
-        <p className="mb-5 rounded-xl bg-bad-100 px-4 py-3 text-sm text-bad-700">Your membership is suspended. Contact your cooperative's officers.</p>
+        <p className="mb-5 rounded-xl bg-bad-100 px-4 py-3 text-sm text-bad-700">Your membership is suspended. Contact your cooperative&apos;s officers.</p>
       )}
       {children}
     </AppShell>

@@ -83,7 +83,7 @@ export default function ImportWizard({ action }) {
       {result?.preview && (
         <div>
           <h3 className="flex items-center gap-2 font-semibold text-adire-900"><Icon name="eye" size={16} className="text-adire-500" /> Preview</h3>
-          <p className="mb-2 mt-1 text-sm text-ink/75">Preview of the first {Math.min(result.preview.length, 10)} of {result.total} rows. Choose "2. Import members" to save them.</p>
+          <p className="mb-2 mt-1 text-sm text-ink/75">Preview of the first {Math.min(result.preview.length, 10)} of {result.total} rows. Choose &quot;2. Import members&quot; to save them.</p>
           <DataTable caption="Preview of the first ten members in the file">
             <thead><tr><th scope="col">No.</th><th scope="col">Name</th><th scope="col">Phone</th><th scope="col" className="text-right">Savings</th><th scope="col" className="text-right">Loan</th></tr></thead>
             <tbody>{result.preview.slice(0, 10).map((r) => <tr key={r.member_no}><td>{r.member_no}</td><td>{r.full_name}</td><td>{r.phone}</td><td className="text-right">{naira(r.opening_savings)}</td><td className="text-right">{naira(r.opening_loan_balance)}</td></tr>)}</tbody>

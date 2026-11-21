@@ -5,7 +5,7 @@ import { toCsv } from '@/lib/format';
 export const dynamic = 'force-dynamic';
 
 export async function GET(req) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   const role = user?.app_metadata?.role;
   if (!user || !['admin', 'bookkeeper'].includes(role)) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 });

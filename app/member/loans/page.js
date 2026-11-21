@@ -42,7 +42,7 @@ export default async function MemberLoans() {
 
       <section className="panel mb-8 max-w-xl p-6">
         <h2 className="flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="bank" size={18} className="text-adire-500" /> Request a loan</h2>
-        <p className="mt-1 text-sm text-ink/75">The cooperative's admin reviews every request. If approved, the admin pays you directly; the platform does not send money.</p>
+        <p className="mt-1 text-sm text-ink/75">The cooperative&apos;s admin reviews every request. If approved, the admin pays you directly; the platform does not send money.</p>
         <ActionForm action={requestLoan} resetOnSuccess className="mt-4 grid gap-4 sm:grid-cols-2">
           <div><label htmlFor="amount" className="label">Amount (₦)</label><input id="amount" name="amount" type="number" step="0.01" min="1" max={s.loan_limit || undefined} required disabled={!active} className="input" /></div>
           <div><label htmlFor="tenor" className="label">Repay over (months)</label><input id="tenor" name="tenor" type="number" min="1" max="120" required disabled={!active} className="input" /></div>

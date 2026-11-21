@@ -13,7 +13,8 @@ import { naira, formatDate } from '@/lib/format';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Member details' };
 
-export default async function MemberDetail({ params }) {
+export default async function MemberDetail(props) {
+  const params = await props.params;
   const { supabase } = await requireStaff();
   const member = must(await supabase.from('members').select('*').eq('id', params.id).maybeSingle(), 'member');
   if (!member) notFound();

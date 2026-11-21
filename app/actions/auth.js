@@ -27,7 +27,7 @@ export async function login(prev, fd) {
   const email = str(fd, 'email').toLowerCase();
   const password = String(fd.get('password') ?? '');
   if (!email || !password) return { error: 'Enter your email address and password.' };
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) return { error: 'Email or password is incorrect.' };
   const role = data.user.app_metadata?.role;
@@ -35,7 +35,7 @@ export async function login(prev, fd) {
 }
 
 export async function logout() {
-  const supabase = createClient();
+  const supabase = await createClient();
   await supabase.auth.signOut();
   redirect('/');
 }
@@ -79,7 +79,7 @@ export async function registerCooperative(prev, fd) {
     return { error: 'Could not finish setting up your workspace. Please try again.' };
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const { error: sErr } = await supabase.auth.signInWithPassword({ email, password });
   if (sErr) redirect('/login');
   redirect('/admin');
@@ -116,14 +116,14 @@ export async function joinCooperative(prev, fd) {
     return { error: 'Could not complete your registration. Please try again.' };
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
   await supabase.auth.signInWithPassword({ email, password });
   redirect('/member');
 }
 
 /** Imported member activates the account with a one-time claim code. */
 export async function claimAccount(prev, fd) {
-  const ip = (headers().get('x-forwarded-for') || 'local').split(',')[0].trim();
+  const ip = ((await headers()).get('x-forwarded-for') || 'local').split(',')[0].trim();
   if (!rateLimit(`claim:${ip}`)) return { error: 'Too many attempts. Wait a few minutes and try again.' };
 
   const code = str(fd, 'code').toUpperCase().replace(/\s+/g, '');
@@ -164,7 +164,7 @@ export async function claimAccount(prev, fd) {
     return { error: 'Could not activate your account. Please try again.' };
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
   await supabase.auth.signInWithPassword({ email, password });
   redirect('/member');
 }

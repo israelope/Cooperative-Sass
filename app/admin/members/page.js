@@ -14,7 +14,8 @@ export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Members' };
 const STATUSES = ['all', 'active', 'pending', 'unclaimed', 'suspended'];
 
-export default async function MembersPage({ searchParams }) {
+export default async function MembersPage(props) {
+  const searchParams = await props.searchParams;
   const { supabase, profile } = await requireStaff();
   const status = STATUSES.includes(searchParams.status) ? searchParams.status : 'all';
   const q = String(searchParams.q || '').trim().replace(/[%,()]/g, '');

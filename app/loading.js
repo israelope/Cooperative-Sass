@@ -7,8 +7,8 @@ export default function Loading() {
       <div className="grid gap-px overflow-hidden rounded-xl bg-rule ring-1 ring-rule sm:grid-cols-3 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
           <div key={i} className="bg-white px-5 py-5">
-            <div className="skeleton h-3 w-24 rounded" />
-            <div className="skeleton mt-3 h-7 w-32 rounded" />
+            <div className="skeleton h-3 w-24 rounded-lg" />
+            <div className="skeleton mt-3 h-7 w-32 rounded-lg" />
           </div>
         ))}
       </div>

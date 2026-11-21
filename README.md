@@ -73,7 +73,7 @@ docs/REPORT_ALIGNMENT.md Differences between this code and the project report (R
 
 ## 3. Prerequisites (all free)
 
-1. **Node.js 20 LTS or newer** (https://nodejs.org) and **Git**. Check: `node -v`, `git --version`.
+1. **Node.js 22.12 or newer** (https://nodejs.org) and **Git**. Check: `node -v`, `git --version`. Next.js 16 needs Node ≥20.9, Supabase JS needs ≥22, and Vitest 5 needs ≥22.12; this project targets all three.
 2. **VS Code** (optional but recommended).
 3. A **GitHub** account.
 4. A **Supabase** account (https://supabase.com), free plan.
@@ -268,9 +268,9 @@ appears as `data.fees_split.subaccount` in the payment confirmation, because the
 | Settings: "Paystack could not set up the payout account" | Test mode may reject fake bank details. Use Paystack's test details, or keep `PAYSTACK_ALLOW_NO_SUBACCOUNT=true` and skip it |
 | Paystack init error "Invalid key" | Use the **Test** secret key (`sk_test_...`) |
 | Payment stays "Confirming…" | Webhook URL not set (local) and verify fallback failing: check the terminal, and that `PAYSTACK_SECRET_KEY` is right |
-| `next/font` build error offline | Fonts download at build time; build needs internet (Vercel has it) |
+| Font styles look wrong after a fresh checkout | Fonts are vendored in `app/fonts/`; make sure both `.woff2` files are present. No internet is needed to build |
 | Supabase paused | Dashboard > Restore project |
-| `npm audit` flags `xlsx` | Known advisories for the npm `xlsx@0.18.5`; used only for admin-uploaded files. See SheetJS docs for their patched build if this concerns your examiner |
+| `npm audit` flags `xlsx` | **Known risk, deliberately retained.** npm only publishes `xlsx@0.18.5`, which has [prototype-pollution](https://github.com/advisories/GHSA-4r6h-8v6p-xvw6) and [ReDoS](https://github.com/advisories/GHSA-5pgg-2g8v-p4x9) advisories. It parses spreadsheets uploaded by trusted admins only, and the app validates every row before writing. A patched build exists on the SheetJS CDN but is not on npm; switching to it changes how the dependency is installed. Do not expose bulk import to untrusted users |
 | Import: leading zeros lost | Format `member_no`/`phone` as **Text** in Excel; phone zeros are repaired automatically |
 
 ## 12. Security design (summary, matches Chapter 3.7)

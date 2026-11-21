@@ -6,11 +6,13 @@ import { joinCooperative } from '@/app/actions/auth';
 import { createServiceClient } from '@/lib/supabase/service';
 import { must } from '@/lib/db';
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   return { title: `Join ${params.slug}` };
 }
 
-export default async function JoinPage({ params }) {
+export default async function JoinPage(props) {
+  const params = await props.params;
   const tenant = must(
     await createServiceClient().from('tenants').select('name, slug').eq('slug', params.slug).maybeSingle(),
     'cooperative lookup',

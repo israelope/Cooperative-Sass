@@ -11,7 +11,7 @@ export const options = {
   scenarios: { webhooks: { executor: 'constant-arrival-rate', rate: RATE, timeUnit: '1s', duration: __ENV.DURATION || '1m', preAllocatedVUs: 50, maxVUs: 400 } },
   thresholds: { http_req_failed: ['rate<0.01'], http_req_duration: ['p(95)<2000'] },
 };
-export default function () {
+export default function webhookScenario() {
   const r = refs[exec.scenario.iterationInTest % refs.length];
   const res = signedPost(`${BASE}/api/webhooks/paystack`, { event: 'charge.success', data: { reference: r.reference, amount: r.amountKobo, currency: 'NGN', status: 'success', fees: r.feeKobo, fees_split: { subaccount: r.shareKobo } } });
   check(res, { 'acknowledged (200)': (x) => x.status === 200 });

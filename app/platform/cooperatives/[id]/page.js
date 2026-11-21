@@ -15,7 +15,8 @@ import { setTenantStatus } from '@/app/platform/actions';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Cooperative details' };
 
-export default async function CooperativeDetail({ params }) {
+export default async function CooperativeDetail(props) {
+  const params = await props.params;
   const svc = createServiceClient();
   const all = must(await svc.rpc('platform_cooperatives'), 'platform cooperatives');
   const c = (all || []).find((x) => x.id === params.id);

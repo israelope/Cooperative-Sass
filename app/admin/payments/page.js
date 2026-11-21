@@ -14,7 +14,8 @@ export const metadata = { title: 'Payments' };
 const CHANNELS = ['all', 'online', 'cash', 'transfer'];
 const STATUSES = ['all', 'success', 'pending', 'failed'];
 
-export default async function PaymentsPage({ searchParams }) {
+export default async function PaymentsPage(props) {
+  const searchParams = await props.searchParams;
   const { supabase } = await requireStaff();
   const channel = CHANNELS.includes(searchParams.channel) ? searchParams.channel : 'all';
   const status = STATUSES.includes(searchParams.status) ? searchParams.status : 'all';

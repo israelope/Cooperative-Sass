@@ -7,8 +7,8 @@ export default function AdminLoading() {
       <div className="grid gap-px overflow-hidden rounded-xl bg-rule ring-1 ring-rule sm:grid-cols-3 lg:grid-cols-6">
         {Array.from({ length: 6 }).map((_, i) => (
           <div key={i} className="bg-white px-5 py-4">
-            <div className="skeleton h-3 w-24 rounded" />
-            <div className="skeleton mt-3 h-7 w-28 rounded" />
+            <div className="skeleton h-3 w-24 rounded-lg" />
+            <div className="skeleton mt-3 h-7 w-28 rounded-lg" />
           </div>
         ))}
       </div>

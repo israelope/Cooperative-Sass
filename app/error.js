@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import Link from 'next/link';
 import Icon from '@/components/Icon';
 
 export default function Error({ error, reset }) {
@@ -21,7 +22,7 @@ export default function Error({ error, reset }) {
         <button type="button" onClick={reset} className="btn-primary">
           <Icon name="refresh" size={16} /> Try again
         </button>
-        <a href="/" className="btn-quiet">Go home</a>
+        <Link href="/" className="btn-quiet">Go home</Link>
       </div>
       {error?.digest && <p className="mt-4 text-xs text-ink/75">Reference: {error.digest}</p>}
     </main>

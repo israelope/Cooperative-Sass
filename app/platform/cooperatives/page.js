@@ -13,7 +13,8 @@ import { setTenantStatus } from '@/app/platform/actions';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Cooperatives' };
 
-export default async function CooperativesPage({ searchParams }) {
+export default async function CooperativesPage(props) {
+  const searchParams = await props.searchParams;
   const q = String(searchParams.q || '').trim().toLowerCase();
   const all = must(await createServiceClient().rpc('platform_cooperatives'), 'platform cooperatives') || [];
   const coops = q ? all.filter((c) => c.name.toLowerCase().includes(q) || c.slug.includes(q) || (c.admin_name || '').toLowerCase().includes(q)) : all;

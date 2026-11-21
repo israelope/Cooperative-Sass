@@ -11,8 +11,9 @@ export const dynamic = 'force-dynamic';
  * a member gets only their own, staff get any member of their own cooperative.
  * Optional ?from=YYYY-MM-DD&to=YYYY-MM-DD
  */
-export async function GET(req, { params }) {
-  const supabase = createClient();
+export async function GET(req, props) {
+  const params = await props.params;
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 });
 

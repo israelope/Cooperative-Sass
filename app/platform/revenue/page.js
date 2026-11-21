@@ -15,7 +15,8 @@ export const metadata = { title: 'Revenue' };
 const RANGES = [30, 90, 365];
 const pct = (a, b) => (Number(b) > 0 ? `${((Number(a) / Number(b)) * 100).toFixed(2)}%` : '–');
 
-export default async function RevenuePage({ searchParams }) {
+export default async function RevenuePage(props) {
+  const searchParams = await props.searchParams;
   const days = RANGES.includes(Number(searchParams.days)) ? Number(searchParams.days) : 30;
   const r = must(await createServiceClient().rpc('revenue_stats', { p_days: days }), 'revenue statistics') || {};
   const cfg = feeConfig();
@@ -101,9 +102,9 @@ export default async function RevenuePage({ searchParams }) {
         <Icon name="info" size={18} className="mt-0.5" />
         <div className="min-w-0 space-y-2 text-sm">
           <h2 className="font-display text-base font-bold text-adire-900">How these numbers are worked out</h2>
-          <p><b>Current fee setting:</b> {naira(cfg.flatKobo / 100)} flat + {cfg.percent}% of each online payment (never more than half the payment). Paystack's own processing fee is paid by {cfg.bearer === 'account' ? 'the platform' : 'the cooperative'}. Change this with <code>PLATFORM_FEE_KOBO</code>, <code>PLATFORM_FEE_PERCENT</code> and <code>PAYSTACK_BEARER</code> in your environment variables.</p>
+          <p><b>Current fee setting:</b> {naira(cfg.flatKobo / 100)} flat + {cfg.percent}% of each online payment (never more than half the payment). Paystack&apos;s own processing fee is paid by {cfg.bearer === 'account' ? 'the platform' : 'the cooperative'}. Change this with <code>PLATFORM_FEE_KOBO</code>, <code>PLATFORM_FEE_PERCENT</code> and <code>PAYSTACK_BEARER</code> in your environment variables.</p>
           <p><b>Gross fees</b> are the platform fee recorded on each successful online payment. <b>Net revenue</b> = gross fees minus the Paystack fees the platform bears (zero when cooperatives bear them).</p>
-          <p>These are your platform's own records of what it routed to itself through Paystack. Reconcile them with your Paystack settlements. Payments made before fee tracking was added show a fee of zero. Subscription plans are not billed by this version, so revenue here is transaction fees only.</p>
+          <p>These are your platform&apos;s own records of what it routed to itself through Paystack. Reconcile them with your Paystack settlements. Payments made before fee tracking was added show a fee of zero. Subscription plans are not billed by this version, so revenue here is transaction fees only.</p>
         </div>
       </div>
     </>

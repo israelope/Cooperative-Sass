@@ -46,7 +46,7 @@ export default async function StatementsPage() {
           <div><label htmlFor="to" className="label">To</label><input id="to" name="to" type="date" required defaultValue={p.thisMonth.to} className="input" /></div>
           <div className="flex items-end"><button className="btn-primary w-full"><Icon name="download" size={16} /> Download PDF</button></div>
         </form>
-        <p className="hint mt-3">Need the raw rows for a spreadsheet? Use <a className="link" href={`/api/export/payments?${qs(p.thisYear)}`}><Icon name="download" size={14} /> Export payments (CSV)</a>. Individual member statements are on each member's page.</p>
+        <p className="hint mt-3">Need the raw rows for a spreadsheet? Use <a className="link" href={`/api/export/payments?${qs(p.thisYear)}`}><Icon name="download" size={14} /> Export payments (CSV)</a>. Individual member statements are on each member&apos;s page.</p>
       </section>
     </>
   );

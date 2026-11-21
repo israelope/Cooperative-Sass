@@ -8,7 +8,8 @@ import { requireMember } from '@/lib/auth';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Payment status' };
 
-export default async function ProcessingPage({ searchParams }) {
+export default async function ProcessingPage(props) {
+  const searchParams = await props.searchParams;
   await requireMember();
   const ref = String(searchParams.ref || searchParams.reference || '').slice(0, 64);
   return (

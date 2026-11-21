@@ -16,7 +16,7 @@ export async function GET(req) {
   const ref = url.searchParams.get('ref') || '';
   const verify = url.searchParams.get('verify') === '1';
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 });
 

@@ -2,7 +2,7 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 
 // Route-level guard (level 1 of 3). Level 2 = server actions re-check role; level 3 = RLS in the database.
-export async function middleware(request) {
+export async function proxy(request) {
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY, {

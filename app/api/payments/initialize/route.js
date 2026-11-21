@@ -8,7 +8,7 @@ import { feeConfig, computePlatformFeeKobo } from '@/lib/fees';
 export const dynamic = 'force-dynamic';
 
 export async function POST(req) {
-  const supabase = createClient();                                // runs with the member's session, RLS applies
+  const supabase = await createClient();                                // runs with the member's session, RLS applies
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: 'Please log in again.' }, { status: 401 });
 

@@ -1,9 +1,10 @@
 import './globals.css';
-import { Bricolage_Grotesque, Public_Sans } from 'next/font/google';
+import localFont from 'next/font/local';
 import VisitTracker from '@/components/VisitTracker';
 
-const display = Bricolage_Grotesque({ subsets: ['latin'], variable: '--font-display', display: 'swap' });
-const body = Public_Sans({ subsets: ['latin'], variable: '--font-body', display: 'swap' });
+// Vendored locally so builds work offline and the UI does not depend on Google Fonts at build time.
+const display = localFont({ src: './fonts/bricolage-grotesque-latin.woff2', variable: '--font-bricolage', weight: '200 800', display: 'swap' });
+const body = localFont({ src: './fonts/public-sans-latin.woff2', variable: '--font-public-sans', weight: '100 900', display: 'swap' });
 
 export const metadata = {
   title: {

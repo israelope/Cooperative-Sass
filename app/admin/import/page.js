@@ -20,7 +20,7 @@ export default async function ImportPage() {
         <h2 className="flex items-center gap-2 text-lg font-bold text-adire-900"><Icon name="book" size={18} className="text-adire-500" /> How to prepare your file</h2>
         <ol className="mt-3 list-decimal space-y-1 pl-5 text-sm text-ink/75">
           <li>Pick a cut-off date, for example the last day of the month.</li>
-          <li>From the paper ledger, write each member's total savings (and unpaid loan, if any) as at that date into the template.</li>
+          <li>From the paper ledger, write each member&apos;s total savings (and unpaid loan, if any) as at that date into the template.</li>
           <li>Upload the file. Fix any rows the check flags.</li>
           <li>Import, then give each member their claim code. They use it at the Activate account page to choose a password.</li>
         </ol>

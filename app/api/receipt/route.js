@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 export async function GET(req) {
   const path = new URL(req.url).searchParams.get('path') || '';
   if (!path || path.includes('..')) return NextResponse.json({ error: 'Bad path' }, { status: 400 });
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 });
   const { data, error } = await supabase.storage.from('receipts').createSignedUrl(path, 60);

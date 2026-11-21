@@ -5,8 +5,9 @@ import { toCsv } from '@/lib/format';
 export const dynamic = 'force-dynamic';
 
 /** Member statement. Staff may export any member of their cooperative; a member only their own (RLS decides). */
-export async function GET(req, { params }) {
-  const supabase = createClient();
+export async function GET(req, props) {
+  const params = await props.params;
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 });
 

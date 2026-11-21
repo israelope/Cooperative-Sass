@@ -1,6 +1,6 @@
 'use client';
-import { useEffect, useRef } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState, useEffect, useRef } from 'react';
+import { useFormStatus } from 'react-dom';
 import FormErrorsContext from '@/components/FormErrorsContext';
 
 export function SubmitButton({ children, className = 'btn-primary', pendingText = 'Please wait…', name, value }) {
@@ -35,10 +35,12 @@ export function SubmitButton({ children, className = 'btn-primary', pendingText 
  * Shows the result under the form; resets fields after success when resetOnSuccess is set.
  */
 export default function ActionForm({ action, children, className = '', resetOnSuccess = false, onResult }) {
-  const [state, formAction] = useFormState(action, null);
+  const [state, formAction] = useActionState(action, null);
   const ref = useRef(null);
   const onResultRef = useRef(onResult);
-  onResultRef.current = onResult;
+  useEffect(() => {
+    onResultRef.current = onResult;
+  }, [onResult]);
 
   // Runs once per action result (state identity changes only when the action returns).
   useEffect(() => {
