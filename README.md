@@ -113,11 +113,28 @@ docs/REPORT_ALIGNMENT.md Differences between this code and the project report (R
 ```bash
 unzip cooperative-saas-mvp.zip && cd cooperative-saas-mvp
 npm install
-cp .env.example .env.local        # Windows: copy .env.example .env.local
 ```
 
-Edit `.env.local` and fill in the Supabase URL/keys, `PAYSTACK_SECRET_KEY`, `NEXT_PUBLIC_APP_URL` and `VISIT_SALT`
-(a long random string; visitor counting is skipped in production without it). Then:
+There is deliberately no committed `.env.example`. Create `.env.local` yourself with these keys (never commit it):
+
+```
+NEXT_PUBLIC_SUPABASE_URL=<your Supabase project URL>
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<your anon / publishable key>
+SUPABASE_SERVICE_ROLE_KEY=<your service-role key, server only>
+PAYSTACK_SECRET_KEY=<your Paystack test secret key>
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+VISIT_SALT=<a long random string>
+PLATFORM_FEE_KOBO=0
+PLATFORM_FEE_PERCENT=0
+PAYSTACK_BEARER=subaccount
+PAYSTACK_ALLOW_NO_SUBACCOUNT=false
+CRON_SECRET=<a long random string>
+RECON_SETTLE_HOURS=48
+RECON_FINAL_DAYS=7
+RECON_REVIEW_DAYS=14
+```
+
+`VISIT_SALT` keeps visitor counts unguessable; visitor counting is skipped in production without it. Then:
 
 ```bash
 npm run seed       # creates 2 test cooperatives with users, balances and one claim code each
@@ -247,7 +264,7 @@ appears as `data.fees_split.subaccount` in the payment confirmation, because the
    ```
    `.env.local` is git-ignored. Never commit keys.
 2. Vercel > **Add New > Project** > import the repo. Framework is detected as Next.js.
-3. **Environment Variables:** add every key from `.env.example` (set `NEXT_PUBLIC_APP_URL` to your Vercel URL, e.g.
+3. **Environment Variables:** add every key listed in section 6 (set `NEXT_PUBLIC_APP_URL` to your Vercel URL, e.g.
    `https://your-app.vercel.app`, and `PAYSTACK_ALLOW_NO_SUBACCOUNT=false` if you want real split enforcement).
 4. Deploy. Set `NEXT_PUBLIC_APP_URL` correctly and redeploy if you set it after the first build.
 5. Paystack > Test Webhook URL: `https://your-app.vercel.app/api/webhooks/paystack`.

@@ -17,8 +17,8 @@
 
 ## 1. Set up the test project
 
-1. Create a second Supabase project (free) for testing. Run the **eight** migrations in order (or `docs/all_migrations_combined.sql`).
-2. Copy `.env.example` to `.env.local` and point it at the TEST project. Set `PAYSTACK_SECRET_KEY` to your test secret.
+1. Create a second Supabase project (free) for testing. Run the **eleven** migrations in order (or `docs/all_migrations_combined.sql`).
+2. Create `.env.local` with the keys listed in README section 6 and point it at the TEST project. Set `PAYSTACK_SECRET_KEY` to your test secret.
 3. `npm run seed` (creates the two isolation-test cooperatives).
 
 ## 2. The reconciliation experiment (Section 3.10.5)
