@@ -13,14 +13,14 @@ Final-year project MVP, Department of Computer Science, University of Ibadan.
 ## Start here: first-run checklist
 
 1. Do sections 3 to 6 in order (accounts, Supabase project, Paystack test keys, `npm install`, `.env.local`).
-2. In the Supabase SQL Editor run the **eleven** migration files in order, one at a time. If one fails, copy the exact error, fix it, and only then run the next.
+2. In the Supabase SQL Editor run the **fifteen** migration files in order, one at a time. If one fails, copy the exact error, fix it, and only then run the next. For an existing database, run only the new migration files you have not applied yet.
 3. `npm run seed`, then `npm run dev`, then work through the section 7 walkthrough.
 4. `npm test` (no database needed), then `npm run test:integration` (needs steps 1 to 3).
 5. Fees are **off by default** (`PLATFORM_FEE_KOBO=0`). To see revenue in test mode, set it to `5000` temporarily (section 8).
 
 ## What is NOT built yet
 
-Billing and subscriptions (trial dates, "paid until", plans), password reset, email/SMS notifications, a withdrawals screen,
+Billing and subscriptions (trial dates, "paid until", plans), password reset, email/SMS notifications, automatic Paystack debit for scheduled contributions, a withdrawals screen,
 admin two-factor login, dedicated virtual account numbers per cooperative (money reaches each cooperative through its Paystack sub-account instead). The
 suggested business model is a monthly/yearly subscription per cooperative with no per-transaction charge to members; the
 fee setting exists but is off by default. Login/registration rate limits are in-memory per server instance; a
@@ -46,6 +46,12 @@ multi-instance deployment needs a shared store such as Upstash or Supabase itsel
 | Self-registration | Member | Join via the cooperative link; staff approve |
 | Dashboards | Admin, Member | Totals, 6-month collections chart, recent payments |
 | **Platform owner dashboard** | You (super admin) | All cooperatives, members, money transacted, **fees and revenue**, visitor analytics, attention alerts, suspend/reactivate a cooperative |
+| **In-app notifications** | Member, Admin, Bookkeeper | Payment, loan, announcement and reminder notices in the app inbox; unread badges; admin announcements. No email/SMS. |
+| **Savings plans and reminders** | Member, Admin | Members set a weekly/monthly savings schedule; a daily Vercel Cron creates in-app due/overdue reminders; officers can nudge. No auto-debit. |
+| **Cashbook and cashflow** | Admin, Bookkeeper | Record income, expenses and transfers; see account balances and a six-month cashflow view that includes member payments and loan payouts. |
+| **Loan calculator** | Member | Estimate interest, total repayable and monthly amount before requesting a loan. |
+| **Savings goal and streak** | Member | Set a target, track progress from real passbook savings, and see a contribution streak. |
+| **Digital membership card** | Member | A digital card showing member name, number and cooperative for identification. |
 
 The platform **never moves money out**. Loan payouts are made by the admin outside the system.
 
@@ -64,7 +70,7 @@ app/                     Next.js routes (pages, server actions, API routes)
 components/              ActionForm, ManualPaymentForm, ImportWizard, PayForm, ...
 lib/                     supabase clients, paystack, signature, money, import validation, format
 proxy.js                 route-level role guard (Next.js 16 renamed middleware)
-supabase/migrations/     11 SQL files: schema, functions, RLS, storage, platform, revenue, loan repayment + statements, reconciliation, staff roles, money safety, role authority   (docs/all_migrations_combined.sql = all eleven)
+supabase/migrations/     15 SQL files: schema, functions, RLS, storage, platform, revenue, loan repayment + statements, reconciliation, staff roles, money safety, role authority, notifications, contribution plans, cashbook, savings goals   (docs/all_migrations_combined.sql = all fifteen)
 scripts/                 seed.mjs, simulate-webhook.mjs
 tests/                   unit/ (no database)  integration/ (needs Supabase + seed)
 docs/REPORT_ALIGNMENT.md Differences between this code and the project report (READ THIS)
@@ -89,7 +95,7 @@ docs/REPORT_ALIGNMENT.md Differences between this code and the project report (R
    * the **anon / publishable** key
    * the **service_role / secret** key (**server only; never commit or expose it**)
    If the dashboard shows both "legacy" and new-style keys, either pair works with this code.
-3. **SQL Editor > New query**. Paste and run the eleven files in `supabase/migrations/` **in order**
+3. **SQL Editor > New query**. Paste and run the fifteen files in `supabase/migrations/` **in order**
    (or run `docs/all_migrations_combined.sql` once):
    1. `..._schema.sql`  2. `..._functions.sql`  3. `..._rls.sql`  4. `..._storage.sql`  5. `..._platform.sql`  6. `..._revenue.sql`  7. `..._loan_repayment_statements.sql`  8. `..._reconciliation.sql`  9. `..._staff_roles.sql`  10. `..._money_safety.sql`  11. `..._role_authority.sql`
    Each must finish with "Success. No rows returned". If one errors, fix it before running the next. On an existing
@@ -128,7 +134,7 @@ PLATFORM_FEE_KOBO=0
 PLATFORM_FEE_PERCENT=0
 PAYSTACK_BEARER=subaccount
 PAYSTACK_ALLOW_NO_SUBACCOUNT=false
-CRON_SECRET=<a long random string>
+CRON_SECRET=<a long random string>   # protects /api/cron/reconcile and /api/cron/notifications
 RECON_SETTLE_HOURS=48
 RECON_FINAL_DAYS=7
 RECON_REVIEW_DAYS=14

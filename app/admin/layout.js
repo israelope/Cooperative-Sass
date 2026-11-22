@@ -1,13 +1,18 @@
 import AppShell from '@/components/AppShell';
 import { requireStaff } from '@/lib/auth';
+import { unreadCount } from '@/lib/notifications';
 
 export default async function AdminLayout({ children }) {
-  const { profile } = await requireStaff();
+  const { supabase, profile } = await requireStaff();
   const isAdmin = profile.role === 'admin';
+  const unread = await unreadCount(supabase);
   const nav = [
     { href: '/admin', label: 'Dashboard' },
+    { href: '/admin/notifications', label: 'Notifications', badge: unread },
     { href: '/admin/members', label: 'Members' },
     { href: '/admin/payments', label: 'Payments' },
+    { href: '/admin/cashbook', label: 'Cashbook' },
+    { href: '/admin/contributions', label: 'Savings plans' },
     { href: '/admin/loans', label: 'Loans' },
     { href: '/admin/payments/record', label: 'Record payment' },
     { href: '/admin/reconciliation', label: 'Reconciliation' },

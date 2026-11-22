@@ -7,6 +7,7 @@ import PayForm from '@/components/PayForm';
 import DataTable from '@/components/DataTable';
 import EmptyState from '@/components/EmptyState';
 import Pagination from '@/components/Pagination';
+import LoanCalculator from '@/components/LoanCalculator';
 import { requireMember } from '@/lib/auth';
 import { must, mustWithCount } from '@/lib/db';
 import { pageOf, pageRange } from '@/lib/pagination';
@@ -18,10 +19,10 @@ export const metadata = { title: 'Loans' };
 
 export default async function MemberLoans(props) {
   const searchParams = await props.searchParams;
-  const { supabase, member } = await requireMember();
+  const { supabase, member, profile } = await requireMember();
   const page = pageOf(searchParams.page);
   const range = pageRange(page);
-  const [sum, { rows: loans, count: total }, activeLoans] = await Promise.all([
+  const [sum, { rows: loans, count: total }, activeLoans, tenant] = await Promise.all([
     await must(supabase.rpc('member_summary', { p_member_id: member.id }), 'member summary'),
     await mustWithCount(
       supabase
@@ -38,6 +39,10 @@ export default async function MemberLoans(props) {
         .eq('member_id', member.id).eq('status', 'active'),
       'active loans',
     ),
+    await must(
+      supabase.from('tenants').select('default_interest_rate').eq('id', profile.tenant_id).single(),
+      'loan settings',
+    ),
   ]);
   const s = sum?.[0] || {};
   const active = member.status === 'active';
@@ -51,6 +56,8 @@ export default async function MemberLoans(props) {
         <Stat label="Still owed" value={naira(s.outstanding)} icon="receipt" />
         <Stat label="You can borrow" value={naira(s.loan_limit)} tone="text-ok-700" icon="trendingUp" />
       </StatGrid>
+
+      <LoanCalculator rate={tenant?.default_interest_rate} limit={s.loan_limit} />
 
       <section className="panel mb-8 max-w-xl p-6">
         <h2 className="flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="bank" size={18} className="text-accent-500" /> Request a loan</h2>

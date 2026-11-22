@@ -5,6 +5,7 @@ import { createServiceClient } from '@/lib/supabase/service';
 import { createSubaccount, updateSubaccount } from '@/lib/paystack';
 import { validateRows } from '@/lib/importValidate';
 import { parseSpreadsheet } from '@/lib/importParse';
+import { notifyTransaction, notifyLoan } from '@/lib/notifications';
 
 const str = (fd, k) => String(fd.get(k) ?? '').trim();
 const num = (fd, k) => Number(String(fd.get(k) ?? '').replace(/,/g, ''));
@@ -49,11 +50,12 @@ export async function recordManualPayment(prev, fd) {
   if (!(amount > 0)) return { error: 'Enter an amount greater than zero.' };
   const receiptPath = str(fd, 'receiptPath');
   if (!receiptPath) return { error: 'Upload a photo of the receipt first.' };
-  const { error } = await supabase.rpc('record_manual_payment', {
+  const { data: txnId, error } = await supabase.rpc('record_manual_payment', {
     p_member_id: str(fd, 'memberId'), p_amount: amount, p_channel: str(fd, 'channel'),
     p_receipt_path: receiptPath, p_paid_on: str(fd, 'paidOn') || null, p_note: str(fd, 'note') || null,
   });
   if (error) return { error: msg(error) };
+  await notifyTransaction(txnId);
   revalidatePath('/admin', 'layout');
   return { ok: true, message: 'Payment recorded and added to the member\'s passbook.' };
 }
@@ -94,16 +96,20 @@ export async function decideLoan(prev, fd) {
   const decision = str(fd, 'decision');
   if (decision !== 'approve' && decision !== 'reject') return { error: 'Choose Approve or Reject.' };
   const approve = decision === 'approve';
-  const { error } = await supabase.rpc('decide_loan', { p_loan_id: str(fd, 'loanId'), p_approve: approve, p_interest: approve ? num(fd, 'interest') : null });
+  const loanId = str(fd, 'loanId');
+  const { error } = await supabase.rpc('decide_loan', { p_loan_id: loanId, p_approve: approve, p_interest: approve ? num(fd, 'interest') : null });
   if (error) return { error: msg(error) };
+  await notifyLoan(loanId, approve ? 'approved' : 'rejected');
   revalidatePath('/admin/loans');
   return { ok: true, message: approve ? 'Loan approved. Transfer the money, then mark it as paid out.' : 'Loan rejected.' };
 }
 
 export async function activateLoan(prev, fd) {
   const { supabase } = await requireStaff({ adminOnly: true });
-  const { error } = await supabase.rpc('activate_loan', { p_loan_id: str(fd, 'loanId') });
+  const loanId = str(fd, 'loanId');
+  const { error } = await supabase.rpc('activate_loan', { p_loan_id: loanId });
   if (error) return { error: msg(error) };
+  await notifyLoan(loanId, 'activated');
   revalidatePath('/admin/loans');
   return { ok: true, message: 'Loan is now active.' };
 }
@@ -112,8 +118,10 @@ export async function recordRepayment(prev, fd) {
   const { supabase } = await requireStaff();
   const amount = num(fd, 'amount');
   if (!(amount > 0)) return { error: 'Enter an amount greater than zero.' };
-  const { error } = await supabase.rpc('record_repayment', { p_loan_id: str(fd, 'loanId'), p_amount: amount });
+  const loanId = str(fd, 'loanId');
+  const { error } = await supabase.rpc('record_repayment', { p_loan_id: loanId, p_amount: amount });
   if (error) return { error: msg(error) };
+  await notifyLoan(loanId, 'repayment');
   revalidatePath('/admin/loans');
   return { ok: true, message: 'Repayment recorded.' };
 }
@@ -254,4 +262,90 @@ export async function resolveReconciliation(prev, fd) {
   revalidatePath('/admin/reconciliation');
   revalidatePath('/admin', 'layout');
   return { ok: true, message: data === 'resolved' ? 'Decision recorded.' : String(data) };
+}
+
+/* ---------------- notifications, schedules and cashbook ---------------- */
+
+export async function nudgeMember(prev, fd) {
+  await requireStaff();
+  const { error } = await createServiceClient().rpc('nudge_contribution', { p_member_id: str(fd, 'memberId') });
+  if (error) return { error: msg(error) };
+  return { ok: true, message: 'A reminder was sent to the member\'s in-app inbox.' };
+}
+
+export async function broadcastAnnouncement(prev, fd) {
+  const { profile } = await requireStaff({ adminOnly: true });
+  const title = str(fd, 'title');
+  const body = str(fd, 'body');
+  if (title.length < 3) return { error: 'Enter a short title.' };
+  if (body.length < 5) return { error: 'Enter the announcement message.' };
+  const key = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
+  const { data, error } = await createServiceClient().rpc('broadcast_announcement', {
+    p_tenant_hint: profile.tenant_id, p_title: title, p_body: body,
+    p_href: str(fd, 'href') || null, p_key: key,
+  });
+  if (error) return { error: msg(error) };
+  revalidatePath('/admin/notifications');
+  return { ok: true, message: `Announcement delivered to ${data || 0} member(s).` };
+}
+
+export async function createCashAccount(prev, fd) {
+  await requireStaff();
+  const opening = fd.get('openingBalance') ? num(fd, 'openingBalance') : 0;
+  if (!(opening >= 0)) return { error: 'Opening balance cannot be negative.' };
+  const { error } = await supabaseRpc('create_cash_account', {
+    p_name: str(fd, 'name'), p_kind: str(fd, 'kind'), p_opening: opening, p_note: str(fd, 'note') || null,
+  });
+  if (error) return { error: msg(error) };
+  revalidatePath('/admin/cashbook');
+  return { ok: true, message: 'Cash account added.' };
+}
+
+export async function addCashEntry(prev, fd) {
+  await requireStaff();
+  const amount = num(fd, 'amount');
+  if (!(amount > 0)) return { error: 'Enter an amount greater than zero.' };
+  const kind = str(fd, 'kind');
+  const { error } = await supabaseRpc('add_cashbook_entry', {
+    p_account_id: str(fd, 'accountId'), p_kind: kind, p_category: str(fd, 'category'),
+    p_amount: amount, p_entry_date: str(fd, 'entryDate') || null, p_note: str(fd, 'note') || null,
+  });
+  if (error) return { error: msg(error) };
+  revalidatePath('/admin/cashbook');
+  return { ok: true, message: kind === 'income' ? 'Income recorded.' : 'Expense recorded.' };
+}
+
+export async function addCashTransfer(prev, fd) {
+  await requireStaff();
+  const amount = num(fd, 'amount');
+  if (!(amount > 0)) return { error: 'Enter an amount greater than zero.' };
+  const { error } = await supabaseRpc('add_cash_transfer', {
+    p_from_account: str(fd, 'fromAccount'), p_to_account: str(fd, 'toAccount'),
+    p_amount: amount, p_entry_date: str(fd, 'entryDate') || null, p_note: str(fd, 'note') || null,
+  });
+  if (error) return { error: msg(error) };
+  revalidatePath('/admin/cashbook');
+  return { ok: true, message: 'Transfer recorded.' };
+}
+
+export async function setDefaultCashAccount(prev, fd) {
+  await requireStaff({ adminOnly: true });
+  const { error } = await supabaseRpc('set_default_cash_account', { p_account_id: str(fd, 'accountId') });
+  if (error) return { error: msg(error) };
+  revalidatePath('/admin/cashbook');
+  return { ok: true, message: 'Default account updated. Member payments now count towards it.' };
+}
+
+export async function deleteCashEntry(prev, fd) {
+  await requireStaff();
+  const { error } = await supabaseRpc('delete_cashbook_entry', { p_id: str(fd, 'id') });
+  if (error) return { error: msg(error) };
+  revalidatePath('/admin/cashbook');
+  return { ok: true, message: 'Entry removed.' };
+}
+
+/** Cashbook changes must be visible to the caller's RLS-scoped session. */
+async function supabaseRpc(name, args) {
+  const { supabase } = await requireStaff();
+  return supabase.rpc(name, args);
 }

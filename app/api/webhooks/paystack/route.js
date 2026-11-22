@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { verifyPaystackSignature } from '@/lib/signature';
+import { notifyPayment } from '@/lib/notifications';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -48,5 +49,6 @@ export async function POST(req) {
     console.error('Reconciliation error', error.message);
     return NextResponse.json({ error: 'Retry later' }, { status: 500 });   // Paystack will retry
   }
+  await notifyPayment(reference);   // in-app notice only; never blocks the webhook response
   return NextResponse.json({ received: true, result: data });
 }
