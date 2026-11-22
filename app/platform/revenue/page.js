@@ -24,7 +24,7 @@ export default async function RevenuePage(props) {
 
   return (
     <>
-      <PageHeader title="Revenue" intro="Fees your platform earns on online payments. Cash and transfer entries carry no fee." icon="trendingUp" helpKey="platformRevenue">
+      <PageHeader title="Revenue" intro="Fees your platform earns on online payments. Cash and transfer entries carry no fee." icon="trendingUp">
         {RANGES.map((d) => (
           <Link key={d} href={`/platform/revenue?days=${d}`} aria-current={d === days ? 'page' : undefined} className={d === days ? 'btn-primary btn-sm' : 'btn-quiet btn-sm'}>
             <Icon name="calendar" size={16} /> {d} days

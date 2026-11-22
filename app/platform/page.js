@@ -50,7 +50,7 @@ export default async function PlatformOverview() {
 
   return (
     <>
-      <PageHeader title="Platform overview" intro="Everything happening across every cooperative on CoopLedger." helpKey="platformHome">
+      <PageHeader title="Platform overview" intro="Everything happening across every cooperative on CoopLedger.">
         <Link href="/platform/revenue" className="btn-quiet"><Icon name="chart" size={16} /> Revenue report</Link>
       </PageHeader>
 

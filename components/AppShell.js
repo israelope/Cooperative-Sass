@@ -31,11 +31,13 @@ export default function AppShell({ nav, title, subtitle, tone = 'cooperative', h
           <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto px-3 pb-4" aria-label="Main">
             <NavLinks nav={nav} />
           </nav>
-          <div className="shrink-0 border-t border-white/10 p-3">
-            <Link href={helpHref} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 transition-colors hover:bg-accent-700 hover:text-white">
-              <Icon name="info" size={17} /> Help &amp; guides
-            </Link>
-          </div>
+          {helpHref && (
+            <div className="shrink-0 border-t border-white/10 p-3">
+              <Link href={helpHref} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 transition-colors hover:bg-accent-700 hover:text-white">
+                <Icon name="info" size={17} /> Help &amp; guides
+              </Link>
+            </div>
+          )}
           <form action={logout} className="shrink-0 border-t border-white/10 p-3">
             <button type="submit" className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 transition-colors hover:bg-accent-700 hover:text-white">
               <Icon name="logout" size={17} /> Log out

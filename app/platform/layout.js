@@ -9,5 +9,5 @@ export default async function PlatformLayout({ children }) {
     { href: '/platform/cooperatives', label: 'Cooperatives' },
     { href: '/platform/visitors', label: 'Visitors' },
   ];
-  return <AppShell nav={nav} title="Platform owner" subtitle={user.email} tone="platform" helpHref="/help/platform">{children}</AppShell>;
+  return <AppShell nav={nav} title="Platform owner" subtitle={user.email} tone="platform" helpHref={null}>{children}</AppShell>;
 }

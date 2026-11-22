@@ -36,13 +36,15 @@ export default function MobileNav({ nav, title, subtitle, variant = 'header', he
           <nav aria-label="All pages">
             <NavLinks nav={nav} variant="menu" onNavigate={() => setOpen(false)} />
           </nav>
-          <Link
-            href={helpHref}
-            onClick={() => setOpen(false)}
-            className="mt-3 flex items-center gap-3 rounded-lg border-t border-rule px-3 pb-2 pt-3 text-sm font-semibold text-accent-700 transition-colors hover:bg-accent-50"
-          >
-            <Icon name="info" size={17} /> Help &amp; guides
-          </Link>
+          {helpHref && (
+            <Link
+              href={helpHref}
+              onClick={() => setOpen(false)}
+              className="mt-3 flex items-center gap-3 rounded-lg border-t border-rule px-3 pb-2 pt-3 text-sm font-semibold text-accent-700 transition-colors hover:bg-accent-50"
+            >
+              <Icon name="info" size={17} /> Help &amp; guides
+            </Link>
+          )}
           <form action={logout} className="border-t border-rule pt-3">
             <button type="submit" className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-ink/75 transition-colors hover:bg-accent-50 hover:text-accent-800">
               <Icon name="logout" size={17} /> Log out

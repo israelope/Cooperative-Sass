@@ -26,7 +26,7 @@ export default async function CooperativesPage(props) {
 
   return (
     <>
-      <PageHeader title="Cooperatives" intro={`${all.length} registered. Suspending a cooperative locks all its users out immediately.`} icon="building" helpKey="platformCooperatives" />
+      <PageHeader title="Cooperatives" intro={`${all.length} registered. Suspending a cooperative locks all its users out immediately.`} icon="building" />
       <form method="get" className="mb-4 flex items-end gap-3">
         <input type="hidden" name="page" value="1" />
         <div className="grow sm:max-w-xs"><label htmlFor="q" className="label">Search name, link or admin</label><input id="q" name="q" defaultValue={q} className="input" /></div>

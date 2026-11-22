@@ -7,7 +7,6 @@ const AUDIENCES = [
   { icon: 'settings', title: 'Cooperative owners & admins', text: 'Set up your society, bring members over from paper, approve accounts and see every naira in one place.', href: '/help/admin', cta: 'Read the admin guide' },
   { icon: 'receipt', title: 'Bookkeepers & treasurers', text: 'Record cash and transfers with receipts, reconcile online payments and issue statements without chasing alerts.', href: '/help/bookkeeper', cta: 'Read the bookkeeper guide' },
   { icon: 'wallet', title: 'Members', text: 'Pay contributions any time, check your passbook and loan limit, and download your own statement.', href: '/help/member', cta: 'Read the member guide' },
-  { icon: 'chart', title: 'Platform owners', text: 'Oversee every cooperative, follow revenue and reconciliation health, and understand site activity.', href: '/help/platform', cta: 'Read the owner guide' },
 ];
 
 const SAMPLE = [
@@ -29,7 +28,7 @@ const FEATURES = [
   { icon: 'receipt', title: 'Cash still counts', text: 'Bookkeepers record cash and transfers with a photo of the receipt, so members can check every entry.' },
   { icon: 'bank', title: 'Loans, end to end', text: 'Request, approve, pay out and repay — with a clear loan limit derived from each member’s savings.' },
   { icon: 'fileText', title: 'Statements on demand', text: 'Members download their own PDF passbook; officers export cooperative statements and CSV ledgers.' },
-  { icon: 'chart', title: 'A clear view for owners', text: 'Platform dashboards show activity, revenue and reconciliation health across every cooperative.' },
+  { icon: 'card', title: 'A membership card for every member', text: 'Each member gets a digital card with their number, ready to show when they pay in cash.' },
 ];
 
 export default function Home() {
@@ -102,7 +101,7 @@ export default function Home() {
           <p className="mt-2 max-w-prose text-sm leading-relaxed text-ink/75">
             Each role sees the tools it needs, with a short guide that explains every page. Choose yours to see exactly what you can do.
           </p>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {AUDIENCES.map((audience) => (
               <div key={audience.title} className="panel p-5">
                 <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent-50 text-accent-600"><Icon name={audience.icon} size={19} /></span>
