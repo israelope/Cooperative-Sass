@@ -28,7 +28,7 @@ export default async function MemberNotifications(props) {
 
   return (
     <>
-      <PageHeader title="Notifications" intro="Payments, loan updates and messages from your cooperative, all in one place." icon="mail">
+      <PageHeader title="Notifications" intro="Payments, loan updates and messages from your cooperative, all in one place." icon="mail" helpKey="memberNotifications">
         {count > 0 && (
           <form action={markAllNotificationsRead}>
             <button type="submit" className="btn-quiet"><Icon name="check" size={16} /> Mark all as read</button>

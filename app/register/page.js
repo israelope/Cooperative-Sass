@@ -11,7 +11,7 @@ export default function RegisterPage() {
     <AuthCard
       title="Register your cooperative"
       intro="You will be the admin. Your society gets a private workspace and a link to share with members. You can add bank details for online payments afterwards in Settings."
-      footer={<p>Already registered? <Link href="/login" className="link">Log in</Link>.</p>}
+      footer={<div className="space-y-2"><p>Already registered? <Link href="/login" className="link">Log in</Link>.</p><p>New to this? <Link href="/help/admin#setup" className="link">Read the admin setup guide</Link></p></div>}
     >
       <ActionForm action={registerCooperative} className="space-y-4">
         <Field label="Cooperative name" name="coopName" placeholder="e.g. Adeola Thrift Society" />

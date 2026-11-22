@@ -1,6 +1,14 @@
 import Link from 'next/link';
 import Icon from '@/components/Icon';
 import Logo from '@/components/Logo';
+import { FAQS } from '@/lib/help-content';
+
+const AUDIENCES = [
+  { icon: 'settings', title: 'Cooperative owners & admins', text: 'Set up your society, bring members over from paper, approve accounts and see every naira in one place.', href: '/help/admin', cta: 'Read the admin guide' },
+  { icon: 'receipt', title: 'Bookkeepers & treasurers', text: 'Record cash and transfers with receipts, reconcile online payments and issue statements without chasing alerts.', href: '/help/bookkeeper', cta: 'Read the bookkeeper guide' },
+  { icon: 'wallet', title: 'Members', text: 'Pay contributions any time, check your passbook and loan limit, and download your own statement.', href: '/help/member', cta: 'Read the member guide' },
+  { icon: 'chart', title: 'Platform owners', text: 'Oversee every cooperative, follow revenue and reconciliation health, and understand site activity.', href: '/help/platform', cta: 'Read the owner guide' },
+];
 
 const SAMPLE = [
   ['03 Oct', 'Online payment', '25,000.00', '410,000.00'],
@@ -31,6 +39,7 @@ export default function Home() {
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-4">
           <Logo />
           <nav className="flex items-center gap-2" aria-label="Account">
+            <Link href="/help" className="btn-quiet btn-sm"><Icon name="info" size={15} /> Help centre</Link>
             <Link href="/claim" className="btn-quiet btn-sm"><Icon name="ticket" size={15} /> Claim account</Link>
             <Link href="/login" className="btn-primary btn-sm"><Icon name="logout" size={15} /> Log in</Link>
           </nav>
@@ -54,6 +63,7 @@ export default function Home() {
               <Link href="/claim" className="btn-quiet"><Icon name="ticket" size={17} /> I have a claim code</Link>
             </div>
             <p className="mt-4 text-sm text-ink/75">Moving from paper? Upload a spreadsheet and hand each member a claim code. No one creates 500 passwords by hand.</p>
+            <p className="mt-3 text-sm"><Link href="/help" className="link inline-flex items-center gap-1">New here? See the step-by-step guides <Icon name="arrowRight" size={14} /></Link></p>
             <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium text-accent-800">
               <li className="inline-flex items-center gap-2"><Icon name="shield" size={16} className="text-accent-500" /> Private by design</li>
               <li className="inline-flex items-center gap-2"><Icon name="card" size={16} className="text-accent-500" /> Paystack payments</li>
@@ -81,6 +91,28 @@ export default function Home() {
                 </tbody>
               </table>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="who-its-for" className="border-t border-rule bg-chalk">
+        <div className="mx-auto max-w-6xl px-5 py-14">
+          <span className="badge-info"><Icon name="users" size={13} /> Who it&apos;s for</span>
+          <h2 className="mt-3 text-2xl font-bold text-accent-900 sm:text-3xl">Everyone in your society has a place here</h2>
+          <p className="mt-2 max-w-prose text-sm leading-relaxed text-ink/75">
+            Each role sees the tools it needs, with a short guide that explains every page. Choose yours to see exactly what you can do.
+          </p>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2">
+            {AUDIENCES.map((audience) => (
+              <div key={audience.title} className="panel p-5">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent-50 text-accent-600"><Icon name={audience.icon} size={19} /></span>
+                <h3 className="mt-3 font-display text-lg font-bold text-accent-900">{audience.title}</h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-ink/75">{audience.text}</p>
+                <Link href={audience.href} className="link mt-3 inline-flex items-center gap-1 text-sm">
+                  {audience.cta} <Icon name="arrowRight" size={14} />
+                </Link>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -118,6 +150,25 @@ export default function Home() {
         </div>
       </section>
 
+      <section id="faq" className="border-t border-rule bg-chalk">
+        <div className="mx-auto max-w-3xl px-5 py-14">
+          <span className="badge-info"><Icon name="info" size={13} /> Good to know</span>
+          <h2 className="mt-3 text-2xl font-bold text-accent-900 sm:text-3xl">Questions people ask first</h2>
+          <div className="mt-6 space-y-2">
+            {FAQS.slice(0, 5).map((item) => (
+              <details key={item.q} className="panel group px-5 py-4">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-semibold text-accent-900 marker:hidden">
+                  {item.q}
+                  <Icon name="arrowRight" size={16} className="shrink-0 text-accent-500 transition-transform group-open:rotate-90" />
+                </summary>
+                <p className="mt-3 text-sm leading-relaxed text-ink/80">{item.a}</p>
+              </details>
+            ))}
+          </div>
+          <p className="mt-5 text-sm"><Link href="/help#faq" className="link inline-flex items-center gap-1">More questions and the full glossary <Icon name="arrowRight" size={14} /></Link></p>
+        </div>
+      </section>
+
       <section className="bg-accent-900 text-white">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-6 px-5 py-12">
           <div>
@@ -135,6 +186,7 @@ export default function Home() {
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4">
           <Logo />
           <nav className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-ink/75" aria-label="Footer">
+            <Link href="/help" className="hover:text-accent-700">Help centre</Link>
             <Link href="/claim" className="hover:text-accent-700">Claim account</Link>
             <Link href="/login" className="hover:text-accent-700">Log in</Link>
             <Link href="/register" className="hover:text-accent-700">Register</Link>

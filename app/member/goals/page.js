@@ -25,7 +25,7 @@ export default async function MemberGoals() {
 
   return (
     <>
-      <PageHeader title="My savings goal" intro="Pick a target and watch your passbook balance carry you there. Progress is calculated from your real savings." icon="trendingUp" />
+      <PageHeader title="My savings goal" intro="Pick a target and watch your passbook balance carry you there. Progress is calculated from your real savings." icon="trendingUp" helpKey="memberGoals" />
 
       <div className="grid gap-6 lg:grid-cols-5">
         <section className="panel p-6 lg:col-span-3">

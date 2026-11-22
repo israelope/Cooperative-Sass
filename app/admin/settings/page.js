@@ -24,7 +24,7 @@ export default async function SettingsPage() {
 
   return (
     <>
-      <PageHeader title="Settings" intro="Your cooperative's rules, payout account and staff." icon="settings" />
+      <PageHeader title="Settings" intro="Your cooperative's rules, payout account and staff." icon="settings" helpKey="adminSettings" />
 
       <section className="panel mb-8 max-w-2xl p-6">
         <h2 className="flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="building" size={18} className="text-accent-500" /> Cooperative</h2>

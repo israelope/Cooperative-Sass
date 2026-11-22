@@ -33,10 +33,23 @@ export default async function AdminDashboard() {
 
   return (
     <>
-      <PageHeader title={`Welcome, ${profile.full_name?.split(' ')[0] || 'there'}`} intro={`Overview of ${profile.tenants?.name}.`}>
+      <PageHeader title={`Welcome, ${profile.full_name?.split(' ')[0] || 'there'}`} intro={`Overview of ${profile.tenants?.name}.`} helpKey="adminHome">
         <Link href="/admin/payments/record" className="btn-gold"><Icon name="plusCircle" size={16} /> Record a payment</Link>
         <Link href="/admin/members" className="btn-quiet"><Icon name="users" size={16} /> Members</Link>
       </PageHeader>
+
+      {Number(s.members_active || 0) === 0 && Number(s.month_collections || 0) === 0 && (
+        <div className="callout-info mb-5 flex-wrap">
+          <Icon name="info" size={18} className="mt-0.5 shrink-0" />
+          <div>
+            <p className="font-semibold">New here? Start with the setup guide.</p>
+            <p className="mt-0.5">
+              Add payout details, bring your members in, then record your first payment — in that order.{' '}
+              <Link href="/help/admin#setup" className="link">Open the admin guide</Link>
+            </p>
+          </div>
+        </div>
+      )}
 
       {needsAttention > 0 && (
         <div className="callout-warn mb-5" role="status">

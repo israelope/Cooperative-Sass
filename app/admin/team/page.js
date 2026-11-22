@@ -31,7 +31,7 @@ export default async function TeamPage() {
 
   return (
     <>
-      <PageHeader title="Team" intro="Add admins and bookkeepers, or change an existing staff member's role." icon="users">
+      <PageHeader title="Team" intro="Add admins and bookkeepers, or change an existing staff member's role." icon="users" helpKey="adminTeam">
         <Link href="/admin/settings" className="btn-quiet"><Icon name="settings" size={16} /> Cooperative settings</Link>
       </PageHeader>
 

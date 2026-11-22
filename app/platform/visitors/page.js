@@ -20,7 +20,7 @@ export default async function VisitorsPage(props) {
 
   return (
     <>
-      <PageHeader title="Visitors" intro="Anonymous page-view analytics. No cookies are used and no IP addresses are stored." icon="eye">
+      <PageHeader title="Visitors" intro="Anonymous page-view analytics. No cookies are used and no IP addresses are stored." icon="eye" helpKey="platformVisitors">
         {RANGES.map((r) => (
           <Link key={r} href={`/platform/visitors?days=${r}`} aria-current={r === days ? 'page' : undefined} className={r === days ? 'btn-primary btn-sm' : 'btn-quiet btn-sm'}>
             <Icon name="calendar" size={16} /> {r} days

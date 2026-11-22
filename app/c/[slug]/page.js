@@ -22,7 +22,7 @@ export default async function CooperativePage(props) {
     <AuthCard
       title={tenant.name}
       intro={`Welcome to the member portal of ${tenant.name}. View your digital passbook, pay your contribution and request loans.`}
-      footer={<p className="text-center">Don&apos;t have an account? Ask your cooperative&apos;s officers for a claim code or join link.</p>}
+      footer={<div className="space-y-2 text-center"><p>Don&apos;t have an account? Ask your cooperative&apos;s officers for a claim code or join link.</p><p><Link href="/help/member#start" className="link">New member? Read the short guide</Link></p></div>}
     >
       <div className="space-y-3">
         <Link href="/login" className="panel flex items-center gap-4 p-4 transition-colors hover:bg-accent-50">

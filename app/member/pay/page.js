@@ -10,7 +10,7 @@ export default async function PayPage() {
   const active = member.status === 'active';
   return (
     <>
-      <PageHeader title="Pay your contribution" icon="wallet" />
+      <PageHeader title="Pay your contribution" icon="wallet" helpKey="memberPay" />
       {!active && (
         <div className="callout-warn mb-4" role="status">
           <Icon name="alertTriangle" size={18} className="mt-0.5" />

@@ -69,7 +69,7 @@ export default async function LoansPage(props) {
 
   return (
     <>
-      <PageHeader title="Loans" intro="The platform tracks loans but never moves money. After approving, transfer the funds yourself, then mark the loan as paid out." icon="bank" />
+      <PageHeader title="Loans" intro="The platform tracks loans but never moves money. After approving, transfer the funds yourself, then mark the loan as paid out." icon="bank" helpKey="adminLoans" />
 
       <Section
         title="Waiting for a decision"

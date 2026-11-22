@@ -12,7 +12,7 @@ export default async function StatementsPage() {
   const qs = (x) => `from=${x.from}&to=${x.to}`;
   return (
     <>
-      <PageHeader title="Statements" intro="Download your cooperative's statement as a PDF: collections by channel, every member's savings and loan balance, and every payment in the period." icon="fileText" />
+      <PageHeader title="Statements" intro="Download your cooperative's statement as a PDF: collections by channel, every member's savings and loan balance, and every payment in the period." icon="fileText" helpKey="adminStatements" />
 
       <section className="panel mb-6 grid max-w-2xl gap-4 p-6 sm:grid-cols-3">
         <div>

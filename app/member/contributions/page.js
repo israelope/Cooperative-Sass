@@ -21,7 +21,7 @@ export default async function MemberContributions() {
 
   return (
     <>
-      <PageHeader title="Savings plan" intro="Choose a schedule and we'll remind you in the app when it's time to pay. You still make each payment yourself." icon="calendar">
+      <PageHeader title="Savings plan" intro="Choose a schedule and we'll remind you in the app when it's time to pay. You still make each payment yourself." icon="calendar" helpKey="memberContributions">
         <Link href="/member/pay" className="btn-gold"><Icon name="wallet" size={16} /> Pay now</Link>
       </PageHeader>
 

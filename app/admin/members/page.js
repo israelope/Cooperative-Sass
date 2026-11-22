@@ -36,7 +36,7 @@ export default async function MembersPage(props) {
 
   return (
     <>
-      <PageHeader title="Members" intro="Manage your society's members and their account status." icon="users">
+      <PageHeader title="Members" intro="Manage your society's members and their account status." icon="users" helpKey="adminMembers">
         {profile.role === 'admin' && <Link href="/admin/team" className="btn-quiet"><Icon name="users" size={16} /> Manage team</Link>}
         {profile.role === 'admin' && <Link href="/admin/import" className="btn-quiet"><Icon name="upload" size={16} /> Bulk import</Link>}
       </PageHeader>

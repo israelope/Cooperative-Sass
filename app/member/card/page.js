@@ -14,7 +14,7 @@ export default async function MemberCard() {
 
   return (
     <>
-      <PageHeader title="Membership card" intro="Your digital identity in this cooperative. Show your number to an officer when you pay in cash." icon="card">
+      <PageHeader title="Membership card" intro="Your digital identity in this cooperative. Show your number to an officer when you pay in cash." icon="card" helpKey="memberCard">
         <CopyButton value={member.member_no} label="Copy number" />
       </PageHeader>
 

@@ -11,7 +11,7 @@ export default async function ImportPage() {
   await requireStaff({ adminOnly: true });
   return (
     <>
-      <PageHeader title="Bulk import" intro="Move your paper records online in four steps." icon="upload">
+      <PageHeader title="Bulk import" intro="Move your paper records online in four steps." icon="upload" helpKey="adminImport">
         <a href="/api/import-template" className="btn-gold"><Icon name="download" size={16} /> Download Excel template</a>
         <a href="/templates/member_import_template.csv" className="btn-quiet"><Icon name="download" size={16} /> CSV template</a>
       </PageHeader>

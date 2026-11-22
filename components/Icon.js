@@ -246,6 +246,16 @@ const PATHS = {
       <path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.5-1.5" />
     </>
   ),
+  menu: (
+    <>
+      <path d="M4 6h16M4 12h16M4 18h16" />
+    </>
+  ),
+  close: (
+    <>
+      <path d="M6 6l12 12M18 6 6 18" />
+    </>
+  ),
 };
 
 export default function Icon({ name, size = 18, className = '', strokeWidth = 1.8, ...rest }) {

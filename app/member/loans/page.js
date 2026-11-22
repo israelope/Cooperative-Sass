@@ -49,7 +49,7 @@ export default async function MemberLoans(props) {
 
   return (
     <>
-      <PageHeader title="Loans" intro="Your limit is your savings times your cooperative's multiplier, minus any loan you still owe." icon="bank" />
+      <PageHeader title="Loans" intro="Your limit is your savings times your cooperative's multiplier, minus any loan you still owe." icon="bank" helpKey="memberLoans" />
 
       <StatGrid cols="grid-cols-1 sm:grid-cols-3" className="mb-6">
         <Stat label="Savings" value={naira(s.savings)} icon="wallet" />

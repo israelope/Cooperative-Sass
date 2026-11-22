@@ -44,7 +44,7 @@ export default async function ReconciliationPage(props) {
 
   return (
     <>
-      <PageHeader title="Reconciliation" intro="Every online payment is checked against what Paystack reports. Anything that needs a human decision appears here." icon="refresh" />
+      <PageHeader title="Reconciliation" intro="Every online payment is checked against what Paystack reports. Anything that needs a human decision appears here." icon="refresh" helpKey="adminReconciliation" />
 
       <StatGrid cols="grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
         <Stat label="Checked" value={s.total ?? 0} icon="dashboard" />

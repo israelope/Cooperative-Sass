@@ -39,7 +39,7 @@ export default async function PassbookPage(props) {
 
   return (
     <>
-      <PageHeader title="Passbook" intro="Every entry, newest first. Entries are never edited: corrections appear as new lines." icon="book">
+      <PageHeader title="Passbook" intro="Every entry, newest first. Entries are never edited: corrections appear as new lines." icon="book" helpKey="memberPassbook">
         <a href={`/api/statements/member/${member.id}`} className="btn-gold"><Icon name="download" size={16} /> Download PDF statement</a>
         <a href={`/api/export/statement/${member.id}`} className="btn-quiet"><Icon name="fileText" size={16} /> CSV</a>
       </PageHeader>

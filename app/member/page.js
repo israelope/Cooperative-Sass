@@ -33,10 +33,24 @@ export default async function MemberHome() {
 
   return (
     <>
-      <PageHeader title={`Hello, ${member.full_name.split(' ')[0]}`} intro={`${profile.tenants?.name} · Member ${member.member_no}`}>
+      <PageHeader title={`Hello, ${member.full_name.split(' ')[0]}`} intro={`${profile.tenants?.name} · Member ${member.member_no}`} helpKey="memberHome">
         {active && <Link href="/member/pay" className="btn-gold"><Icon name="wallet" size={16} /> Pay contribution</Link>}
         {active && <Link href="/member/loans" className="btn-quiet"><Icon name="bank" size={16} /> Request a loan</Link>}
       </PageHeader>
+
+      {(entries || []).length === 0 && (
+        <div className="callout-info mb-5 flex-wrap">
+          <Icon name="info" size={18} className="mt-0.5 shrink-0" />
+          <div>
+            <p className="font-semibold">{active ? 'Welcome to your passbook.' : 'Your account is waiting for approval.'}</p>
+            <p className="mt-0.5">
+              {active
+                ? <>Make your first contribution and it will appear here automatically. <Link href="/help/member#start" className="link">See how it works</Link></>
+                : <>An officer needs to approve your membership before you can pay or borrow. <Link href="/help/member#start" className="link">Read the member guide</Link></>}
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="passbook-page p-6 pl-14">
         <p className="flex items-center gap-2 text-sm font-medium text-ink/75">

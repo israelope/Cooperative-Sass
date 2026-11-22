@@ -1,10 +1,11 @@
+import Link from 'next/link';
 import Logo from '@/components/Logo';
 import Icon from '@/components/Icon';
 import NavLinks from '@/components/NavLinks';
 import MobileNav from '@/components/MobileNav';
 import { logout } from '@/app/actions/auth';
 
-export default function AppShell({ nav, title, subtitle, tone = 'cooperative', children }) {
+export default function AppShell({ nav, title, subtitle, tone = 'cooperative', helpHref = '/help', children }) {
   // Three primary destinations on mobile; the More tab opens the full list.
   const primaryNav = nav.slice(0, 3);
 
@@ -17,7 +18,7 @@ export default function AppShell({ nav, title, subtitle, tone = 'cooperative', c
       {/* Mobile: compact sticky header with an all-pages menu. */}
       <div className="sticky top-0 z-40 flex w-full max-w-full items-center justify-between gap-3 border-b border-rule bg-white/95 px-4 py-3 backdrop-blur md:hidden">
         <div className="min-w-0"><Logo /></div>
-        <MobileNav nav={nav} title={title} subtitle={subtitle} />
+        <MobileNav nav={nav} title={title} subtitle={subtitle} helpHref={helpHref} />
       </div>
 
       <div className="md:flex">
@@ -30,7 +31,12 @@ export default function AppShell({ nav, title, subtitle, tone = 'cooperative', c
           <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto px-3 pb-4" aria-label="Main">
             <NavLinks nav={nav} />
           </nav>
-          <form action={logout} className="mt-auto shrink-0 border-t border-white/10 p-3">
+          <div className="shrink-0 border-t border-white/10 p-3">
+            <Link href={helpHref} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 transition-colors hover:bg-accent-700 hover:text-white">
+              <Icon name="info" size={17} /> Help &amp; guides
+            </Link>
+          </div>
+          <form action={logout} className="shrink-0 border-t border-white/10 p-3">
             <button type="submit" className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 transition-colors hover:bg-accent-700 hover:text-white">
               <Icon name="logout" size={17} /> Log out
             </button>

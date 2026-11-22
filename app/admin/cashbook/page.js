@@ -40,7 +40,7 @@ export default async function CashbookPage(props) {
 
   return (
     <>
-      <PageHeader title="Cashbook" intro="Record cooperative expenses, other income and transfers. Member contributions and loan payouts are included automatically." icon="bank" />
+      <PageHeader title="Cashbook" intro="Record cooperative expenses, other income and transfers. Member contributions and loan payouts are included automatically." icon="bank" helpKey="adminCashbook" />
 
       <section className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {accounts.length === 0 && (

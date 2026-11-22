@@ -31,7 +31,7 @@ export default async function AdminContributions(props) {
 
   return (
     <>
-      <PageHeader title="Savings plans" intro="See who has a recurring contribution plan, who is behind, and send a gentle in-app nudge." icon="calendar" />
+      <PageHeader title="Savings plans" intro="See who has a recurring contribution plan, who is behind, and send a gentle in-app nudge." icon="calendar" helpKey="adminPlans" />
 
       <section className="panel mb-6 flex flex-wrap items-center gap-6 p-5">
         <p className="text-sm text-ink/75"><span className="block font-display text-2xl font-bold text-accent-900">{count}</span> active plans</p>
