@@ -32,7 +32,7 @@ multi-instance deployment needs a shared store such as Upstash or Supabase itsel
 
 | Module | Who | What |
 |---|---|---|
-| Cooperative registration | President | Creates an isolated workspace + admin login + shareable link `/c/<slug>` |
+| Cooperative registration | President | Creates an isolated workspace + admin login + shareable link `/<slug>` |
 | Roles | Admin, Bookkeeper, Member | Route guards + role checks in server actions + Row-Level Security |
 | Digital passbook | Member | Ruled ledger with running balance, receipts, CSV statement |
 | Online payment | Member | Paystack checkout, **split settlement** to the cooperative's sub-account |

@@ -39,8 +39,8 @@ export default async function CooperativeDetail(props) {
 
   return (
     <>
-      <PageHeader title={c.name} intro={`Member link: /c/${c.slug} · registered ${formatDate(c.created_at)}`} icon="building">
-        <Link href={`/c/${c.slug}`} target="_blank" rel="noopener noreferrer" className="btn-quiet"><Icon name="externalLink" size={16} /> View member page</Link>
+      <PageHeader title={c.name} intro={`Member link: /${c.slug} · registered ${formatDate(c.created_at)}`} icon="building">
+        <Link href={`/${c.slug}`} target="_blank" rel="noopener noreferrer" className="btn-quiet"><Icon name="externalLink" size={16} /> View member page</Link>
         <Link href="/platform/cooperatives" className="btn-quiet"><Icon name="building" size={16} /> All cooperatives</Link>
         <ActionForm action={setTenantStatus}>
           <input type="hidden" name="id" value={c.id} />

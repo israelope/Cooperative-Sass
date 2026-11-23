@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import Icon from '@/components/Icon';
 import PageHeader from '@/components/PageHeader';
 import ImportWizard from '@/components/ImportWizard';
@@ -12,7 +13,7 @@ export default async function ImportPage() {
   return (
     <>
       <PageHeader title="Bulk import" intro="Move your paper records online in four steps." icon="upload" helpKey="adminImport">
-        <a href="/api/import-template" className="btn-gold"><Icon name="download" size={16} /> Download Excel template</a>
+        <Link href="/api/import-template" download className="btn-gold"><Icon name="download" size={16} /> Download Excel template</Link>
         <a href="/templates/member_import_template.csv" className="btn-quiet"><Icon name="download" size={16} /> CSV template</a>
       </PageHeader>
 

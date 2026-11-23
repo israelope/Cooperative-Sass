@@ -3,9 +3,9 @@ import { roleHome, sectionFor, canAccess, scopeHref, slugFromPath } from '@/lib/
 
 describe('tenant-scoped routing', () => {
   it('sends tenant roles to their co-op address and the owner to /platform', () => {
-    expect(roleHome('member', 'adeola-thrift')).toBe('/c/adeola-thrift/member');
-    expect(roleHome('admin', 'adeola-thrift')).toBe('/c/adeola-thrift/admin');
-    expect(roleHome('bookkeeper', 'adeola-thrift')).toBe('/c/adeola-thrift/admin');
+    expect(roleHome('member', 'adeola-thrift')).toBe('/adeola-thrift/member');
+    expect(roleHome('admin', 'adeola-thrift')).toBe('/adeola-thrift/admin');
+    expect(roleHome('bookkeeper', 'adeola-thrift')).toBe('/adeola-thrift/admin');
     expect(roleHome('platform_admin', 'adeola-thrift')).toBe('/platform');
   });
 
@@ -15,8 +15,8 @@ describe('tenant-scoped routing', () => {
   });
 
   it('recognises sections on scoped and legacy paths', () => {
-    expect(sectionFor('/c/adeola-thrift/member/pay')).toBe('member');
-    expect(sectionFor('/c/adeola-thrift/admin/loans')).toBe('staff');
+    expect(sectionFor('/adeola-thrift/member/pay')).toBe('member');
+    expect(sectionFor('/adeola-thrift/admin/loans')).toBe('staff');
     expect(sectionFor('/member')).toBe('member');
     expect(sectionFor('/admin/members')).toBe('staff');
     expect(sectionFor('/platform/revenue')).toBe('platform');
@@ -30,15 +30,16 @@ describe('tenant-scoped routing', () => {
   });
 
   it('keeps app links inside the current co-op', () => {
-    const pathname = '/c/adeola-thrift/member/passbook';
-    expect(scopeHref('/member/pay', pathname)).toBe('/c/adeola-thrift/member/pay');
-    expect(scopeHref('/member/notifications?filter=unread', pathname)).toBe('/c/adeola-thrift/member/notifications?filter=unread');
-    expect(scopeHref('/c/other/member', pathname)).toBe('/c/other/member');
+    const pathname = '/adeola-thrift/member/passbook';
+    expect(scopeHref('/member/pay', pathname)).toBe('/adeola-thrift/member/pay');
+    expect(scopeHref('/member/pay?plan=monthly', pathname)).toBe('/adeola-thrift/member/pay?plan=monthly');
+    expect(scopeHref('/other/member', pathname)).toBe('/other/member');
     expect(scopeHref('/help', pathname)).toBe('/help');
   });
 
   it('extracts the slug from a scoped path', () => {
-    expect(slugFromPath('/c/adeola-thrift/admin/loans')).toBe('adeola-thrift');
+    expect(slugFromPath('/adeola-thrift/admin/loans')).toBe('adeola-thrift');
     expect(slugFromPath('/admin/loans')).toBeNull();
+    expect(slugFromPath('/platform/revenue')).toBeNull();
   });
 });

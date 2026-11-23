@@ -94,7 +94,7 @@ export default async function VisitorsPage(props) {
           ) : (
             <DataTable caption="Most visited cooperative pages" className="mt-2">
               <thead><tr><th scope="col">Page</th><th scope="col" className="text-right">Views</th></tr></thead>
-              <tbody>{(s.coop_pages || []).map((p) => <tr key={p.tenant_slug}><td className="font-mono text-xs">/c/{p.tenant_slug}</td><td className="text-right">{p.views}</td></tr>)}</tbody>
+              <tbody>{(s.coop_pages || []).map((p) => <tr key={p.tenant_slug}><td className="font-mono text-xs">/{p.tenant_slug}</td><td className="text-right">{p.views}</td></tr>)}</tbody>
             </DataTable>
           )}
         </section>

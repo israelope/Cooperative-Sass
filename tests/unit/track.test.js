@@ -19,7 +19,9 @@ describe('visit tracking helpers', () => {
   });
   it('normalises ids and extracts the cooperative slug', () => {
     expect(normalisePath('/admin/members/3f2504e0-4f89-11d3-9a0c-0305e82c3301')).toEqual({ path: '/admin/members/:id', tenantSlug: null });
-    expect(normalisePath('/c/adeola-thrift/join?x=1')).toEqual({ path: '/c/:slug/join', tenantSlug: 'adeola-thrift' });
+    expect(normalisePath('/adeola-thrift/join?x=1')).toEqual({ path: '/:slug/join', tenantSlug: 'adeola-thrift' });
+    expect(normalisePath('/c/adeola-thrift/join?x=1')).toEqual({ path: '/:slug/join', tenantSlug: 'adeola-thrift' });
+    expect(normalisePath('/help')).toEqual({ path: '/help', tenantSlug: null });
   });
   it('hashes differ by day and never contain the raw IP', () => {
     const a = visitorHash({ salt: 's', ip: '102.89.1.2', ua: 'x', day: '2026-10-01' });

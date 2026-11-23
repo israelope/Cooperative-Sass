@@ -32,7 +32,7 @@ export default async function MembersPage(props) {
   if (status !== 'all') query = query.eq('status', status);
   if (q) query = query.or(`full_name.ilike.%${q}%,member_no.ilike.%${q}%`);
   const { rows: members, count: total } = await mustWithCount(query.range(range.from, range.to), 'members');
-  const link = `${getAppUrl()}/c/${profile.tenants?.slug}`;
+  const link = `${getAppUrl()}/${profile.tenants?.slug}`;
 
   return (
     <>
@@ -45,7 +45,7 @@ export default async function MembersPage(props) {
         <Icon name="link" size={17} className="mt-0.5" />
         <div className="min-w-0">
           <p className="font-semibold">Share this link so members can join themselves</p>
-          <Link href={`/c/${profile.tenants?.slug}`} target="_blank" rel="noopener noreferrer" className="link mt-1 block break-all rounded bg-white px-2 py-1 text-xs"><code>{link}</code></Link>
+          <Link href={`/${profile.tenants?.slug}`} target="_blank" rel="noopener noreferrer" className="link mt-1 block break-all rounded bg-white px-2 py-1 text-xs"><code>{link}</code></Link>
         </div>
       </div>
 

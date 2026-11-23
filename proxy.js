@@ -33,6 +33,10 @@ export async function proxy(request) {
     return NextResponse.redirect(url);
   };
 
+  // Links shared with the old /c/<co-op>/... format keep working.
+  const oldPrefix = path.match(/^\/c\/([^/]+)(\/.*)?$/);
+  if (oldPrefix) return goScoped(`/${oldPrefix[1]}${oldPrefix[2] || ''}`);
+
   if (!user) return go('/login');
   const role = user.app_metadata?.role;
   if (!APP_ROLES.includes(role)) return go('/login');
@@ -55,14 +59,14 @@ export async function proxy(request) {
   if (legacy && tenantSlug) {
     const prefix = `/${legacy[1]}`;
     const rest = path.startsWith(`${prefix}/`) ? path.slice(prefix.length) : '';
-    return goScoped(`/c/${tenantSlug}/${legacy[1]}${rest}`);
+    return goScoped(`/${tenantSlug}/${legacy[1]}${rest}`);
   }
 
   // Never show one society's portal under another society's name.
   const pathSlug = slugFromPath(path);
   if (pathSlug && tenantSlug && pathSlug !== tenantSlug) {
-    const rest = path.slice(`/c/${pathSlug}`.length);
-    return goScoped(`/c/${tenantSlug}${rest}`);
+    const rest = path.slice(`/${pathSlug}`.length);
+    return goScoped(`/${tenantSlug}${rest}`);
   }
 
   const section = sectionFor(path);
@@ -75,7 +79,9 @@ export const config = {
     '/admin/:path*',
     '/member/:path*',
     '/platform/:path*',
-    '/c/:slug/member/:path*',
-    '/c/:slug/admin/:path*',
+    '/c/:slug',
+    '/c/:slug/:path*',
+    '/:slug/member/:path*',
+    '/:slug/admin/:path*',
   ],
 };

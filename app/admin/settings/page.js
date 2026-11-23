@@ -20,7 +20,7 @@ export default async function SettingsPage() {
     listBanks(),
     await must(supabase.from('profiles').select('id, full_name, role').in('role', ['admin', 'bookkeeper']).order('role'), 'staff'),
   ]);
-  const link = `${getAppUrl()}/c/${tenant.slug}`;
+  const link = `${getAppUrl()}/${tenant.slug}`;
 
   return (
     <>
@@ -30,7 +30,7 @@ export default async function SettingsPage() {
         <h2 className="flex items-center gap-2 text-lg font-bold text-accent-900"><Icon name="building" size={18} className="text-accent-500" /> Cooperative</h2>
         <div className="callout-info mt-3">
           <Icon name="link" size={17} className="mt-0.5" />
-          <span className="min-w-0">Member link: <Link href={`/c/${tenant.slug}`} target="_blank" rel="noopener noreferrer" className="link break-all font-mono">{link}</Link></span>
+          <span className="min-w-0">Member link: <Link href={`/${tenant.slug}`} target="_blank" rel="noopener noreferrer" className="link break-all font-mono">{link}</Link></span>
         </div>
         <ActionForm action={saveSettings} className="mt-4 grid gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2"><Field label="Cooperative name" name="name" defaultValue={tenant.name} /></div>

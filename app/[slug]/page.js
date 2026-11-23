@@ -30,7 +30,7 @@ export default async function CooperativePage(props) {
           <span className="flex-1"><span className="block font-display font-semibold text-accent-900">I&apos;m already a member</span><span className="text-xs text-ink/75">Log in to your account</span></span>
           <Icon name="arrowRight" size={17} className="text-accent-500" />
         </Link>
-        <Link href={`/c/${tenant.slug}/join`} className="panel flex items-center gap-4 p-4 transition-colors hover:bg-accent-50">
+        <Link href={`/${tenant.slug}/join`} className="panel flex items-center gap-4 p-4 transition-colors hover:bg-accent-50">
           <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent-50 text-accent-600"><Icon name="userPlus" size={18} /></span>
           <span className="flex-1"><span className="block font-display font-semibold text-accent-900">Join this cooperative</span><span className="text-xs text-ink/75">Create an account for officer approval</span></span>
           <Icon name="arrowRight" size={17} className="text-accent-500" />

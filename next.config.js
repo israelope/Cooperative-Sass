@@ -4,15 +4,21 @@ const nextConfig = {
     // Bulk-import spreadsheets are posted through a server action (default limit is 1 MB).
     serverActions: { bodySizeLimit: '3mb' },
   },
-  async rewrites() {
-    // Members and staff see /c/<co-op>/... in the address bar, while the app
-    // keeps its single set of pages. The proxy verifies the slug is the
-    // signed-in tenant's before these rewrites are used.
+  async redirects() {
+    // The earlier /c/<co-op>/... links are still shared in messages and bookmarks.
     return [
-      { source: '/c/:slug/member', destination: '/member' },
-      { source: '/c/:slug/admin', destination: '/admin' },
-      { source: '/c/:slug/member/:path*', destination: '/member/:path*' },
-      { source: '/c/:slug/admin/:path*', destination: '/admin/:path*' },
+      { source: '/c/:slug', destination: '/:slug', permanent: false },
+      { source: '/c/:slug/:path*', destination: '/:slug/:path*', permanent: false },
+    ];
+  },
+  async rewrites() {
+    // The browser shows /<co-op>/..., while the app keeps its single set of pages.
+    // The proxy verifies the slug belongs to the signed-in tenant before this runs.
+    return [
+      { source: '/:slug/member', destination: '/member' },
+      { source: '/:slug/admin', destination: '/admin' },
+      { source: '/:slug/member/:path*', destination: '/member/:path*' },
+      { source: '/:slug/admin/:path*', destination: '/admin/:path*' },
     ];
   },
 };

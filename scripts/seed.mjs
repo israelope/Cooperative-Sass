@@ -99,13 +99,13 @@ async function seedLoan(tenantId, memberId) {
 
 // ~400 synthetic page views over 30 days so the Visitors charts have something to show (clearly marked 'seed-').
 async function seedVisits() {
-  const pages = ['/', '/', '/', '/login', '/register', '/claim', '/c/:slug', '/c/:slug'];
+  const pages = ['/', '/', '/', '/login', '/register', '/claim', '/:slug', '/:slug'];
   const slugs = ['adeola-thrift', 'ui-staff-coop'];
   const rows = [];
   for (let i = 0; i < 400; i++) {
     const path = pages[Math.floor(Math.random() * pages.length)];
     const when = new Date(Date.now() - Math.random() * 30 * 864e5).toISOString();
-    rows.push({ created_at: when, path, tenant_slug: path.startsWith('/c/') ? slugs[i % 2] : null, visitor_hash: 'seed-' + Math.floor(Math.random() * 120) + '-' + when.slice(0, 10), device: Math.random() < 0.7 ? 'mobile' : 'desktop' });
+    rows.push({ created_at: when, path, tenant_slug: path === '/:slug' ? slugs[i % 2] : null, visitor_hash: 'seed-' + Math.floor(Math.random() * 120) + '-' + when.slice(0, 10), device: Math.random() < 0.7 ? 'mobile' : 'desktop' });
   }
   await admin.from('site_visits').insert(rows);
 }

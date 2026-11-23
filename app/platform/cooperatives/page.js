@@ -45,7 +45,7 @@ export default async function CooperativesPage(props) {
             <tbody>
               {visible.map((c) => (
                 <tr key={c.id}>
-                  <td><Link href={`/platform/cooperatives/${c.id}`} className="link whitespace-nowrap">{c.name}</Link><Link href={`/c/${c.slug}`} target="_blank" rel="noopener noreferrer" className="link block font-mono text-xs">/c/{c.slug}</Link></td>
+                  <td><Link href={`/platform/cooperatives/${c.id}`} className="link whitespace-nowrap">{c.name}</Link><Link href={`/${c.slug}`} target="_blank" rel="noopener noreferrer" className="link block font-mono text-xs">/{c.slug}</Link></td>
                   <td>{c.admin_name}</td>
                   <td className="text-right">{c.members_active}<span className="text-ink/75"> / {c.members_total}</span></td>
                   <td className="text-right">{naira(c.total_savings)}</td>
