@@ -1,4 +1,5 @@
 import Icon from '@/components/Icon';
+import Link from '@/components/TenantLink';
 import PageHeader from '@/components/PageHeader';
 import ManualPaymentForm from '@/components/ManualPaymentForm';
 import { requireStaff } from '@/lib/auth';
@@ -17,7 +18,7 @@ export default async function RecordPaymentPage() {
   return (
     <>
       <PageHeader title="Record a payment" intro="For cash and bank-transfer payments. Online payments are recorded automatically." icon="plusCircle" helpKey="adminRecord">
-        <a href="/admin/payments" className="btn-quiet"><Icon name="arrowRight" size={16} className="rotate-180" /> All payments</a>
+        <Link href="/admin/payments" className="btn-quiet"><Icon name="arrowRight" size={16} className="rotate-180" /> All payments</Link>
       </PageHeader>
       <ManualPaymentForm action={recordManualPayment} tenantId={profile.tenant_id} members={members} />
     </>

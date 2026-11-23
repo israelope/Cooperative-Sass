@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import Link from '@/components/TenantLink';
 import Icon from '@/components/Icon';
 
 /** Only these statuses stop the poller; anything else means "keep waiting". */

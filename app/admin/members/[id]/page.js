@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Link from '@/components/TenantLink';
 import { notFound } from 'next/navigation';
 import Icon from '@/components/Icon';
 import PageHeader from '@/components/PageHeader';

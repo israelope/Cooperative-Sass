@@ -18,6 +18,16 @@ function checkCommon({ email, password, fullName }) {
   return null;
 }
 
+/** Resolve the role's scoped home after a sign-in (profile is authoritative). */
+async function homeFor(supabase, user, fallbackRole) {
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role, tenants(slug)')
+    .eq('id', user.id)
+    .maybeSingle();
+  return roleHome(profile?.role || fallbackRole, profile?.tenants?.slug);
+}
+
 function friendlyAuthError(error) {
   const m = (error?.message || '').toLowerCase();
   if (m.includes('already') || m.includes('registered') || m.includes('exists')) return 'That email address is already in use. Log in instead.';
@@ -39,7 +49,7 @@ export async function login(prev, fd) {
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) return { error: 'Email or password is incorrect.' };
   const role = data.user.app_metadata?.role;
-  redirect(roleHome(role));
+  redirect(await homeFor(supabase, data.user, role));
 }
 
 export async function logout() {
@@ -91,9 +101,9 @@ export async function registerCooperative(prev, fd) {
   }
 
   const supabase = await createClient();
-  const { error: sErr } = await supabase.auth.signInWithPassword({ email, password });
+  const { data: signed, error: sErr } = await supabase.auth.signInWithPassword({ email, password });
   if (sErr) redirect('/login');
-  redirect('/admin');
+  redirect(await homeFor(supabase, signed.user, 'admin'));
 }
 
 /** A member self-registers through the cooperative's link; staff must approve (status = pending). */
@@ -131,8 +141,8 @@ export async function joinCooperative(prev, fd) {
   }
 
   const supabase = await createClient();
-  await supabase.auth.signInWithPassword({ email, password });
-  redirect('/member');
+  const { data: signed } = await supabase.auth.signInWithPassword({ email, password });
+  redirect(await homeFor(supabase, signed.user, 'member'));
 }
 
 /** Imported member activates the account with a one-time claim code. */
@@ -192,6 +202,6 @@ export async function claimAccount(prev, fd) {
   }
 
   const supabase = await createClient();
-  await supabase.auth.signInWithPassword({ email, password });
-  redirect('/member');
+  const { data: signed } = await supabase.auth.signInWithPassword({ email, password });
+  redirect(await homeFor(supabase, signed.user, 'member'));
 }

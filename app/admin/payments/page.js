@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Link from '@/components/TenantLink';
 import Icon from '@/components/Icon';
 import PageHeader from '@/components/PageHeader';
 import StatusBadge from '@/components/StatusBadge';
@@ -40,7 +40,7 @@ export default async function PaymentsPage(props) {
     <>
       <PageHeader title="Payments" intro="Online payments appear here automatically once Paystack confirms them." icon="receipt" helpKey="adminPayments">
         <a href={`/api/export/payments?${params}`} className="btn-quiet"><Icon name="download" size={16} /> Export CSV</a>
-        <a href="/admin/statements" className="btn-quiet"><Icon name="fileText" size={16} /> PDF statements</a>
+        <Link href="/admin/statements" className="btn-quiet"><Icon name="fileText" size={16} /> PDF statements</Link>
         <Link href="/admin/payments/record" className="btn-gold"><Icon name="plusCircle" size={16} /> Record a payment</Link>
       </PageHeader>
 

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Icon from '@/components/Icon';
+import { scopeHref } from '@/lib/roles';
 
 const NAV_ICONS = {
   '/admin': 'dashboard',
@@ -52,11 +53,12 @@ function Badge({ count }) {
 
 export default function NavLinks({ nav, variant = 'sidebar', onNavigate, columns = 4 }) {
   const pathname = usePathname() || '';
+  const items = nav.map((n) => ({ ...n, href: scopeHref(n.href, pathname) }));
 
   if (variant === 'tabs') {
     return (
       <div className={`no-scrollbar grid max-w-full ${TAB_COLS[columns] || TAB_COLS[4]}`}>
-        {nav.map((n) => {
+        {items.map((n) => {
           const active = isActivePath(pathname, n.href);
           return (
             <Link
@@ -67,10 +69,10 @@ export default function NavLinks({ nav, variant = 'sidebar', onNavigate, columns
               className={`flex min-w-0 flex-col items-center justify-center gap-1 px-1 py-2.5 text-[11px] font-semibold transition-all duration-200 ${active ? 'border-t-2 border-accent-400 text-accent-800' : 'border-t-2 border-transparent text-ink/70 hover:text-accent-700'}`}
             >
               <span className="relative inline-flex">
-                <Icon name={NAV_ICONS[n.href] || 'chevronRight'} size={18} />
+                <Icon name={NAV_ICONS[n.href.replace(/^\/c\/[^/]+/, '')] || 'chevronRight'} size={18} />
                 {!!n.badge && <span className="absolute -right-2 -top-1"><Badge count={n.badge} /></span>}
               </span>
-              <span className="max-w-full truncate">{n.label}</span>
+              <span className="block w-full truncate whitespace-nowrap text-center leading-tight" title={n.label}>{n.label}</span>
             </Link>
           );
         })}
@@ -81,7 +83,7 @@ export default function NavLinks({ nav, variant = 'sidebar', onNavigate, columns
   if (variant === 'menu') {
     return (
       <div className="space-y-1">
-        {nav.map((n) => {
+        {items.map((n) => {
           const active = isActivePath(pathname, n.href);
           return (
             <Link
@@ -91,7 +93,7 @@ export default function NavLinks({ nav, variant = 'sidebar', onNavigate, columns
               onClick={onNavigate}
               className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${active ? 'bg-accent-700 text-white' : 'text-ink/80 hover:bg-accent-50 hover:text-accent-800'}`}
             >
-              <Icon name={NAV_ICONS[n.href] || 'chevronRight'} size={17} />
+              <Icon name={NAV_ICONS[n.href.replace(/^\/c\/[^/]+/, '')] || 'chevronRight'} size={17} />
               <span className="truncate">{n.label}</span>
               {!!n.badge && <span className="ml-auto"><Badge count={n.badge} /></span>}
               {active && !n.badge && <Icon name="chevronRight" size={14} className="ml-auto shrink-0" />}
@@ -104,7 +106,7 @@ export default function NavLinks({ nav, variant = 'sidebar', onNavigate, columns
 
   return (
     <div className="space-y-1">
-      {nav.map((n) => {
+      {items.map((n) => {
         const active = isActivePath(pathname, n.href);
         return (
           <Link
@@ -113,7 +115,7 @@ export default function NavLinks({ nav, variant = 'sidebar', onNavigate, columns
             aria-current={active ? 'page' : undefined}
             className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${active ? 'bg-white/15 text-white shadow-sm ring-1 ring-inset ring-white/10' : 'text-white/85 hover:bg-accent-700 hover:text-white'}`}
           >
-            <Icon name={NAV_ICONS[n.href] || 'chevronRight'} size={17} className={active ? 'shrink-0 text-accent-300' : 'shrink-0 text-accent-200'} />
+            <Icon name={NAV_ICONS[n.href.replace(/^\/c\/[^/]+/, '')] || 'chevronRight'} size={17} className={active ? 'shrink-0 text-accent-300' : 'shrink-0 text-accent-200'} />
             <span className="truncate">{n.label}</span>
             {!!n.badge && <span className="ml-auto"><Badge count={n.badge} /></span>}
           </Link>

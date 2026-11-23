@@ -35,12 +35,18 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-30 border-b border-rule/70 bg-white/90 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-4">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 py-4 sm:gap-3 sm:px-5">
           <Logo />
-          <nav className="flex items-center gap-2" aria-label="Account">
-            <Link href="/help" className="btn-quiet btn-sm"><Icon name="info" size={15} /> Help centre</Link>
-            <Link href="/claim" className="btn-quiet btn-sm"><Icon name="ticket" size={15} /> Claim account</Link>
-            <Link href="/login" className="btn-primary btn-sm"><Icon name="logout" size={15} /> Log in</Link>
+          <nav className="flex shrink-0 items-center gap-1.5 sm:gap-2" aria-label="Account">
+            <Link href="/help" aria-label="Help centre" title="Help centre" className="btn-quiet btn-sm">
+              <Icon name="info" size={15} /><span className="hidden sm:inline">Help centre</span>
+            </Link>
+            <Link href="/claim" aria-label="Claim account" title="Claim account" className="btn-quiet btn-sm">
+              <Icon name="ticket" size={15} /><span className="hidden sm:inline">Claim account</span>
+            </Link>
+            <Link href="/login" aria-label="Log in" className="btn-primary btn-sm">
+              <Icon name="logout" size={15} /><span>Log in</span>
+            </Link>
           </nav>
         </div>
       </header>
