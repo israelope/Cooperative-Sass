@@ -1,12 +1,14 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import Icon from '@/components/Icon';
 import Logo from '@/components/Logo';
+import SiteFooter from '@/components/SiteFooter';
 import { FAQS } from '@/lib/help-content';
 
 const AUDIENCES = [
-  { icon: 'settings', title: 'Cooperative owners & admins', text: 'Set up your society, bring members over from paper, approve accounts and see every naira in one place.', href: '/help/admin', cta: 'Read the admin guide' },
-  { icon: 'receipt', title: 'Bookkeepers & treasurers', text: 'Record cash and transfers with receipts, reconcile online payments and issue statements without chasing alerts.', href: '/help/bookkeeper', cta: 'Read the bookkeeper guide' },
-  { icon: 'wallet', title: 'Members', text: 'Pay contributions any time, check your passbook and loan limit, and download your own statement.', href: '/help/member', cta: 'Read the member guide' },
+  { icon: 'settings', image: '/images/admin-meeting.jpg', imageAlt: 'Cooperative officers planning together around a laptop', title: 'Cooperative owners & admins', text: 'Set up your society, bring members over from paper, approve accounts and see every naira in one place.', href: '/help/admin', cta: 'Read the admin guide' },
+  { icon: 'receipt', image: '/images/bookkeeper-records.jpg', imageAlt: 'A bookkeeper checking receipts and recording expenses', title: 'Bookkeepers & treasurers', text: 'Record cash and transfers with receipts, reconcile online payments and issue statements without chasing alerts.', href: '/help/bookkeeper', cta: 'Read the bookkeeper guide' },
+  { icon: 'wallet', image: '/images/member-payment.jpg', imageAlt: 'A member paying a contribution with a smartphone', title: 'Members', text: 'Pay contributions any time, check your passbook and loan limit, and download your own statement.', href: '/help/member', cta: 'Read the member guide' },
 ];
 
 const SAMPLE = [
@@ -76,25 +78,41 @@ export default function Home() {
             </ul>
           </div>
 
-          <div className="passbook-page p-5 pl-12 shadow-[0_18px_40px_-24px_rgba(20,23,43,.35)]" aria-label="Sample digital passbook">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="font-display text-sm font-semibold text-accent-800">Adeola Thrift Society · Member 014</p>
-                <p className="mt-1 text-sm text-ink/75">Savings balance</p>
-              </div>
-              <span className="badge-ok"><Icon name="checkCircle" size={12} /> Up to date</span>
+          <div className="relative">
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-accent-100 ring-1 ring-rule shadow-[0_18px_40px_-24px_rgba(20,23,43,.35)] sm:aspect-[16/10]">
+              <Image
+                src="/images/hero-mobile-payment.jpg"
+                alt="Two members using their phones to make a contribution"
+                fill
+                priority
+                sizes="(min-width: 768px) 50vw, 100vw"
+                className="object-cover"
+              />
+              <div aria-hidden="true" className="absolute inset-0 bg-linear-to-t from-accent-900/65 via-accent-900/10 to-transparent" />
+              <p className="absolute bottom-4 left-4 max-w-[85%] text-sm font-semibold leading-snug text-white drop-shadow-sm">
+                Pay from anywhere. The passbook updates itself.
+              </p>
             </div>
-            <p className="num mt-1 font-display text-4xl font-extrabold text-accent-900">₦410,000.00</p>
-            <div className="table-wrap mt-4">
-              <table className="tbl num">
-                <caption className="sr-only">Example passbook entries and running balance</caption>
-                <thead><tr><th scope="col">Date</th><th scope="col">Entry</th><th scope="col" className="text-right">Amount</th><th scope="col" className="text-right">Balance</th></tr></thead>
-                <tbody>
-                  {SAMPLE.map((r) => (
-                    <tr key={r[0]}><td>{r[0]}</td><td>{r[1]}</td><td className="text-right">{r[2]}</td><td className="text-right font-semibold">{r[3]}</td></tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="passbook-page relative mt-4 p-5 pl-12 shadow-[0_18px_40px_-24px_rgba(20,23,43,.35)] md:-mt-10 md:ml-8" aria-label="Sample digital passbook">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="font-display text-sm font-semibold text-accent-800">Adeola Thrift Society · Member 014</p>
+                  <p className="mt-1 text-sm text-ink/75">Savings balance</p>
+                </div>
+                <span className="badge-ok"><Icon name="checkCircle" size={12} /> Up to date</span>
+              </div>
+              <p className="num mt-1 font-display text-4xl font-extrabold text-accent-900">₦410,000.00</p>
+              <div className="table-wrap mt-4">
+                <table className="tbl num">
+                  <caption className="sr-only">Example passbook entries and running balance</caption>
+                  <thead><tr><th scope="col">Date</th><th scope="col">Entry</th><th scope="col" className="text-right">Amount</th><th scope="col" className="text-right">Balance</th></tr></thead>
+                  <tbody>
+                    {SAMPLE.map((r) => (
+                      <tr key={r[0]}><td>{r[0]}</td><td>{r[1]}</td><td className="text-right">{r[2]}</td><td className="text-right font-semibold">{r[3]}</td></tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
@@ -109,13 +127,18 @@ export default function Home() {
           </p>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {AUDIENCES.map((audience) => (
-              <div key={audience.title} className="panel p-5">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent-50 text-accent-600"><Icon name={audience.icon} size={19} /></span>
-                <h3 className="mt-3 font-display text-lg font-bold text-accent-900">{audience.title}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-ink/75">{audience.text}</p>
-                <Link href={audience.href} className="link mt-3 inline-flex items-center gap-1 text-sm">
-                  {audience.cta} <Icon name="arrowRight" size={14} />
-                </Link>
+              <div key={audience.title} className="panel overflow-hidden">
+                <div className="aspect-[16/7] w-full overflow-hidden bg-accent-50">
+                  <Image src={audience.image} alt={audience.imageAlt} fill sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="object-cover" />
+                </div>
+                <div className="p-5">
+                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent-50 text-accent-600"><Icon name={audience.icon} size={19} /></span>
+                  <h3 className="mt-3 font-display text-lg font-bold text-accent-900">{audience.title}</h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-ink/75">{audience.text}</p>
+                  <Link href={audience.href} className="link mt-3 inline-flex items-center gap-1 text-sm">
+                    {audience.cta} <Icon name="arrowRight" size={14} />
+                  </Link>
+                </div>
               </div>
             ))}
           </div>
@@ -126,6 +149,9 @@ export default function Home() {
         <div className="mx-auto max-w-6xl px-5 py-14">
           <h2 className="text-center text-2xl font-bold text-accent-900 sm:text-3xl">From paper to passbook in three steps</h2>
           <p className="mx-auto mt-2 max-w-xl text-center text-sm text-ink/75">No migration project, no IT department. Just your records, your members and a link to share.</p>
+          <div className="mt-6 aspect-[16/9] w-full overflow-hidden rounded-2xl bg-accent-50 ring-1 ring-rule sm:aspect-[16/5]">
+            <Image src="/images/community-meeting.jpg" alt="Members of a cooperative meeting together in Lagos" fill sizes="100vw" className="object-cover" />
+          </div>
           <div className="mt-9 grid gap-5 md:grid-cols-3">
             {STEPS.map((s, i) => (
               <div key={s.title} className="panel relative p-6">
@@ -174,8 +200,10 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-accent-900 text-white">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-6 px-5 py-12">
+      <section className="relative overflow-hidden bg-accent-900 text-white">
+        <Image src="/images/community-meeting.jpg" alt="" aria-hidden="true" fill sizes="100vw" className="object-cover opacity-25" />
+        <div aria-hidden="true" className="absolute inset-0 bg-linear-to-r from-accent-900 via-accent-900/90 to-accent-900/60" />
+        <div className="relative mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-6 px-5 py-12">
           <div>
             <h2 className="font-display text-2xl font-bold sm:text-3xl">Ready to put your ledger online?</h2>
             <p className="mt-2 max-w-xl text-sm text-accent-100">Create your cooperative&apos;s workspace today. You can add payout details whenever you are ready.</p>
@@ -187,18 +215,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="bg-white px-5 py-8">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4">
-          <Logo />
-          <nav className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-ink/75" aria-label="Footer">
-            <Link href="/help" className="hover:text-accent-700">Help centre</Link>
-            <Link href="/claim" className="hover:text-accent-700">Claim account</Link>
-            <Link href="/login" className="hover:text-accent-700">Log in</Link>
-            <Link href="/register" className="hover:text-accent-700">Register</Link>
-          </nav>
-        </div>
-        <p className="mx-auto mt-5 max-w-6xl text-xs text-ink/75">CoopLedger · Final-year project, Department of Computer Science, University of Ibadan</p>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

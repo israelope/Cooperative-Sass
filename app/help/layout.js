@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Icon from '@/components/Icon';
 import Logo from '@/components/Logo';
 import HelpTabs from '@/components/HelpTabs';
+import SiteFooter from '@/components/SiteFooter';
 
 export default function HelpLayout({ children }) {
   return (
@@ -29,9 +30,7 @@ export default function HelpLayout({ children }) {
         <div className="mt-8">{children}</div>
       </div>
 
-      <footer className="border-t border-rule bg-white px-5 py-8 text-center text-xs text-ink/75">
-        CoopLedger · <Link href="/" className="link">Main site</Link> · <Link href="/login" className="link">Log in</Link>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
