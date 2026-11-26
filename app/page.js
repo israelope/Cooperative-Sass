@@ -1,4 +1,4 @@
-import Image from 'next/image';
+/* eslint-disable @next/next/no-img-element */
 import Link from 'next/link';
 import Icon from '@/components/Icon';
 import Logo from '@/components/Logo';
@@ -65,14 +65,11 @@ export default function Home() {
           </div>
 
           <div className="relative md:col-start-2 md:row-span-2 md:row-start-1">
-            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-accent-100 ring-1 ring-rule shadow-[0_18px_40px_-24px_rgba(20,23,43,.35)] sm:aspect-[16/10]">
-              <Image
+            <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-accent-100 ring-1 ring-rule shadow-[0_18px_40px_-24px_rgba(20,23,43,.35)] sm:aspect-[16/9]">
+              <img
                 src="/images/hero-mobile-payment.jpg"
                 alt="Two members using their phones to make a contribution"
-                fill
-                priority
-                sizes="(min-width: 768px) 50vw, 100vw"
-                className="object-cover"
+                className="h-full w-full object-cover"
               />
               <div aria-hidden="true" className="absolute inset-0 bg-linear-to-t from-accent-900/65 via-accent-900/10 to-transparent" />
               <p className="absolute bottom-4 left-4 max-w-[85%] text-sm font-semibold leading-snug text-white drop-shadow-sm">
@@ -132,7 +129,7 @@ export default function Home() {
             {AUDIENCES.map((audience) => (
               <div key={audience.title} className="panel overflow-hidden">
                 <div className="aspect-[4/3] w-full overflow-hidden bg-accent-50 sm:aspect-[16/7]">
-                  <Image src={audience.image} alt={audience.imageAlt} fill sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="object-cover" />
+                  <img src={audience.image} alt={audience.imageAlt} loading="lazy" className="h-full w-full object-cover" />
                 </div>
                 <div className="p-5">
                   <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent-50 text-accent-600"><Icon name={audience.icon} size={19} /></span>
@@ -153,7 +150,7 @@ export default function Home() {
           <h2 className="text-center text-2xl font-bold text-accent-900 sm:text-3xl">From paper to passbook in three steps</h2>
           <p className="mx-auto mt-2 max-w-xl text-center text-sm text-ink/75">No migration project, no IT department. Just your records, your members and a link to share.</p>
           <div className="mt-6 aspect-[16/9] w-full overflow-hidden rounded-2xl bg-accent-50 ring-1 ring-rule sm:aspect-[16/5]">
-            <Image src="/images/community-meeting.jpg" alt="Members of a cooperative meeting together in Lagos" fill sizes="100vw" className="object-cover" />
+            <img src="/images/community-meeting.jpg" alt="Members of a cooperative meeting together in Lagos" loading="lazy" className="h-full w-full object-cover" />
           </div>
           <div className="mt-9 grid gap-5 md:grid-cols-3">
             {STEPS.map((s, i) => (
@@ -204,7 +201,7 @@ export default function Home() {
       </section>
 
       <section className="relative overflow-hidden bg-accent-900 text-white">
-        <Image src="/images/community-meeting.jpg" alt="" aria-hidden="true" fill sizes="100vw" className="object-cover opacity-25" />
+        <img src="/images/community-meeting.jpg" alt="" aria-hidden="true" loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-25" />
         <div aria-hidden="true" className="absolute inset-0 bg-linear-to-r from-accent-900 via-accent-900/90 to-accent-900/60" />
         <div className="relative mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-6 px-5 py-12">
           <div>
