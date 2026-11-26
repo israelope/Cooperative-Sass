@@ -1,6 +1,6 @@
 # CoopLedger: Multi-Tenant SaaS for Cooperative Financial Management
 
-Final-year project MVP, Department of Computer Science, University of Ibadan.
+Multi-tenant cooperative accounting platform for thrift and credit societies.
 **Stack:** Next.js 16 (App Router, JavaScript) · Tailwind CSS · Supabase (PostgreSQL + Auth + Storage) · Paystack · Vercel.
 **Everything runs on free plans.**
 

@@ -84,7 +84,7 @@ export default function Home() {
                 </div>
                 <span className="badge-ok"><Icon name="checkCircle" size={12} /> Up to date</span>
               </div>
-              <p className="num mt-1 font-display text-4xl font-extrabold text-accent-900">₦410,000.00</p>
+              <p className="num mt-1 whitespace-nowrap font-display text-3xl font-extrabold tracking-tight text-accent-900 sm:text-4xl">₦410,000.00</p>
               <div className="table-wrap mt-4">
                 <table className="tbl num">
                   <caption className="sr-only">Example passbook entries and running balance</caption>
@@ -148,7 +148,7 @@ export default function Home() {
       <section className="border-t border-rule bg-white">
         <div className="mx-auto max-w-6xl px-5 py-14">
           <h2 className="text-center text-2xl font-bold text-accent-900 sm:text-3xl">From paper to passbook in three steps</h2>
-          <p className="mx-auto mt-2 max-w-xl text-center text-sm text-ink/75">No migration project, no IT department. Just your records, your members and a link to share.</p>
+          <p className="mx-auto mt-2 max-w-xl text-center text-sm text-ink/75">No migration headache, no IT department. Just your records, your members and a link to share.</p>
           <div className="mt-6 aspect-[16/9] w-full overflow-hidden rounded-2xl bg-accent-50 ring-1 ring-rule sm:aspect-[16/5]">
             <img src="/images/community-meeting.jpg" alt="Members of a cooperative meeting together in Lagos" loading="lazy" className="h-full w-full object-cover" />
           </div>

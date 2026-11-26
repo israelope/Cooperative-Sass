@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "license": "UNLICENSED",
-  "description": "Multi-tenant SaaS platform for cooperative financial management with Paystack split-payment webhook reconciliation (University of Ibadan final-year project MVP).",
+  "description": "Multi-tenant SaaS platform for cooperative financial management with Paystack split-payment webhook reconciliation.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

@@ -40,7 +40,7 @@ function FooterColumn({ title, links }) {
   );
 }
 
-/** Shared footer for public pages. Only real routes and real project details. */
+/** Shared footer for public pages. Only real routes and real product details. */
 export default function SiteFooter() {
   return (
     <footer className="border-t border-rule bg-white">
@@ -62,16 +62,13 @@ export default function SiteFooter() {
           <nav aria-label="About CoopLedger">
             <h2 className="text-xs font-bold uppercase tracking-wider text-accent-800">About</h2>
             <p className="mt-3 text-sm leading-relaxed text-ink/75">
-              A final-year project of the Department of Computer Science, University of Ibadan. Built for the way Nigerian thrift and credit societies actually keep records.
-            </p>
-            <p className="mt-3 text-xs text-ink/75">
-              Photography from <FooterLink href="https://www.pexels.com/license/">Pexels</FooterLink>.
+              CoopLedger is a cooperative accounting platform for thrift and credit societies. Members get a live passbook, officers get contribution and loan records, and every Paystack payment is reconciled in one private workspace.
             </p>
           </nav>
         </div>
 
         <div className="mt-10 flex flex-col gap-2 border-t border-rule pt-5 text-xs text-ink/75 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} CoopLedger · Final-year project, University of Ibadan.</p>
+          <p>© {new Date().getFullYear()} CoopLedger. All rights reserved.</p>
           <p>Private by design · Paystack payments · PDF statements</p>
         </div>
       </div>

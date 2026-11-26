@@ -106,7 +106,7 @@
   body { @apply bg-chalk text-ink font-body antialiased; }
   h1, h2, h3, h4 { @apply font-display tracking-tight; }
   :focus-visible { @apply outline-2 outline-offset-2 outline-accent-500; }
-  .num { font-variant-numeric: tabular-nums; }
+  .num { font-variant-numeric: tabular-nums; white-space: nowrap; }
 }
 
 @utility btn {
