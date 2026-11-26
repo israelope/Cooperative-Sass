@@ -56,29 +56,15 @@ export default function Home() {
       <section className="relative overflow-hidden">
         <div aria-hidden="true" className="pointer-events-none absolute -right-40 -top-40 h-[32rem] w-[32rem] rounded-full bg-accent-100/70 blur-3xl" />
         <div aria-hidden="true" className="pointer-events-none absolute -bottom-52 -left-40 h-[28rem] w-[28rem] rounded-full bg-marigold-100/50 blur-3xl" />
-        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-5 pb-16 pt-10 md:grid-cols-2 md:pt-16">
-          <div>
+        <div className="relative mx-auto grid max-w-6xl items-center gap-8 px-5 pb-16 pt-10 md:grid-cols-2 md:gap-12 md:pt-16">
+          <div className="md:col-start-1 md:row-start-1">
             <span className="badge-info"><Icon name="sparkles" size={13} /> Built for thrift &amp; credit societies</span>
             <h1 className="mt-5 text-4xl font-extrabold leading-[1.07] text-accent-900 sm:text-5xl lg:text-[3.4rem]">
               The passbook that updates itself when your members pay.
             </h1>
-            <p className="mt-5 max-w-prose text-lg leading-relaxed text-ink/75">
-              CoopLedger gives every thrift and credit society its own private workspace. Members see their savings and loan limit any time of day. Treasurers stop copying bank alerts into ledgers.
-            </p>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <Link href="/register" className="btn-gold"><Icon name="building" size={17} /> Register your cooperative</Link>
-              <Link href="/claim" className="btn-quiet"><Icon name="ticket" size={17} /> I have a claim code</Link>
-            </div>
-            <p className="mt-4 text-sm text-ink/75">Moving from paper? Upload a spreadsheet and hand each member a claim code. No one creates 500 passwords by hand.</p>
-            <p className="mt-3 text-sm"><Link href="/help" className="link inline-flex items-center gap-1">New here? See the step-by-step guides <Icon name="arrowRight" size={14} /></Link></p>
-            <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium text-accent-800">
-              <li className="inline-flex items-center gap-2"><Icon name="shield" size={16} className="text-accent-500" /> Private by design</li>
-              <li className="inline-flex items-center gap-2"><Icon name="card" size={16} className="text-accent-500" /> Paystack payments</li>
-              <li className="inline-flex items-center gap-2"><Icon name="download" size={16} className="text-accent-500" /> PDF statements</li>
-            </ul>
           </div>
 
-          <div className="relative">
+          <div className="relative md:col-start-2 md:row-span-2 md:row-start-1">
             <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-accent-100 ring-1 ring-rule shadow-[0_18px_40px_-24px_rgba(20,23,43,.35)] sm:aspect-[16/10]">
               <Image
                 src="/images/hero-mobile-payment.jpg"
@@ -115,6 +101,23 @@ export default function Home() {
               </div>
             </div>
           </div>
+
+          <div className="md:col-start-1 md:row-start-2">
+            <p className="mt-5 max-w-prose text-lg leading-relaxed text-ink/75 md:mt-0">
+              CoopLedger gives every thrift and credit society its own private workspace. Members see their savings and loan limit any time of day. Treasurers stop copying bank alerts into ledgers.
+            </p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <Link href="/register" className="btn-gold"><Icon name="building" size={17} /> Register your cooperative</Link>
+              <Link href="/claim" className="btn-quiet"><Icon name="ticket" size={17} /> I have a claim code</Link>
+            </div>
+            <p className="mt-4 text-sm text-ink/75">Moving from paper? Upload a spreadsheet and hand each member a claim code. No one creates 500 passwords by hand.</p>
+            <p className="mt-3 text-sm"><Link href="/help" className="link inline-flex items-center gap-1">New here? See the step-by-step guides <Icon name="arrowRight" size={14} /></Link></p>
+            <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium text-accent-800">
+              <li className="inline-flex items-center gap-2"><Icon name="shield" size={16} className="text-accent-500" /> Private by design</li>
+              <li className="inline-flex items-center gap-2"><Icon name="card" size={16} className="text-accent-500" /> Paystack payments</li>
+              <li className="inline-flex items-center gap-2"><Icon name="download" size={16} className="text-accent-500" /> PDF statements</li>
+            </ul>
+          </div>
         </div>
       </section>
 
@@ -128,7 +131,7 @@ export default function Home() {
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {AUDIENCES.map((audience) => (
               <div key={audience.title} className="panel overflow-hidden">
-                <div className="aspect-[16/7] w-full overflow-hidden bg-accent-50">
+                <div className="aspect-[4/3] w-full overflow-hidden bg-accent-50 sm:aspect-[16/7]">
                   <Image src={audience.image} alt={audience.imageAlt} fill sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="object-cover" />
                 </div>
                 <div className="p-5">
