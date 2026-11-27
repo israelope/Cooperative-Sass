@@ -45,8 +45,8 @@ export default async function MemberHome() {
             <p className="font-semibold">{active ? 'Welcome to your passbook.' : 'Your account is waiting for approval.'}</p>
             <p className="mt-0.5">
               {active
-                ? <>Make your first contribution and it will appear here automatically. <Link href="/help/member#start" className="link">See how it works</Link></>
-                : <>An officer needs to approve your membership before you can pay or borrow. <Link href="/help/member#start" className="link">Read the member guide</Link></>}
+                ? <>Make your first contribution and it will appear here automatically. <Link href="/help/guide/member#start" className="link">See how it works</Link></>
+                : <>An officer needs to approve your membership before you can pay or borrow. <Link href="/help/guide/member#start" className="link">Read the member guide</Link></>}
             </p>
           </div>
         </div>

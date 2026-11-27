@@ -110,7 +110,7 @@ export default async function RoleGuide(props) {
         <h2 className="text-lg font-bold text-accent-900">Looking for someone else&apos;s guide?</h2>
         <div className="mt-3 flex flex-wrap gap-2">
           {otherRoles.map((other) => (
-            <Link key={other.id} href={`/help/${other.id}`} className="btn-quiet btn-sm">
+            <Link key={other.id} href={`/help/guide/${other.id}`} className="btn-quiet btn-sm">
               <Icon name={other.icon} size={14} /> {other.label}
             </Link>
           ))}

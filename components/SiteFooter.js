@@ -57,7 +57,7 @@ export default function SiteFooter() {
           </div>
 
           <FooterColumn title="Explore" links={SITE_LINKS} />
-          <FooterColumn title="Role guides" links={ROLES.map((role) => ({ href: `/help/${role.id}`, label: `${role.shortLabel} guide` }))} />
+          <FooterColumn title="Role guides" links={ROLES.map((role) => ({ href: `/help/guide/${role.id}`, label: `${role.shortLabel} guide` }))} />
 
           <nav aria-label="About CoopLedger">
             <h2 className="text-xs font-bold uppercase tracking-wider text-accent-800">About</h2>

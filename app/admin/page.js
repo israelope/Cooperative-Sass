@@ -45,7 +45,7 @@ export default async function AdminDashboard() {
             <p className="font-semibold">New here? Start with the setup guide.</p>
             <p className="mt-0.5">
               Add payout details, bring your members in, then record your first payment — in that order.{' '}
-              <Link href="/help/admin#setup" className="link">Open the admin guide</Link>
+              <Link href="/help/guide/admin#setup" className="link">Open the admin guide</Link>
             </p>
           </div>
         </div>

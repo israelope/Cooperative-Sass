@@ -16,7 +16,7 @@ export default function HelpHome() {
         <p className="mt-1 text-sm text-ink/75">Each guide is a short set of steps that follows the real pages in the app.</p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           {ROLES.map((role) => (
-            <Link key={role.id} href={`/help/${role.id}`} className="panel group min-w-0 overflow-hidden">
+            <Link key={role.id} href={`/help/guide/${role.id}`} className="panel group min-w-0 overflow-hidden">
               <GuideImage src={role.image} alt={role.imageAlt} aspect="aspect-[16/8] sm:aspect-[16/7]" />
               <div className="p-5">
                 <div className="flex items-start gap-3">
@@ -43,8 +43,8 @@ export default function HelpHome() {
         <div>
           <p className="font-semibold">New to CoopLedger?</p>
           <p className="mt-0.5">
-            The <Link href="/help/admin" className="link">admin setup guide</Link> walks through registration, adding members and recording your first payment in order.
-            Members should start with <Link href="/help/member#start" className="link">getting into your account</Link>.
+            The <Link href="/help/guide/admin" className="link">admin setup guide</Link> walks through registration, adding members and recording your first payment in order.
+            Members should start with <Link href="/help/guide/member#start" className="link">getting into your account</Link>.
           </p>
         </div>
       </section>

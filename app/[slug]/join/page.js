@@ -24,7 +24,7 @@ export default async function JoinPage(props) {
     <AuthCard
       title={`Join ${tenant.name}`}
       intro="Create your account. A cooperative officer will approve your membership before you can pay or borrow."
-      footer={<p>What happens after I join? <Link href="/help/member#start" className="link">Read the member guide</Link></p>}
+      footer={<p>What happens after I join? <Link href="/help/guide/member#start" className="link">Read the member guide</Link></p>}
     >
       <ActionForm action={joinCooperative} className="space-y-4">
         <input type="hidden" name="slug" value={tenant.slug} />

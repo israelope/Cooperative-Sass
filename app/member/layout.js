@@ -16,7 +16,7 @@ export default async function MemberLayout({ children }) {
     { href: '/member/card', label: 'Membership card' },
   ];
   return (
-    <AppShell nav={nav} title="Member" subtitle={profile.tenants?.name} tone="member" helpHref="/help/member">
+    <AppShell nav={nav} title="Member" subtitle={profile.tenants?.name} tone="member" helpHref="/help/guide/member">
       {member.status === 'pending' && (
         <p className="mb-5 rounded-xl bg-marigold-100 px-4 py-3 text-sm text-marigold-700">Your membership is waiting for approval by a cooperative officer. You can look around, but payments and loans open once you are approved.</p>
       )}

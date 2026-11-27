@@ -22,7 +22,7 @@ export async function proxy(request) {
   const { data: { user } } = await supabase.auth.getUser();
   const path = request.nextUrl.pathname;
 
-  // Help centre guides are public; the tenant patterns below must not catch /help/admin or /help/member.
+  // The whole help centre is public; the tenant patterns below must not catch help routes.
   if (path === '/help' || path.startsWith('/help/')) return response;
 
   const go = (to) => {

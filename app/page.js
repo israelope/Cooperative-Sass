@@ -6,9 +6,9 @@ import SiteFooter from '@/components/SiteFooter';
 import { FAQS } from '@/lib/help-content';
 
 const AUDIENCES = [
-  { icon: 'settings', image: '/images/admin-meeting.jpg', imageAlt: 'Cooperative officers planning together around a laptop', title: 'Cooperative owners & admins', text: 'Set up your society, bring members over from paper, approve accounts and see every naira in one place.', href: '/help/admin', cta: 'Read the admin guide' },
-  { icon: 'receipt', image: '/images/bookkeeper-records.jpg', imageAlt: 'A bookkeeper checking receipts and recording expenses', title: 'Bookkeepers & treasurers', text: 'Record cash and transfers with receipts, reconcile online payments and issue statements without chasing alerts.', href: '/help/bookkeeper', cta: 'Read the bookkeeper guide' },
-  { icon: 'wallet', image: '/images/member-payment.jpg', imageAlt: 'A member paying a contribution with a smartphone', title: 'Members', text: 'Pay contributions any time, check your passbook and loan limit, and download your own statement.', href: '/help/member', cta: 'Read the member guide' },
+  { icon: 'settings', image: '/images/admin-meeting.jpg', imageAlt: 'Cooperative officers planning together around a laptop', title: 'Cooperative owners & admins', text: 'Set up your society, bring members over from paper, approve accounts and see every naira in one place.', href: '/help/guide/admin', cta: 'Read the admin guide' },
+  { icon: 'receipt', image: '/images/bookkeeper-records.jpg', imageAlt: 'A bookkeeper checking receipts and recording expenses', title: 'Bookkeepers & treasurers', text: 'Record cash and transfers with receipts, reconcile online payments and issue statements without chasing alerts.', href: '/help/guide/bookkeeper', cta: 'Read the bookkeeper guide' },
+  { icon: 'wallet', image: '/images/member-payment.jpg', imageAlt: 'A member paying a contribution with a smartphone', title: 'Members', text: 'Pay contributions any time, check your passbook and loan limit, and download your own statement.', href: '/help/guide/member', cta: 'Read the member guide' },
 ];
 
 const SAMPLE = [
