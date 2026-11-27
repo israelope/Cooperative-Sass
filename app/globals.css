@@ -152,7 +152,7 @@
 }
 @utility no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
-@utility table-wrap { @apply max-w-full overflow-x-auto; }
+@utility table-wrap { @apply min-w-0 max-w-full overflow-x-auto; }
 
 @layer components {
   .tbl { @apply w-full text-left text-sm; }

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Icon from '@/components/Icon';
+import GuideImage from '@/components/GuideImage';
 import { ROLES, getRole } from '@/lib/help-content';
 
 export function generateStaticParams() {
@@ -38,15 +39,18 @@ export default async function RoleGuide(props) {
         </Link>
       </div>
 
-      <div className="panel mb-8 p-6">
-        <div className="flex items-start gap-4">
-          <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent-700 text-white">
-            <Icon name={role.icon} size={22} />
-          </span>
-          <div>
-            <h2 className="text-2xl font-bold text-accent-900 sm:text-3xl">{role.label} guide</h2>
-            <p className="mt-1 text-sm font-medium text-ink/70">{role.audience}</p>
-            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink/80">{role.summary}</p>
+      <div className="panel mb-8 overflow-hidden">
+        <GuideImage src={role.image} alt={role.imageAlt} aspect="aspect-[16/6] sm:aspect-[10/3]" />
+        <div className="p-6">
+          <div className="flex items-start gap-4">
+            <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent-700 text-white">
+              <Icon name={role.icon} size={22} />
+            </span>
+            <div className="min-w-0">
+              <h2 className="text-2xl font-bold text-accent-900 sm:text-3xl">{role.label} guide</h2>
+              <p className="mt-1 text-sm font-medium text-ink/70">{role.audience}</p>
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink/80">{role.summary}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -71,7 +75,7 @@ export default async function RoleGuide(props) {
                   {!!step.links?.length && (
                     <div className="mt-4 flex flex-wrap gap-2">
                       {step.links.map((link) => (
-                        <Link key={link.href} href={link.href} className="btn-quiet btn-sm">
+                        <Link key={link.href} href={link.href} prefetch={false} className="btn-quiet btn-sm">
                           {link.label} <Icon name="arrowRight" size={14} />
                         </Link>
                       ))}
@@ -94,7 +98,7 @@ export default async function RoleGuide(props) {
               ))}
             </nav>
             {firstLink && (
-              <Link href={firstLink.href} className="btn-primary btn-sm mt-4 w-full">
+              <Link href={firstLink.href} prefetch={false} className="btn-primary btn-sm mt-4 w-full">
                 Go to the app <Icon name="arrowRight" size={14} />
               </Link>
             )}

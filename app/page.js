@@ -57,14 +57,14 @@ export default function Home() {
         <div aria-hidden="true" className="pointer-events-none absolute -right-40 -top-40 h-[32rem] w-[32rem] rounded-full bg-accent-100/70 blur-3xl" />
         <div aria-hidden="true" className="pointer-events-none absolute -bottom-52 -left-40 h-[28rem] w-[28rem] rounded-full bg-marigold-100/50 blur-3xl" />
         <div className="relative mx-auto grid max-w-6xl items-center gap-8 px-5 pb-16 pt-10 md:grid-cols-2 md:gap-12 md:pt-16">
-          <div className="md:col-start-1 md:row-start-1">
+          <div className="min-w-0 md:col-start-1 md:row-start-1">
             <span className="badge-info"><Icon name="sparkles" size={13} /> Built for thrift &amp; credit societies</span>
             <h1 className="mt-5 text-4xl font-extrabold leading-[1.07] text-accent-900 sm:text-5xl lg:text-[3.4rem]">
               The passbook that updates itself when your members pay.
             </h1>
           </div>
 
-          <div className="relative md:col-start-2 md:row-span-2 md:row-start-1">
+          <div className="relative min-w-0 md:col-start-2 md:row-span-2 md:row-start-1">
             <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-accent-100 ring-1 ring-rule shadow-[0_18px_40px_-24px_rgba(20,23,43,.35)] sm:aspect-[16/9]">
               <img
                 src="/images/hero-mobile-payment.jpg"
@@ -99,7 +99,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="md:col-start-1 md:row-start-2">
+          <div className="min-w-0 md:col-start-1 md:row-start-2">
             <p className="mt-5 max-w-prose text-lg leading-relaxed text-ink/75 md:mt-0">
               CoopLedger gives every thrift and credit society its own private workspace. Members see their savings and loan limit any time of day. Treasurers stop copying bank alerts into ledgers.
             </p>

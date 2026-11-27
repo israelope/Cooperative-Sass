@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Icon from '@/components/Icon';
+import GuideImage from '@/components/GuideImage';
 import { ROLES, GLOSSARY, FAQS } from '@/lib/help-content';
 
 export const metadata = {
@@ -15,20 +16,23 @@ export default function HelpHome() {
         <p className="mt-1 text-sm text-ink/75">Each guide is a short set of steps that follows the real pages in the app.</p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           {ROLES.map((role) => (
-            <Link key={role.id} href={`/help/${role.id}`} className="panel group p-5">
-              <div className="flex items-start gap-3">
-                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-accent-600">
-                  <Icon name={role.icon} size={20} />
-                </span>
-                <div className="min-w-0">
-                  <h3 className="font-display text-lg font-bold text-accent-900">{role.label}</h3>
-                  <p className="mt-1 text-sm text-ink/70">{role.audience}</p>
+            <Link key={role.id} href={`/help/${role.id}`} className="panel group min-w-0 overflow-hidden">
+              <GuideImage src={role.image} alt={role.imageAlt} aspect="aspect-[16/8] sm:aspect-[16/7]" />
+              <div className="p-5">
+                <div className="flex items-start gap-3">
+                  <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-accent-600">
+                    <Icon name={role.icon} size={20} />
+                  </span>
+                  <div className="min-w-0">
+                    <h3 className="font-display text-lg font-bold text-accent-900">{role.label}</h3>
+                    <p className="mt-1 text-sm text-ink/70">{role.audience}</p>
+                  </div>
                 </div>
+                <p className="mt-3 text-sm leading-relaxed text-ink/80">{role.summary}</p>
+                <p className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-accent-700 group-hover:underline">
+                  Read the {role.shortLabel} guide <Icon name="arrowRight" size={15} />
+                </p>
               </div>
-              <p className="mt-3 text-sm leading-relaxed text-ink/80">{role.summary}</p>
-              <p className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-accent-700 group-hover:underline">
-                Read the {role.shortLabel} guide <Icon name="arrowRight" size={15} />
-              </p>
             </Link>
           ))}
         </div>

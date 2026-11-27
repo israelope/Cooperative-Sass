@@ -21,6 +21,10 @@ export async function proxy(request) {
 
   const { data: { user } } = await supabase.auth.getUser();
   const path = request.nextUrl.pathname;
+
+  // Help centre guides are public; the tenant patterns below must not catch /help/admin or /help/member.
+  if (path === '/help' || path.startsWith('/help/')) return response;
+
   const go = (to) => {
     const url = request.nextUrl.clone();
     url.pathname = to;

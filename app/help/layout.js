@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Icon from '@/components/Icon';
 import Logo from '@/components/Logo';
+import GuideImage from '@/components/GuideImage';
 import HelpTabs from '@/components/HelpTabs';
 import SiteFooter from '@/components/SiteFooter';
 
@@ -24,6 +25,13 @@ export default function HelpLayout({ children }) {
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink/75 sm:text-base">
           Plain-language explanations of every part of CoopLedger. Pick the guide for your role, or search the questions below.
         </p>
+        <GuideImage
+          src="/images/community-meeting.jpg"
+          alt="Members of a cooperative meeting together around a table"
+          aspect="aspect-[16/9] sm:aspect-[21/7]"
+          className="mt-5 rounded-xl ring-1 ring-rule"
+          eager
+        />
         <div className="mt-6">
           <HelpTabs />
         </div>
